@@ -1,0 +1,25 @@
+{
+  "name": "xtoken-monorepo",
+  "version": "1.0.0",
+  "description": "xToken monorepo.",
+  "private": true,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/helix-bridge/xtoken-monorepo.git"
+  },
+  "keywords": [
+    "xtoken"
+  ],
+  "workspaces": [
+    "packages/*"
+  ],
+  "author": "Helix Bridge",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/helix-bridge/xtoken-monorepo/issues"
+  },
+  "homepage": "https://github.com/helix-bridge/xtoken-monorepo#readme"
+}
