@@ -4,7 +4,8 @@
   "description": "xToken monorepo.",
   "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "husky"
   },
   "repository": {
     "type": "git",
@@ -21,5 +22,10 @@
   "bugs": {
     "url": "https://github.com/helix-bridge/xtoken-monorepo/issues"
   },
-  "homepage": "https://github.com/helix-bridge/xtoken-monorepo#readme"
+  "homepage": "https://github.com/helix-bridge/xtoken-monorepo#readme",
+  "devDependencies": {
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.2",
+    "prettier": "3.2.5"
+  }
 }
