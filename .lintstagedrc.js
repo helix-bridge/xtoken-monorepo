@@ -1,9 +1,10 @@
-// const path = require("path");
+const path = require("path");
 
-// const buildAppsEslintCommand = (filenames) =>
-//   `npm run lint -w apps -- --fix --file ${filenames.map((f) => path.relative("packages/apps", f)).join(" --file ")}`;
+const buildAppsEslintCommand = (package) => (filenames) =>
+  `npm run lint -w ${package} -- --fix --file ${filenames.map((f) => path.relative(`packages/${package}`, f)).join(" --file ")}`;
 
 module.exports = {
-  // "packages/apps/src/**/*.{js,jsx,ts,tsx}": [buildAppsEslintCommand],
+  "packages/xtoken-home/src/**/*.{js,jsx,ts,tsx}": [buildAppsEslintCommand("xtoken-home")],
+  "packages/xtoken-ui/src/**/*.{js,jsx,ts,tsx}": [buildAppsEslintCommand("xtoken-ui")],
   "**/*.{js,jsx,ts,tsx,json}": "prettier --write",
 };
