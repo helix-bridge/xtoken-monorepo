@@ -6,5 +6,6 @@ const buildAppsEslintCommand = (package) => (filenames) =>
 module.exports = {
   "packages/xtoken-home/src/**/*.{js,jsx,ts,tsx}": [buildAppsEslintCommand("xtoken-home")],
   "packages/xtoken-ui/src/**/*.{js,jsx,ts,tsx}": [buildAppsEslintCommand("xtoken-ui")],
-  "**/*.{js,jsx,ts,tsx,json}": "prettier --write",
+  "packages/xtoken-home/**/*.{js,jsx,ts,tsx,json}": "prettier --write",
+  "packages/xtoken-ui/**/*.{js,jsx,ts,tsx,json}": "prettier --write",
 };
