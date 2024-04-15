@@ -24,6 +24,7 @@ const navigationsConfig: NavigationConfig[] = [
   { href: "/", label: "Bridge" },
   { href: "/records", label: "Explore" },
   { href: "https://assethub-bridge.darwinia.network", label: "Assethub", external: true },
+  { href: "/wrap", label: "Wrap" },
 ];
 
 export default function Header() {
