@@ -16,6 +16,7 @@ interface Props {
   amount: Amount;
   balance: bigint;
   loading?: boolean;
+  maxInput?: boolean;
   chain: ChainConfig;
   onRefresh?: () => void;
   onChange?: (amount: Amount) => void;
@@ -29,6 +30,7 @@ export default function TransferAmountSection({
   amount,
   balance,
   loading,
+  maxInput,
   onRefresh,
   onChange,
 }: Props) {
@@ -42,6 +44,7 @@ export default function TransferAmountSection({
         chain={chain}
         balance={balance}
         value={amount}
+        maxInput={maxInput}
         onRefresh={onRefresh}
         onChange={onChange}
       />
