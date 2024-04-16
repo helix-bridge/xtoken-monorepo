@@ -84,6 +84,32 @@ export const darwiniaChain: ChainConfig = {
             },
           ],
         },
+        {
+          target: { network: "polygon", symbol: "RING" },
+          bridge: { category: "xtoken-darwinia-ethereum" },
+          action: "issue",
+          thirdPartyBridges: [
+            {
+              name: "Helix Bridge",
+              logo: "helix-bridge.png",
+              url: "https://helixbridge.app/?token_category=ring&source_chain=darwinia-dvm&source_token=RING&target_chain=polygon&target_token=RING",
+            },
+          ],
+          onlyThirdParty: true,
+        },
+        {
+          target: { network: "arbitrum", symbol: "RING" },
+          bridge: { category: "xtoken-darwinia-ethereum" },
+          action: "issue",
+          thirdPartyBridges: [
+            {
+              name: "Helix Bridge",
+              logo: "helix-bridge.png",
+              url: "https://helixbridge.app/?token_category=ring&source_chain=darwinia-dvm&source_token=RING&target_chain=arbitrum&target_token=RING",
+            },
+          ],
+          onlyThirdParty: true,
+        },
       ],
       category: "ring",
     },
