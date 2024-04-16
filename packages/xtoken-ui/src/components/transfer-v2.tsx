@@ -294,7 +294,7 @@ function Component() {
                 </>
               ),
               tab: BridgeTab.OFFICIAL,
-              label: "Official Brigde",
+              label: "Official Bridge",
             },
             {
               children: <ThirdPartyBridge />,
