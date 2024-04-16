@@ -296,11 +296,15 @@ function Component() {
               tab: BridgeTab.OFFICIAL,
               label: "Official Bridge",
             },
-            {
-              children: <ThirdPartyBridge />,
-              tab: BridgeTab.THIRD_PARTY,
-              label: "Third Party Bridge",
-            },
+            ...(cross?.thirdPartyBridges?.length
+              ? [
+                  {
+                    children: <ThirdPartyBridge data={cross.thirdPartyBridges} />,
+                    tab: BridgeTab.THIRD_PARTY,
+                    label: "Third Party Bridge",
+                  },
+                ]
+              : []),
           ]}
           activeTab={bridgeTab}
           onChange={setBridgeTab}

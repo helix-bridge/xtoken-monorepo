@@ -15,6 +15,12 @@ interface Target {
 
 type Action = "issue" | "redeem";
 
+interface ThirdPartyBridge {
+  name: string;
+  url: string;
+  logo: string; // File name
+}
+
 export type CrossChain =
   | {
       target: Target;
@@ -25,6 +31,7 @@ export type CrossChain =
       action?: never;
       hidden?: boolean;
       min?: bigint; // Minimum transfer amount
+      thirdPartyBridges?: ThirdPartyBridge[];
     }
   | {
       target: Target;
@@ -35,6 +42,7 @@ export type CrossChain =
       action: Action;
       hidden?: boolean;
       min?: bigint; // Minimum transfer amount
+      thirdPartyBridges?: ThirdPartyBridge[];
     }
   | {
       target: Target;
@@ -45,6 +53,7 @@ export type CrossChain =
       action: Action;
       hidden?: boolean;
       min?: bigint; // Minimum transfer amount
+      thirdPartyBridges?: ThirdPartyBridge[];
     };
 
 export type AvailableBridges = {

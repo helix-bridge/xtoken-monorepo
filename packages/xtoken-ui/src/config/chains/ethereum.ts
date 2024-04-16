@@ -55,6 +55,13 @@ export const ethereumChain: ChainConfig = {
           target: { network: "darwinia-dvm", symbol: "RING" },
           bridge: { category: "xtoken-darwinia-ethereum" },
           action: "redeem",
+          thirdPartyBridges: [
+            {
+              name: "Helix Bridge",
+              logo: "helix-bridge.png",
+              url: "https://helixbridge.app/?token_category=ring&source_chain=ethereum&source_token=RING&target_chain=darwinia-dvm&target_token=RING",
+            },
+          ],
         },
       ],
       category: "ring",
