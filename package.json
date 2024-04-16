@@ -4,7 +4,7 @@
   "description": "xToken monorepo.",
   "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:xtoken-ui": "",
     "prepare": "husky"
   },
   "repository": {
@@ -27,6 +27,8 @@
     "husky": "^9.0.11",
     "lint-staged": "^15.2.2",
     "prettier": "3.2.5",
-    "prettier-plugin-tailwindcss": "^0.5.13"
+    "prettier-plugin-tailwindcss": "^0.5.13",
+    "lerna": "^8.1.2",
+    "nx": "^18.2.4"
   }
 }
