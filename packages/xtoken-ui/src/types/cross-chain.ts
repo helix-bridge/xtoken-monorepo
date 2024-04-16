@@ -32,6 +32,7 @@ export type CrossChain =
       hidden?: boolean;
       min?: bigint; // Minimum transfer amount
       thirdPartyBridges?: ThirdPartyBridge[];
+      onlyThirdParty?: boolean;
     }
   | {
       target: Target;
@@ -43,6 +44,7 @@ export type CrossChain =
       hidden?: boolean;
       min?: bigint; // Minimum transfer amount
       thirdPartyBridges?: ThirdPartyBridge[];
+      onlyThirdParty?: boolean;
     }
   | {
       target: Target;
@@ -54,6 +56,7 @@ export type CrossChain =
       hidden?: boolean;
       min?: bigint; // Minimum transfer amount
       thirdPartyBridges?: ThirdPartyBridge[];
+      onlyThirdParty?: boolean;
     };
 
 export type AvailableBridges = {

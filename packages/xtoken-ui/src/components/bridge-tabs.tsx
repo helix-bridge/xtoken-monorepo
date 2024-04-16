@@ -23,9 +23,9 @@ export default function BridgeTabs<K extends Key = string>({
         {options.map((option) => (
           <button
             key={option.tab}
-            disabled={option.tab === activeTab}
+            disabled={option.tab === activeTab || options.length === 1}
             onClick={() => onChange(option.tab)}
-            className="h-9 flex-1 rounded-lg text-sm font-bold text-white transition-colors hover:bg-white/10 disabled:bg-white/20"
+            className={`h-9 flex-1 rounded-lg text-sm font-bold text-white transition-colors  ${options.length === 1 ? "" : "hover:bg-white/10 disabled:bg-white/20"}`}
           >
             {option.label}
           </button>

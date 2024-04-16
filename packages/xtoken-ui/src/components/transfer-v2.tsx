@@ -247,55 +247,59 @@ function Component() {
         />
         <BridgeTabs<BridgeTab>
           options={[
-            {
-              children: (
-                <>
-                  <TransferAmountSection
-                    amount={amount}
-                    loading={loadingBalance}
-                    balance={balance}
-                    token={sourceToken}
-                    chain={sourceChain}
-                    min={bridge?.getCrossInfo()?.min}
-                    max={dailyLimit?.limit}
-                    onChange={setAmount}
-                    onRefresh={refreshBalance}
-                  />
-                  <TransferInformationSection
-                    bridge={bridge}
-                    fee={fee}
-                    dailyLimit={dailyLimit}
-                    isLoadingFee={loadingFee}
-                    isLoadingDailyLimit={loadingDailyLimit}
-                  />
+            ...(cross?.onlyThirdParty
+              ? []
+              : [
+                  {
+                    children: (
+                      <>
+                        <TransferAmountSection
+                          amount={amount}
+                          loading={loadingBalance}
+                          balance={balance}
+                          token={sourceToken}
+                          chain={sourceChain}
+                          min={bridge?.getCrossInfo()?.min}
+                          max={dailyLimit?.limit}
+                          onChange={setAmount}
+                          onRefresh={refreshBalance}
+                        />
+                        <TransferInformationSection
+                          bridge={bridge}
+                          fee={fee}
+                          dailyLimit={dailyLimit}
+                          isLoadingFee={loadingFee}
+                          isLoadingDailyLimit={loadingDailyLimit}
+                        />
 
-                  <div className="flex flex-col items-center gap-2 lg:gap-3">
-                    <Button
-                      className="inline-flex h-12 w-full items-center justify-center rounded-full"
-                      kind="primary"
-                      busy={isApproving}
-                      disabled={disableAction}
-                      onClick={handleAction}
-                    >
-                      <span className="text-base font-bold text-white">{actionText}</span>
-                    </Button>
-                    <span className="text-xs font-semibold text-white/50">
-                      © {new Date().getFullYear()} Powered by{" "}
-                      <a
-                        href="https://xtoken.helixbridge.app"
-                        rel="noopener noreferrer"
-                        target="_blank"
-                        className="text-primary hover:underline"
-                      >
-                        xToken
-                      </a>
-                    </span>
-                  </div>
-                </>
-              ),
-              tab: BridgeTab.OFFICIAL,
-              label: "Official Bridge",
-            },
+                        <div className="flex flex-col items-center gap-2 lg:gap-3">
+                          <Button
+                            className="inline-flex h-12 w-full items-center justify-center rounded-full"
+                            kind="primary"
+                            busy={isApproving}
+                            disabled={disableAction}
+                            onClick={handleAction}
+                          >
+                            <span className="text-base font-bold text-white">{actionText}</span>
+                          </Button>
+                          <span className="text-xs font-semibold text-white/50">
+                            © {new Date().getFullYear()} Powered by{" "}
+                            <a
+                              href="https://xtoken.helixbridge.app"
+                              rel="noopener noreferrer"
+                              target="_blank"
+                              className="text-primary hover:underline"
+                            >
+                              xToken
+                            </a>
+                          </span>
+                        </div>
+                      </>
+                    ),
+                    tab: BridgeTab.OFFICIAL,
+                    label: "Official Bridge",
+                  },
+                ]),
             ...(cross?.thirdPartyBridges?.length
               ? [
                   {
