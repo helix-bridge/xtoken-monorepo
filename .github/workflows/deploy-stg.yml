@@ -42,6 +42,7 @@ jobs:
           script_build: yarn build:xtoken-home
           dist_path: packages/xtoken-home/out
           project_name: xtoken-home
+          alias_domain: "xtoken-home-stg"
           enable_cache: true
           enable_notify_slack: true
           slack_channel: helix-ui
