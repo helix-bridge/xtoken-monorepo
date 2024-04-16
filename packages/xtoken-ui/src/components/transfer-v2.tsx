@@ -222,7 +222,7 @@ function Component() {
 
   return (
     <>
-      <div className="gap-medium rounded-large p-medium flex w-full flex-col bg-[#1F282C] lg:w-[27.5rem] lg:gap-5 lg:rounded-[1.25rem] lg:p-5">
+      <div className="gap-medium p-medium flex w-full flex-col rounded-3xl bg-[#1F282C] lg:w-[27.5rem] lg:gap-5 lg:rounded-[2rem] lg:p-5">
         <TransferTokenSection token={token} options={getTokenOptions()} onChange={handleTokenChange} />
         <TransferChainSection
           recipient={recipient}
