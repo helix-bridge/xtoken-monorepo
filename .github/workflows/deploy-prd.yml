@@ -18,7 +18,7 @@ jobs:
 
       - uses: ./.github/actions/smart-vercel
         name: Deploy xtoken-ui
-        if: startsWith(github.ref, 'refs/tags/home')
+        if: startsWith(github.ref, 'refs/tags/ui')
         with:
           vercel_token: ${{ secrets.VERCEL_TOKEN }}
           vercel_group: itering
@@ -26,6 +26,24 @@ jobs:
           script_run: false
           dist_path: packages/xtoken-ui
           project_name: xtoken-ui
+          alias_domain: "xtokenui-prd-main"
+          prod_mode: true
+          enable_cache: true
+          enable_notify_slack: true
+          slack_channel: helix-ui
+          slack_webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
+
+      - uses: ./.github/actions/smart-vercel
+        name: Deploy xtoken-ui
+        if: startsWith(github.ref, 'refs/tags/ui')
+        with:
+          vercel_token: ${{ secrets.VERCEL_TOKEN }}
+          vercel_group: itering
+          preview_output: true
+          script_run: false
+          dist_path: packages/xtoken-ui
+          project_name: xtoken-ui
+          alias_domain: "xtokenui-prd-test"
           prod_mode: true
           enable_cache: true
           enable_notify_slack: true
@@ -34,7 +52,7 @@ jobs:
 
       - uses: ./.github/actions/smart-vercel
         name: Deploy xtoken-home
-        if: startsWith(github.ref, 'refs/tags/ui')
+        if: startsWith(github.ref, 'refs/tags/home')
         with:
           vercel_token: ${{ secrets.VERCEL_TOKEN }}
           vercel_group: itering
@@ -42,6 +60,7 @@ jobs:
           script_build: yarn build:xtoken-home
           dist_path: packages/xtoken-home/out
           project_name: xtoken-home
+          alias_domain: "xtoken-home-prd"
           prod_mode: true
           enable_cache: true
           enable_notify_comment: true

@@ -17,7 +17,7 @@ jobs:
           path: .github
 
       - uses: ./.github/actions/smart-vercel
-        name: Deploy xtoken-ui
+        name: Deploy xtoken-ui (main)
         with:
           vercel_token: ${{ secrets.VERCEL_TOKEN }}
           vercel_group: itering
@@ -25,12 +25,26 @@ jobs:
           script_run: false
           dist_path: packages/xtoken-ui
           project_name: xtoken-ui
-          alias_domain: "xtoken-stg"
+          alias_domain: "xtokenui-stg-main"
           enable_cache: true
           enable_notify_slack: true
           slack_channel: helix-ui
           slack_webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
 
+      - uses: ./.github/actions/smart-vercel
+        name: Deploy xtoken-ui (test)
+        with:
+          vercel_token: ${{ secrets.VERCEL_TOKEN }}
+          vercel_group: itering
+          preview_output: true
+          script_run: false
+          dist_path: packages/xtoken-ui
+          project_name: xtoken-ui
+          alias_domain: "xtokenui-stg-test"
+          enable_cache: true
+          enable_notify_slack: true
+          slack_channel: helix-ui
+          slack_webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
 
       - uses: ./.github/actions/smart-vercel
         name: Deploy xtoken-home
