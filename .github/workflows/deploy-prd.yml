@@ -1,7 +1,9 @@
-name: Deploy develop
+name: Deploy production
 
 on:
-  pull_request:
+  push:
+    tags:
+      - 'v*'
 
 jobs:
   deploy:
@@ -24,12 +26,11 @@ jobs:
           script_run: false
           dist_path: packages/xtoken-ui
           project_name: xtoken-ui
+          prod_mode: true
           enable_cache: true
-          enable_notify_comment: true
           enable_notify_slack: true
           slack_channel: helix-ui
           slack_webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
-
 
       - uses: ./.github/actions/smart-vercel
         name: Deploy xtoken-home
@@ -40,9 +41,11 @@ jobs:
           script_build: yarn build:xtoken-home
           dist_path: packages/xtoken-home/out
           project_name: xtoken-home
+          prod_mode: true
           enable_cache: true
           enable_notify_comment: true
           enable_notify_slack: true
           slack_channel: helix-ui
           slack_webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
+
 

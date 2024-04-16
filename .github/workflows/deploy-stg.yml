@@ -1,7 +1,8 @@
-name: Deploy develop
+name: Deploy staging
 
 on:
-  pull_request:
+  push:
+    branches: [main]
 
 jobs:
   deploy:
@@ -21,11 +22,12 @@ jobs:
           vercel_token: ${{ secrets.VERCEL_TOKEN }}
           vercel_group: itering
           preview_output: true
+          dist_path: .next
           script_run: false
           dist_path: packages/xtoken-ui
           project_name: xtoken-ui
+          alias_domain: "xaccount-stg"
           enable_cache: true
-          enable_notify_comment: true
           enable_notify_slack: true
           slack_channel: helix-ui
           slack_webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
@@ -41,7 +43,6 @@ jobs:
           dist_path: packages/xtoken-home/out
           project_name: xtoken-home
           enable_cache: true
-          enable_notify_comment: true
           enable_notify_slack: true
           slack_channel: helix-ui
           slack_webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
