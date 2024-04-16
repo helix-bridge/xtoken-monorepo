@@ -96,7 +96,7 @@ function Component() {
 
   const [bridge, cross] = useMemo(() => {
     const cross = sourceToken.cross.find(
-      (c) => c.target.network === targetChain.network && c.target.symbol === targetToken.symbol,
+      (c) => !c.hidden && c.target.network === targetChain.network && c.target.symbol === targetToken.symbol,
     );
     const bridge = cross
       ? bridgeFactory({
