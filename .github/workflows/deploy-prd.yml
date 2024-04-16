@@ -42,7 +42,7 @@ jobs:
           preview_output: true
           script_run: false
           dist_path: packages/xtoken-ui
-          project_name: xtoken-ui
+          project_name: xtoken-ui-test
           alias_domain: "xtokenui-prd-test"
           prod_mode: true
           enable_cache: true

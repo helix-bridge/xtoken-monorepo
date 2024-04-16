@@ -39,7 +39,7 @@ jobs:
           preview_output: true
           script_run: false
           dist_path: packages/xtoken-ui
-          project_name: xtoken-ui
+          project_name: xtoken-ui-test
           alias_domain: "xtokenui-stg-test"
           enable_cache: true
           enable_notify_slack: true
