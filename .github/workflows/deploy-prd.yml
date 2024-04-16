@@ -3,6 +3,8 @@ name: Deploy production
 on:
   push:
     tags:
+      - "ui*"
+      - "home*"
 
 jobs:
   deploy:
