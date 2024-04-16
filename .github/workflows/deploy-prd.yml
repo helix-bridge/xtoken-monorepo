@@ -3,7 +3,6 @@ name: Deploy production
 on:
   push:
     tags:
-      - 'v*'
 
 jobs:
   deploy:
@@ -19,6 +18,7 @@ jobs:
 
       - uses: ./.github/actions/smart-vercel
         name: Deploy xtoken-ui
+        if: startsWith(github.ref, 'refs/tags/home')
         with:
           vercel_token: ${{ secrets.VERCEL_TOKEN }}
           vercel_group: itering
@@ -34,6 +34,7 @@ jobs:
 
       - uses: ./.github/actions/smart-vercel
         name: Deploy xtoken-home
+        if: startsWith(github.ref, 'refs/tags/ui')
         with:
           vercel_token: ${{ secrets.VERCEL_TOKEN }}
           vercel_group: itering
