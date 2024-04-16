@@ -26,7 +26,7 @@ jobs:
           script_run: false
           dist_path: packages/xtoken-ui
           project_name: xtoken-ui
-          alias_domain: "xaccount-stg"
+          alias_domain: "xtoken-stg"
           enable_cache: true
           enable_notify_slack: true
           slack_channel: helix-ui
