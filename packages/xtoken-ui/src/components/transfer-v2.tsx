@@ -285,7 +285,7 @@ function Component() {
                           <span className="text-xs font-semibold text-white/50">
                             © {new Date().getFullYear()} Powered by{" "}
                             <a
-                              href="https://xtoken.helixbridge.app"
+                              href="https://xtoken.box"
                               rel="noopener noreferrer"
                               target="_blank"
                               className="text-primary hover:underline"
