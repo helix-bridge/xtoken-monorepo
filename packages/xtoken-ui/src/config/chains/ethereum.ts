@@ -124,7 +124,7 @@ export const ethereumChain: ChainConfig = {
           onlyThirdParty: true,
         },
         {
-          target: { network: "ethereum", symbol: "KTON" },
+          target: { network: "polygon", symbol: "KTON" },
           bridge: { category: "third-party-bridge" },
           thirdPartyBridges: [
             {
