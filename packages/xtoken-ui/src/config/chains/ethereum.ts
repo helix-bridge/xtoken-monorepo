@@ -111,6 +111,30 @@ export const ethereumChain: ChainConfig = {
           bridge: { category: "xtoken-darwinia-ethereum" },
           action: "redeem",
         },
+        {
+          target: { network: "arbitrum", symbol: "KTON" },
+          bridge: { category: "third-party-bridge" },
+          thirdPartyBridges: [
+            {
+              name: "Arbitrum",
+              logo: "arbitrum.png",
+              url: "https://bridge.arbitrum.io/?destinationChain=arbitrum-one&sourceChain=ethereum",
+            },
+          ],
+          onlyThirdParty: true,
+        },
+        {
+          target: { network: "ethereum", symbol: "KTON" },
+          bridge: { category: "third-party-bridge" },
+          thirdPartyBridges: [
+            {
+              name: "Polygon",
+              logo: "polygon.png",
+              url: "https://portal.polygon.technology/bridge",
+            },
+          ],
+          onlyThirdParty: true,
+        },
       ],
       category: "kton",
     },

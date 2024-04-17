@@ -63,6 +63,31 @@ export const arbitrumChain: ChainConfig = {
       ],
       category: "ring",
     },
+    {
+      decimals: 18,
+      symbol: "KTON",
+      name: "KTON",
+      type: "erc20",
+      address: "0xfd50237e40a287d8ef1cd4552980dd198d2c2678",
+      outer: "0xfd50237e40a287d8ef1cd4552980dd198d2c2678",
+      inner: "0xfd50237e40a287d8ef1cd4552980dd198d2c2678",
+      logo: "kton.png",
+      cross: [
+        {
+          target: { network: "ethereum", symbol: "KTON" },
+          bridge: { category: "third-party-bridge" },
+          thirdPartyBridges: [
+            {
+              name: "Arbitrum",
+              logo: "arbitrum.png",
+              url: "https://bridge.arbitrum.io/?destinationChain=ethereum&sourceChain=arbitrum-one",
+            },
+          ],
+          onlyThirdParty: true,
+        },
+      ],
+      category: "kton",
+    },
   ],
   messager: { msgline: "0x65Be094765731F394bc6d9DF53bDF3376F1Fc8B0" },
 };

@@ -63,5 +63,30 @@ export const polygonChain: ChainConfig = {
       ],
       category: "ring",
     },
+    {
+      decimals: 18,
+      symbol: "KTON",
+      name: "KTON",
+      type: "erc20",
+      address: "0x9F284E1337A815fe77D2Ff4aE46544645B20c5ff",
+      outer: "0x9F284E1337A815fe77D2Ff4aE46544645B20c5ff",
+      inner: "0x9F284E1337A815fe77D2Ff4aE46544645B20c5ff",
+      logo: "kton.png",
+      cross: [
+        {
+          target: { network: "ethereum", symbol: "KTON" },
+          bridge: { category: "third-party-bridge" },
+          thirdPartyBridges: [
+            {
+              name: "Polygon",
+              logo: "polygon.png",
+              url: "https://portal.polygon.technology/bridge",
+            },
+          ],
+          onlyThirdParty: true,
+        },
+      ],
+      category: "kton",
+    },
   ],
 };
