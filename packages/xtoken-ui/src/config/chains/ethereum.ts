@@ -63,6 +63,30 @@ export const ethereumChain: ChainConfig = {
             },
           ],
         },
+        {
+          target: { network: "arbitrum", symbol: "RING" },
+          bridge: { category: "third-party-bridge" },
+          thirdPartyBridges: [
+            {
+              name: "Arbitrum",
+              logo: "arbitrum.png",
+              url: "https://bridge.arbitrum.io/?destinationChain=arbitrum-one&sourceChain=ethereum",
+            },
+          ],
+          onlyThirdParty: true,
+        },
+        {
+          target: { network: "polygon", symbol: "RING" },
+          bridge: { category: "third-party-bridge" },
+          thirdPartyBridges: [
+            {
+              name: "Polygon",
+              logo: "polygon.png",
+              url: "https://portal.polygon.technology/bridge",
+            },
+          ],
+          onlyThirdParty: true,
+        },
       ],
       category: "ring",
     },

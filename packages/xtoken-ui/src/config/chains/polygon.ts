@@ -38,13 +38,24 @@ export const polygonChain: ChainConfig = {
       cross: [
         {
           target: { network: "darwinia-dvm", symbol: "RING" },
-          bridge: { category: "xtoken-darwinia-crab" },
-          action: "issue",
+          bridge: { category: "third-party-bridge" },
           thirdPartyBridges: [
             {
               name: "Helix Bridge",
               logo: "helix-bridge.png",
               url: "https://helixbridge.app/?token_category=ring&source_chain=polygon&source_token=RING&target_chain=darwinia-dvm&target_token=RING",
+            },
+          ],
+          onlyThirdParty: true,
+        },
+        {
+          target: { network: "ethereum", symbol: "RING" },
+          bridge: { category: "third-party-bridge" },
+          thirdPartyBridges: [
+            {
+              name: "Polygon",
+              logo: "polygon.png",
+              url: "https://portal.polygon.technology/bridge",
             },
           ],
           onlyThirdParty: true,

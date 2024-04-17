@@ -86,8 +86,7 @@ export const darwiniaChain: ChainConfig = {
         },
         {
           target: { network: "polygon", symbol: "RING" },
-          bridge: { category: "xtoken-darwinia-ethereum" },
-          action: "issue",
+          bridge: { category: "third-party-bridge" },
           thirdPartyBridges: [
             {
               name: "Helix Bridge",
@@ -99,8 +98,7 @@ export const darwiniaChain: ChainConfig = {
         },
         {
           target: { network: "arbitrum", symbol: "RING" },
-          bridge: { category: "xtoken-darwinia-ethereum" },
-          action: "issue",
+          bridge: { category: "third-party-bridge" },
           thirdPartyBridges: [
             {
               name: "Helix Bridge",
