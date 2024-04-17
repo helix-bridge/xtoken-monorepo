@@ -1,5 +1,4 @@
-import { Key, ReactElement, useRef } from "react";
-import { CSSTransition, SwitchTransition } from "react-transition-group";
+import { Key, ReactElement } from "react";
 
 export interface TabsProps<T> {
   activeTab: T;
@@ -16,10 +15,6 @@ export default function BridgeTabs<K extends Key = string>({
   activeTab,
   onChange = () => undefined,
 }: TabsProps<K>) {
-  const previousRef = useRef<HTMLDivElement | null>(null);
-  const currentRef = useRef<HTMLDivElement | null>(null);
-
-  const nodeRef = options.findIndex((option) => option.tab === activeTab) % 2 ? currentRef : previousRef;
   const activeItem = options.find(({ tab }) => tab === activeTab) || options[0];
 
   return (
@@ -28,22 +23,16 @@ export default function BridgeTabs<K extends Key = string>({
         {options.map((option) => (
           <button
             key={option.tab}
-            disabled={option.tab === activeTab}
+            disabled={option.tab === activeTab || options.length === 1}
             onClick={() => onChange(option.tab)}
-            className="h-9 flex-1 rounded-lg text-sm font-bold text-white transition-colors hover:bg-white/10 disabled:bg-white/20"
+            className={`h-9 flex-1 rounded-lg text-sm font-bold text-white transition-colors  ${options.length === 1 ? "" : "hover:bg-white/10 disabled:bg-white/20"}`}
           >
             {option.label}
           </button>
         ))}
       </div>
 
-      <SwitchTransition>
-        <CSSTransition timeout={200} key={activeTab} nodeRef={nodeRef} classNames="tabs-fade" unmountOnExit>
-          <div ref={nodeRef} className="gap-medium flex flex-col lg:gap-5">
-            {activeItem.children}
-          </div>
-        </CSSTransition>
-      </SwitchTransition>
+      <div className="gap-medium flex flex-col lg:gap-5">{activeItem.children}</div>
     </>
   );
 }

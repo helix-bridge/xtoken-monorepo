@@ -20,7 +20,12 @@ export type XTokenBridgeCategory =
   | "xtoken-ethereum-darwinia"
   | "xtoken-pangolin-sepolia"
   | "xtoken-sepolia-pangolin";
-export type BridgeCategory = L2BridgeCategory | HelixLpBridgeCategory | HelixBridgeCategory | XTokenBridgeCategory;
+export type BridgeCategory =
+  | L2BridgeCategory
+  | HelixLpBridgeCategory
+  | HelixBridgeCategory
+  | XTokenBridgeCategory
+  | "third-party-bridge";
 
 export interface BridgeContract {
   sourceAddress: Address;

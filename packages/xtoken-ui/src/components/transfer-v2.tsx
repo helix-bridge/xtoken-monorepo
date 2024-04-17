@@ -96,7 +96,7 @@ function Component() {
 
   const [bridge, cross] = useMemo(() => {
     const cross = sourceToken.cross.find(
-      (c) => c.target.network === targetChain.network && c.target.symbol === targetToken.symbol,
+      (c) => !c.hidden && c.target.network === targetChain.network && c.target.symbol === targetToken.symbol,
     );
     const bridge = cross
       ? bridgeFactory({
@@ -222,7 +222,7 @@ function Component() {
 
   return (
     <>
-      <div className="gap-medium rounded-large p-medium mx-auto flex w-full flex-col bg-[#1F282C] lg:mt-5 lg:w-[27.5rem] lg:gap-5 lg:rounded-[1.25rem] lg:p-5">
+      <div className="gap-medium p-medium flex w-full flex-col rounded-3xl bg-[#1F282C] lg:w-[27.5rem] lg:gap-5 lg:rounded-[2rem] lg:p-5">
         <TransferTokenSection token={token} options={getTokenOptions()} onChange={handleTokenChange} />
         <TransferChainSection
           recipient={recipient}
@@ -247,60 +247,68 @@ function Component() {
         />
         <BridgeTabs<BridgeTab>
           options={[
-            {
-              children: (
-                <>
-                  <TransferAmountSection
-                    amount={amount}
-                    loading={loadingBalance}
-                    balance={balance}
-                    token={sourceToken}
-                    chain={sourceChain}
-                    min={bridge?.getCrossInfo()?.min}
-                    max={dailyLimit?.limit}
-                    onChange={setAmount}
-                    onRefresh={refreshBalance}
-                  />
-                  <TransferInformationSection
-                    bridge={bridge}
-                    fee={fee}
-                    dailyLimit={dailyLimit}
-                    isLoadingFee={loadingFee}
-                    isLoadingDailyLimit={loadingDailyLimit}
-                  />
+            ...(cross?.onlyThirdParty
+              ? []
+              : [
+                  {
+                    children: (
+                      <>
+                        <TransferAmountSection
+                          amount={amount}
+                          loading={loadingBalance}
+                          balance={balance}
+                          token={sourceToken}
+                          chain={sourceChain}
+                          min={bridge?.getCrossInfo()?.min}
+                          max={dailyLimit?.limit}
+                          onChange={setAmount}
+                          onRefresh={refreshBalance}
+                        />
+                        <TransferInformationSection
+                          bridge={bridge}
+                          fee={fee}
+                          dailyLimit={dailyLimit}
+                          isLoadingFee={loadingFee}
+                          isLoadingDailyLimit={loadingDailyLimit}
+                        />
 
-                  <div className="flex flex-col items-center gap-2 lg:gap-3">
-                    <Button
-                      className="inline-flex h-12 w-full items-center justify-center rounded-full"
-                      kind="primary"
-                      busy={isApproving}
-                      disabled={disableAction}
-                      onClick={handleAction}
-                    >
-                      <span className="text-base font-bold text-white">{actionText}</span>
-                    </Button>
-                    <span className="text-xs font-semibold text-white/50">
-                      © {new Date().getFullYear()} Powered by{" "}
-                      <a
-                        href="https://xtoken.helixbridge.app"
-                        rel="noopener noreferrer"
-                        target="_blank"
-                        className="text-primary hover:underline"
-                      >
-                        xToken
-                      </a>
-                    </span>
-                  </div>
-                </>
-              ),
-              tab: BridgeTab.OFFICIAL,
-              label: "Official Brigde",
-            },
-            {
-              children: <ThirdPartyBridge />,
-              tab: BridgeTab.THIRD_PARTY,
-              label: "Third Party Bridge",
-            },
+                        <div className="flex flex-col items-center gap-2 lg:gap-3">
+                          <Button
+                            className="inline-flex h-12 w-full items-center justify-center rounded-full"
+                            kind="primary"
+                            busy={isApproving}
+                            disabled={disableAction}
+                            onClick={handleAction}
+                          >
+                            <span className="text-base font-bold text-white">{actionText}</span>
+                          </Button>
+                          <span className="text-xs font-semibold text-white/50">
+                            © {new Date().getFullYear()} Powered by{" "}
+                            <a
+                              href="https://xtoken.helixbridge.app"
+                              rel="noopener noreferrer"
+                              target="_blank"
+                              className="text-primary hover:underline"
+                            >
+                              xToken
+                            </a>
+                          </span>
+                        </div>
+                      </>
+                    ),
+                    tab: BridgeTab.OFFICIAL,
+                    label: "Official Bridge",
+                  },
+                ]),
+            ...(cross?.thirdPartyBridges?.length
+              ? [
+                  {
+                    children: <ThirdPartyBridge data={cross.thirdPartyBridges} />,
+                    tab: BridgeTab.THIRD_PARTY,
+                    label: "Third Party Bridge",
+                  },
+                ]
+              : []),
           ]}
           activeTab={bridgeTab}
           onChange={setBridgeTab}

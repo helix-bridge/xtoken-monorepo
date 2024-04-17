@@ -170,9 +170,32 @@ export default function TransferProviderV2({ children }: PropsWithChildren<unkno
   const handleTokenChange = useCallback(
     (_token: typeof token) => {
       setToken(_token);
+
+      const _sourceChainOptions = getSourceChainOptions(_token.category);
+      const _sourceChain =
+        _sourceChainOptions.find(({ id }) => id === sourceChainRef.current.id) || _sourceChainOptions[0];
+
+      const _sourceTokenOptions = getSourceTokenOptions(_sourceChain, _token.category);
+      const _sourceToken =
+        _sourceTokenOptions.find(({ symbol }) => symbol === sourceTokenRef.current.symbol) || _sourceTokenOptions[0];
+
+      const _targetChainOptions = getTargetChainOptions(_sourceToken);
+      const _targetChain =
+        _targetChainOptions.find(({ id }) => id === targetChainRef.current.id) || _targetChainOptions[0];
+
+      const _targetTokenOptions = getTargetTokenOptions(_sourceToken, _targetChain);
+      const _targetToken =
+        _targetTokenOptions.find(({ symbol }) => symbol === targetTokenRef.current.symbol) || _targetTokenOptions[0];
+
+      setSourceChainOptions(_sourceChainOptions);
+      setTargetChainOptions(_targetChainOptions);
+      setSourceChain(_sourceChain);
+      setSourceToken(_sourceToken);
+      setTargetChain(_targetChain);
+      setTargetToken(_targetToken);
       changeUrl(true);
     },
-    [changeUrl, setToken],
+    [changeUrl, setToken, setSourceChain, setSourceToken, setTargetChain, setTargetToken],
   );
 
   const handleSourceChainChange = useCallback(
@@ -241,16 +264,18 @@ export default function TransferProviderV2({ children }: PropsWithChildren<unkno
 
   const handleSwitch = useCallback(() => {
     const _sourceChain = targetChainRef.current;
-    const _targetChain = sourceChainRef.current;
-
     const _sourceTokenOptions = getSourceTokenOptions(_sourceChain, tokenRef.current.category);
     const _sourceToken =
       _sourceTokenOptions.find(({ symbol }) => symbol === sourceTokenRef.current.symbol) || _sourceTokenOptions[0];
+
+    const _targetChainOptions = getTargetChainOptions(_sourceToken);
+    const _targetChain = sourceChainRef.current;
 
     const _targetTokenOptions = getTargetTokenOptions(_sourceToken, _targetChain);
     const _targetToken =
       _targetTokenOptions.find(({ symbol }) => symbol === targetTokenRef.current.symbol) || _targetTokenOptions[0];
 
+    setTargetChainOptions(_targetChainOptions);
     setSourceChain(_sourceChain);
     setSourceToken(_sourceToken);
     setTargetChain(_targetChain);

@@ -170,7 +170,7 @@ export default function WrapUnwrap() {
 
   return (
     <>
-      <div className="bg-secondary p-large rounded-large mx-auto flex w-full flex-col gap-5 lg:mt-20 lg:w-[26rem] lg:rounded-[1.25rem] lg:p-5">
+      <div className="bg-secondary p-large mx-auto flex w-full flex-col gap-5 rounded-3xl lg:w-[28rem] lg:rounded-[2rem] lg:p-5">
         <div className="flex flex-col">
           <WrapTokenSection label="You pay" token={sourceToken} />
           <TransferSwitch onSwitch={handleSwitch} />
@@ -204,7 +204,7 @@ export default function WrapUnwrap() {
           </Button>
 
           {network.chain?.id && network.chain.id !== ChainID.ETHEREUM ? (
-            <div className="flex flex-wrap items-center gap-1">
+            <div className="mx-auto flex flex-wrap items-center gap-1">
               <Image
                 alt="Wrong network"
                 width={18}

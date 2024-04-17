@@ -9,7 +9,7 @@ interface Props {
 
 export default function WrapTokenSection({ label, token }: Props) {
   return (
-    <div className="bg-background gap-medium p-medium flex flex-col rounded-xl">
+    <div className="bg-background gap-medium px-medium flex flex-col py-3 first:rounded-t-2xl last:rounded-b-2xl">
       <span className="text-sm font-normal text-white/50">{label}</span>
       <div className="gap-medium flex items-center">
         <Image
