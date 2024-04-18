@@ -7,8 +7,8 @@ on:
       - "home*"
 
 jobs:
-  deploy:
-    name: Deploy
+  deploy-website:
+    name: Deploy Website
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -70,4 +70,34 @@ jobs:
           slack_channel: helix-ui
           slack_webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
 
+  publish-indexer:
+    name: Publish indexer
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Docker login
+        uses: docker/login-action@v1
+        with:
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          registry: ${{ env.DOCKER_REGISTRY }}
+
+      - uses: benjlevesque/short-sha@v1.2
+        id: short-sha
+        with:
+          length: 7
+
+      - uses: olegtarasov/get-tag@v2.1
+        id: tag-name
+
+      - name: Build and push
+        uses: docker/build-push-action@v3
+        with:
+          push: true
+          #context: apollo
+          file: packages/xtoken-indexer/Dockerfile
+          tags: |
+            ${{ env.DOCKER_REGISTRY }}/${{ github.repository }}:sha-${{ steps.short-sha.outputs.sha }}
+            ${{ env.DOCKER_REGISTRY }}/${{ github.repository }}:${{ steps.tag-name.outputs.tag }}
 
