@@ -1,0 +1,26 @@
+version: '3'
+services:
+  helix-bridge-apollo:
+    image: quay.io/helix-bridge/apollo:v4.6.8-1
+    restart: always
+    ports:
+        - 0.0.0.0:4002:4002
+
+    environment:
+        KEY: 'value'
+        DATABASE_URL: 'postgresql://postgres:letmein@postgres:5432/apollo?schema=public'
+
+  postgres:
+    image: postgres
+    restart: always
+    # ports:
+    #     # - 127.0.0.1:5433:5432
+    #
+    command: ["postgres", "-cshared_preload_libraries=pg_stat_statements"]
+    environment:
+        POSTGRES_USER: 'postgres'
+        POSTGRES_PASSWORD: 'letmein'
+        POSTGRES_DB: 'apollo'
+
+    volumes:
+        - ./postgres:/var/lib/postgresql/data

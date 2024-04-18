@@ -1,0 +1,44 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl"]
+  previewFeatures = ["fullTextSearch"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model HistoryRecord {
+  id String @id
+  fromChain String
+  toChain String
+  bridge String
+  nonce BigInt
+  requestTxHash String
+  sender String
+  recipient String
+  sendToken String
+  recvToken String
+  sendAmount String
+  recvAmount String
+  startTime Int
+  endTime Int?
+  result Int
+  fee String
+  feeToken String
+  responseTxHash String
+  reason String
+  messageNonce String
+  sendTokenAddress String
+  recvTokenAddress String?
+  sendOuterTokenAddress String?
+  recvOuterTokenAddress String?
+  guardSignatures String?
+  endTxHash String?
+  extData String?
+}
+

@@ -1,0 +1,60 @@
+scalar BigInt
+scalar ID
+
+type HistoryRecord {
+  id: String!
+  fromChain: String!
+  toChain: String!
+  bridge: String!
+  reason: String
+  nonce: BigInt!
+  requestTxHash: String!
+  responseTxHash: String
+  sender: String!
+  recipient: String!
+  sendToken: String!
+  recvToken: String!
+  sendAmount: String!
+  recvAmount: String
+  startTime: Int!
+  endTime: Int
+  result: Int!
+  fee: String!
+  feeToken: String!
+  messageNonce: String
+  sendTokenAddress: String
+  recvTokenAddress: String
+  sendOuterTokenAddress: String
+  recvOuterTokenAddress: String
+  guardSignatures: String
+  endTxHash: String
+  extData: String
+}
+
+type HistoryRecords {
+  total: Int!
+  records: [HistoryRecord]
+}
+
+type SupportChains {
+  fromChain: String!
+  toChains: [String]
+}
+
+type HealthInfo {
+  name: String
+  callTimes: Int
+}
+
+type Query {
+  historyRecordById(id: String): HistoryRecord
+  historyRecordByTxHash(txHash: String): HistoryRecord
+  historyRecords(sender: String, recipient: String, relayer: String, needWithdrawLiquidity: Boolean, fromChains: [String], toChains: [String], bridges: [String], row: Int, page: Int, results: [Int], recvTokenAddress: String,  order: String): HistoryRecords
+  tasksHealthCheck(name: String): [HealthInfo]
+  queryGuardNeedSignature(fromChain: String, toChain: String, bridge: String, guardAddress: String, row: Int): HistoryRecords
+}
+
+type Mutation {
+  addGuardSignature(id: String, dataHash: String, signature: String): String
+}
+
