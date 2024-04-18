@@ -12,6 +12,4 @@ EXPOSE 4002
 
 ENV VERSION_MODE prod
 
-# CMD [ "node", "index.js" ]
-
 ENTRYPOINT /app/apollo/scripts/entrypoint.sh ${VERSION_MODE}
