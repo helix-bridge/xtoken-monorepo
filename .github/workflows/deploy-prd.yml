@@ -8,6 +8,9 @@ on:
   #     - "home*"
   #     - "indexer*"
 
+env:
+  DOCKER_REGISTRY: ghcr.io
+
 jobs:
   # deploy-website:
   #   name: Deploy Website
