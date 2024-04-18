@@ -1,74 +1,76 @@
 name: Deploy production
 
 on:
-  push:
-    tags:
-      - "ui*"
-      - "home*"
+  pull_request:
+  # push:
+  #   tags:
+  #     - "ui*"
+  #     - "home*"
+  #     - "indexer*"
 
 jobs:
-  deploy-website:
-    name: Deploy Website
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
+  # deploy-website:
+  #   name: Deploy Website
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v2
 
-      - uses: actions/checkout@v2
-        with:
-          repository: darwinia-network/devops
-          path: .github
+  #     - uses: actions/checkout@v2
+  #       with:
+  #         repository: darwinia-network/devops
+  #         path: .github
 
-      - uses: ./.github/actions/smart-vercel
-        name: Deploy xtoken-ui
-        if: startsWith(github.ref, 'refs/tags/ui')
-        with:
-          vercel_token: ${{ secrets.VERCEL_TOKEN }}
-          vercel_group: itering
-          preview_output: true
-          script_run: false
-          dist_path: packages/xtoken-ui
-          project_name: xtoken-ui
-          alias_domain: "xtokenui-prd-main"
-          prod_mode: true
-          enable_cache: true
-          enable_notify_slack: true
-          slack_channel: helix-ui
-          slack_webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
+  #     - uses: ./.github/actions/smart-vercel
+  #       name: Deploy xtoken-ui
+  #       if: startsWith(github.ref, 'refs/tags/ui')
+  #       with:
+  #         vercel_token: ${{ secrets.VERCEL_TOKEN }}
+  #         vercel_group: itering
+  #         preview_output: true
+  #         script_run: false
+  #         dist_path: packages/xtoken-ui
+  #         project_name: xtoken-ui
+  #         alias_domain: "xtokenui-prd-main"
+  #         prod_mode: true
+  #         enable_cache: true
+  #         enable_notify_slack: true
+  #         slack_channel: helix-ui
+  #         slack_webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
 
-      - uses: ./.github/actions/smart-vercel
-        name: Deploy xtoken-ui
-        if: startsWith(github.ref, 'refs/tags/ui')
-        with:
-          vercel_token: ${{ secrets.VERCEL_TOKEN }}
-          vercel_group: itering
-          preview_output: true
-          script_run: false
-          dist_path: packages/xtoken-ui
-          project_name: xtoken-ui-test
-          alias_domain: "xtokenui-prd-test"
-          prod_mode: true
-          enable_cache: true
-          enable_notify_slack: true
-          slack_channel: helix-ui
-          slack_webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
+  #     - uses: ./.github/actions/smart-vercel
+  #       name: Deploy xtoken-ui
+  #       if: startsWith(github.ref, 'refs/tags/ui')
+  #       with:
+  #         vercel_token: ${{ secrets.VERCEL_TOKEN }}
+  #         vercel_group: itering
+  #         preview_output: true
+  #         script_run: false
+  #         dist_path: packages/xtoken-ui
+  #         project_name: xtoken-ui-test
+  #         alias_domain: "xtokenui-prd-test"
+  #         prod_mode: true
+  #         enable_cache: true
+  #         enable_notify_slack: true
+  #         slack_channel: helix-ui
+  #         slack_webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
 
-      - uses: ./.github/actions/smart-vercel
-        name: Deploy xtoken-home
-        if: startsWith(github.ref, 'refs/tags/home')
-        with:
-          vercel_token: ${{ secrets.VERCEL_TOKEN }}
-          vercel_group: itering
-          preview_output: true
-          script_build: yarn build:xtoken-home
-          dist_path: packages/xtoken-home/out
-          project_name: xtoken-home
-          alias_domain: "xtoken-home-prd"
-          prod_mode: true
-          enable_cache: true
-          enable_notify_comment: true
-          enable_notify_slack: true
-          slack_channel: helix-ui
-          slack_webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
+  #     - uses: ./.github/actions/smart-vercel
+  #       name: Deploy xtoken-home
+  #       if: startsWith(github.ref, 'refs/tags/home')
+  #       with:
+  #         vercel_token: ${{ secrets.VERCEL_TOKEN }}
+  #         vercel_group: itering
+  #         preview_output: true
+  #         script_build: yarn build:xtoken-home
+  #         dist_path: packages/xtoken-home/out
+  #         project_name: xtoken-home
+  #         alias_domain: "xtoken-home-prd"
+  #         prod_mode: true
+  #         enable_cache: true
+  #         enable_notify_comment: true
+  #         enable_notify_slack: true
+  #         slack_channel: helix-ui
+  #         slack_webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
 
   publish-indexer:
     name: Publish indexer
@@ -91,13 +93,14 @@ jobs:
       - uses: olegtarasov/get-tag@v2.1
         id: tag-name
 
-      - name: Build and push
+      - name: Publish apollo
         uses: docker/build-push-action@v3
+        #if: startsWith(github.ref, 'refs/tags/indexer')
         with:
           push: true
-          #context: apollo
-          file: packages/xtoken-indexer/Dockerfile
+          context: packages/xtoken-indexer/apollo
+          file: Dockerfile
           tags: |
-            ${{ env.DOCKER_REGISTRY }}/${{ github.repository }}:sha-${{ steps.short-sha.outputs.sha }}
-            ${{ env.DOCKER_REGISTRY }}/${{ github.repository }}:${{ steps.tag-name.outputs.tag }}
+            ${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/apollo:sha-${{ steps.short-sha.outputs.sha }}
+            ${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/apollo:${{ steps.tag-name.outputs.tag }}
 
