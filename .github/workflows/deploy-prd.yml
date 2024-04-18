@@ -102,6 +102,6 @@ jobs:
         with:
           push: true
           context: packages/xtoken-indexer/apollo
-          file: Dockerfile
+          # file: Dockerfile
           tags: |
             ${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/apollo:sha-${{ steps.short-sha.outputs.sha }}
