@@ -15,8 +15,29 @@ jobs:
           repository: darwinia-network/devops
           path: .github
 
+      - name: Verify changed for xtoken-ui
+        uses: tj-actions/changed-files@v44.1.0
+        id: changed_files_xtoken_ui
+        with:
+          files: |
+            packages/xtoken-ui/**
+            *.json
+            *.js
+            .github
+
+      - name: Verify changed for xtoken-home
+        uses: tj-actions/changed-files@v44.1.0
+        id: changed_files_xtoken_home
+        with:
+          files: |
+            packages/xtoken-home/**
+            *.json
+            *.js
+            .github
+
       - uses: ./.github/actions/smart-vercel
         name: Deploy xtoken-ui (main)
+        if: steps.changed_files_xtoken_ui.outputs.any_changed == 'true'
         with:
           vercel_token: ${{ secrets.VERCEL_TOKEN }}
           vercel_group: itering
@@ -33,6 +54,7 @@ jobs:
 
       - uses: ./.github/actions/smart-vercel
         name: Deploy xtoken-ui (test)
+        if: steps.changed_files_xtoken_ui.outputs.any_changed == 'true'
         with:
           vercel_token: ${{ secrets.VERCEL_TOKEN }}
           vercel_group: itering
@@ -49,6 +71,7 @@ jobs:
 
       - uses: ./.github/actions/smart-vercel
         name: Deploy xtoken-home
+        if: steps.changed_files_xtoken_home.outputs.any_changed == 'true'
         with:
           vercel_token: ${{ secrets.VERCEL_TOKEN }}
           vercel_group: itering

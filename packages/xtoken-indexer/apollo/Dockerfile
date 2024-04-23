@@ -1,17 +1,15 @@
 FROM node:14-alpine
 
-COPY . /opt/indexer
+COPY . /app
 
-RUN cd /opt/indexer/apollo && \
+RUN cd /app && \
   yarn install && \
   npx prisma generate
 
-WORKDIR /opt/indexer/apollo
+WORKDIR /app
 
 EXPOSE 4002
 
 ENV VERSION_MODE prod
 
-# CMD [ "node", "index.js" ]
-
-ENTRYPOINT /opt/indexer/apollo/scripts/entrypoint.sh ${VERSION_MODE}
+ENTRYPOINT /app/apollo/scripts/entrypoint.sh ${VERSION_MODE}
