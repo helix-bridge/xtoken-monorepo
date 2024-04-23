@@ -12,4 +12,4 @@ EXPOSE 4002
 
 ENV VERSION_MODE prod
 
-ENTRYPOINT /app/apollo/scripts/entrypoint.sh ${VERSION_MODE}
+ENTRYPOINT /app/scripts/entrypoint.sh ${VERSION_MODE}
