@@ -46,7 +46,6 @@ export const GQL_HISTORY_RECORDS = gql`
         recvToken
         sendTokenAddress
         recvTokenAddress
-        confirmedBlocks
       }
     }
   }

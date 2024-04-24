@@ -11,7 +11,7 @@ import {
 import Image from "next/image";
 import { Key, PropsWithChildren } from "react";
 import PrettyAddress from "./pretty-address";
-import { Address, isHash } from "viem";
+import { Address } from "viem";
 
 interface Props {
   dataSource: DataSource[];
@@ -80,7 +80,7 @@ export default function RecordsTable({
     {
       key: "status",
       title: <Title className="text-end">Status</Title>,
-      render: ({ startTime, result, confirmedBlocks }) => (
+      render: ({ startTime, result }) => (
         <div className="flex flex-col items-end truncate">
           <span>{formatTime(startTime * 1000, { compact: true })}</span>
           <span
@@ -94,13 +94,7 @@ export default function RecordsTable({
                     : "text-white/50"
             }`}
           >
-            {result === RecordResult.PENDING
-              ? confirmedBlocks
-                ? isHash(confirmedBlocks)
-                  ? "Confirming"
-                  : `Pending (${confirmedBlocks})`
-                : "Pending"
-              : parseRecordResult(result)}
+            {parseRecordResult(result)}
           </span>
         </div>
       ),
