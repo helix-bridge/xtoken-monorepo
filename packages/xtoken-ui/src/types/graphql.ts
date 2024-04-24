@@ -43,7 +43,6 @@ export interface HistoryRecord {
   guardSignatures: string | null;
   relayer: Address | null;
   endTxHash: Hex | null;
-  confirmedBlocks: string | null;
   extData: Hex;
 }
 
