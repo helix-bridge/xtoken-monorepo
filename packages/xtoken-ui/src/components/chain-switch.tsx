@@ -11,7 +11,7 @@ import {
 } from "@floating-ui/react";
 import Image from "next/image";
 import { useMemo, useState } from "react";
-import { useNetwork, useSwitchNetwork } from "wagmi";
+import { useAccount, useNetwork, useSwitchNetwork } from "wagmi";
 
 const chainOptions = getChainConfigs();
 
@@ -33,10 +33,11 @@ export default function ChainSwitch({ placement }: { placement?: Placement }) {
   const { getReferenceProps, getFloatingProps } = useInteractions([click, dismiss]);
 
   const { switchNetwork } = useSwitchNetwork();
+  const account = useAccount();
   const { chain } = useNetwork();
   const activeChain = useMemo(() => getChainConfig(chain?.id), [chain?.id]);
 
-  return (
+  return account.address ? (
     <>
       <button
         className="px-large flex h-9 w-fit items-center justify-between gap-2 rounded-xl bg-white/20 lg:h-8"
@@ -87,5 +88,5 @@ export default function ChainSwitch({ placement }: { placement?: Placement }) {
         </FloatingPortal>
       )}
     </>
-  );
+  ) : null;
 }
