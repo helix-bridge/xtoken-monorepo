@@ -1,0 +1,35 @@
+{
+  "name": "@xtoken/contract",
+  "version": "1.0.1",
+  "main": "index.js",
+  "author": "Darwinia dev",
+  "license": "MIT",
+  "scripts": {
+    "build": "hardhat compile",
+    "test": "npx hardhat test",
+    "script": "npx hardhat run",
+    "clean": "shx rm -rf cache artifacts abi",
+    "flatten": "npx hardhat flatten",
+    "flat": "npx hardhat flat",
+    "flat:sub2eth": "sh deploy/flatten-sub2eth.sh"
+  },
+  "devDependencies": {
+    "@nomiclabs/hardhat-ethers": "2.0.5",
+    "@nomiclabs/hardhat-etherscan": "^3.1.8",
+    "@nomiclabs/hardhat-waffle": "^2.0.1",
+    "chai": "^4.3.4",
+    "chai-as-promised": "^7.1.1",
+    "dotenv": "^10.0.0",
+    "ethereum-waffle": "^3.0.0",
+    "ethers": "^5.0.0",
+    "hardhat": "^2.20.1",
+    "hardhat-abi-exporter": "^2.2.1",
+    "readline-sync": "^1.4.10",
+    "shx": "^0.3.3"
+  },
+  "dependencies": {
+    "@zeppelin-solidity/contracts": "npm:@openzeppelin/contracts@v4.7.3",
+    "npx": "^10.2.2",
+    "@helix/contracts": "https://github.com/helix-bridge/contracts.git"
+  }
+}
