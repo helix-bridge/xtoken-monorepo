@@ -1,0 +1,19 @@
+name: CI(xtoken-ui)
+
+on:
+  pull_request:
+    paths:
+      - "packages/xtoken-ui/**"
+
+jobs:
+  build:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install
+        run: npm install
+
+      - name: Test
+        run: npm run test:xtoken-ui

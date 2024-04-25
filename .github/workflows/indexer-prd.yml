@@ -1,0 +1,40 @@
+name: Deploy production(indexer)
+
+on:
+  push:
+    tags:
+      - "indexer-*"
+
+env:
+  DOCKER_REGISTRY: ghcr.io
+
+jobs:
+  publish:
+    name: Publish indexer
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Docker login
+        uses: docker/login-action@v1
+        with:
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          registry: ${{ env.DOCKER_REGISTRY }}
+
+      - uses: benjlevesque/short-sha@v1.2
+        id: short-sha
+        with:
+          length: 7
+
+      - uses: olegtarasov/get-tag@v2.1
+        id: tag-name
+
+      - name: Publish apollo
+        uses: docker/build-push-action@v3
+        with:
+          push: true
+          context: packages/xtoken-indexer/apollo
+          tags: |
+            ${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/apollo:sha-${{ steps.short-sha.outputs.sha }}
+            ${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/apollo:${{ steps.tag-name.outputs.tag }}
