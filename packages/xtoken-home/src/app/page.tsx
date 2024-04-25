@@ -8,10 +8,14 @@ export default function Home() {
         <div className="flex flex-col">
           <Image alt="Logo" width={210} height={56} src="/logo.svg" className="shrink-0" />
           <span className="mt-11 inline-block text-3xl font-bold text-white lg:w-[32.8rem]">
-            XToken, Helix&apos; Bridge as a Service Open Platform
+            XToken, Helix&apos;s Bridge as a Service Open Platform
           </span>
-          <span className="mt-5 inline-block text-sm font-normal text-white/60 lg:w-[36rem]">
-            XToken BAAS(Bridge as a Service) offers professional cross-chain token mapping bridge services tailored for cryptocurrency token issuance projects or custodial applications. Clients maintain full control over contracts and asset permissions. Our comprehensive services include BAAS solution consulting, contract deployment, indexing, and UI cloud services. Custom domain provisioning is also available. For inquiries, please contact hello@helixbridge.app.
+          <span className="mt-5 inline-block text-sm font-normal leading-6 text-white/60 lg:w-[36rem]">
+            XToken BAAS(Bridge as a Service) offers professional cross-chain token mapping bridge services tailored for
+            cryptocurrency token issuance projects or custodial applications. Clients maintain full control over
+            contracts and asset permissions. Our comprehensive services include BAAS solution consulting, contract
+            deployment, indexing, and UI cloud services. Custom domain provisioning is also available. For inquiries,
+            please contact hello@helixbridge.app.
           </span>
         </div>
         <div className="flex items-center gap-8">
