@@ -8,11 +8,10 @@ export default function Home() {
         <div className="flex flex-col">
           <Image alt="Logo" width={210} height={56} src="/logo.svg" className="shrink-0" />
           <span className="mt-11 inline-block text-3xl font-bold text-white lg:w-[32.8rem]">
-            Fully Open-Source and Decentralized Cross-Chain Asset Bridge
+            XToken, Helix's Bridge as a Service Open Platform
           </span>
           <span className="mt-5 inline-block text-sm font-normal text-white/60 lg:w-[36rem]">
-            Built on top of common messaging bridges that already exist between chains, and provides secure, fast, and
-            low-cost cross-chain functionality for users.
+            XToken BAAS(Bridge as a Service) offers professional cross-chain token mapping bridge services tailored for cryptocurrency token issuance projects or custodial applications. Clients maintain full control over contracts and asset permissions. Our comprehensive services include BAAS solution consulting, contract deployment, indexing, and UI cloud services. Custom domain provisioning is also available. For inquiries, please contact hello@helixbridge.app.
           </span>
         </div>
         <div className="flex items-center gap-8">
