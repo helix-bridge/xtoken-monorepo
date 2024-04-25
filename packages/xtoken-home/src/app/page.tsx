@@ -1,5 +1,5 @@
+import Footer from "@/components/footer";
 import Image from "next/image";
-import { PropsWithChildren } from "react";
 
 export default function Home() {
   return (
@@ -17,27 +17,11 @@ export default function Home() {
         </div>
         <div className="flex items-center gap-8">
           <Card icon="/darwinia.png" link="https://bridge.darwinia.network" label="Darwinia" />
-          <Card icon="/docs.png" link="https://docs.helixbridge.app" label="Docs" isExternal />
+          <Card icon="/docs.png" link="./docs" label="Docs" />
         </div>
       </div>
 
-      <div className="fixed bottom-0 left-0 flex w-full items-center justify-center p-3 lg:justify-between lg:p-5">
-        <span className="text-xs font-semibold text-white/50">{`© ${new Date().getFullYear()} Powered by Helix Bridge Team`}</span>
-        <div className="hidden items-center gap-5 lg:flex">
-          <Social href="https://github.com/helix-bridge">
-            <Image width={16} height={16} alt="Github" src="/social/github.svg" />
-          </Social>
-          <Social href="https://twitter.com/helixbridges">
-            <Image width={16} height={16} alt="Twitter" src="/social/twitter.svg" />
-          </Social>
-          <Social href="https://discord.gg/6XyyNGugdE">
-            <Image width={20} height={20} alt="Discord" src="/social/discord.svg" />
-          </Social>
-          <Social href="mailto:hello@helixbridge.app">
-            <Image width={16} height={16} alt="Email" src="/social/email.svg" />
-          </Social>
-        </div>
-      </div>
+      <Footer className="fixed bottom-0 left-0" />
 
       <div
         className="absolute -bottom-[90vw] left-0 h-[100vw] w-screen rounded-full opacity-40 blur-[6.15rem]"
@@ -52,7 +36,7 @@ export default function Home() {
 function Card({ icon, link, label, isExternal }: { icon: string; link: string; label: string; isExternal?: boolean }) {
   return (
     <a
-      className="group flex h-52 w-40 flex-col items-center justify-center gap-7 rounded-3xl bg-secondary transition-shadow hover:shadow-[0px_0px_40px_0px_rgba(0,133,255,0.50)]"
+      className="bg-secondary group flex h-52 w-40 flex-col items-center justify-center gap-7 rounded-3xl transition-shadow hover:shadow-[0px_0px_40px_0px_rgba(0,133,255,0.50)]"
       target={isExternal ? "_blank" : "_self"}
       rel={isExternal ? "noopener noreferrer" : undefined}
       href={link}
@@ -69,26 +53,13 @@ function Card({ icon, link, label, isExternal }: { icon: string; link: string; l
               strokeWidth="1.5"
               stroke="currentColor"
               aria-hidden="true"
-              className="h-0 w-0 text-primary transition-all group-hover:h-3 group-hover:w-3"
+              className="text-primary h-0 w-0 transition-all group-hover:h-3 group-hover:w-3"
             >
               <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"></path>
             </svg>
           </span>
         </span>
       </div>
-    </a>
-  );
-}
-
-function Social({ children, href }: PropsWithChildren<{ href: string }>) {
-  return (
-    <a
-      target="_blank"
-      rel="noopener noreferrer"
-      href={href}
-      className="opacity-60 transition-[transform,opacity] hover:-translate-y-[2px] hover:opacity-100 active:translate-y-0"
-    >
-      {children}
     </a>
   );
 }
