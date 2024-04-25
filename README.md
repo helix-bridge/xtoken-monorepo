@@ -1,2 +1,2 @@
-## xToken Monorepo
+## XToken Monorepo
 
