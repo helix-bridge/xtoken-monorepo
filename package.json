@@ -1,7 +1,7 @@
 {
   "name": "xtoken-monorepo",
   "version": "1.0.0",
-  "description": "xToken monorepo.",
+  "description": "XToken monorepo",
   "private": true,
   "scripts": {
     "build:all": "lerna run build",

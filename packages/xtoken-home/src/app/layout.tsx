@@ -5,8 +5,8 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "xToken",
-  description: "xToken Home Page",
+  title: "XToken",
+  description: "XToken Home Page",
 };
 
 export default function RootLayout({

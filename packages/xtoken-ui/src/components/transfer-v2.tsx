@@ -290,7 +290,7 @@ function Component() {
                               target="_blank"
                               className="text-primary hover:underline"
                             >
-                              xToken
+                              XToken
                             </a>
                           </span>
                         </div>
