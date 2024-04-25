@@ -7,6 +7,7 @@
     "build:all": "lerna run build",
     "build:xtoken-home": "lerna run build --scope=xtoken-home",
     "build:xtoken-ui": "lerna run build --scope=xtoken-ui",
+    "test:xtoken-ui": "lerna run test --scope=xtoken-ui",
     "prepare": "husky"
   },
   "repository": {
