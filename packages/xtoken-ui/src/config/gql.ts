@@ -81,3 +81,22 @@ export const GQL_HISTORY_RECORD_BY_ID = gql`
     }
   }
 `;
+
+export const GQL_GET_HISTORY = gql`
+  query GetHistory($sender: String, $page: Int, $row: Int) {
+    historyRecords(sender: $sender, page: $page, row: $row) {
+      total
+      records {
+        requestTxHash
+        responseTxHash
+        fromChain
+        toChain
+        startTime
+        sendToken
+        sendAmount
+        result
+        id
+      }
+    }
+  }
+`;

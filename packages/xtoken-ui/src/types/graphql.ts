@@ -77,3 +77,27 @@ export interface HistoryRecordReqParams {
 export interface HistoryRecordResData {
   historyRecordById: HistoryRecord | null;
 }
+
+export interface HistoryReqParams {
+  sender: Address | undefined;
+  page: number;
+  row: number;
+}
+
+export interface HistoryResData {
+  historyRecords: {
+    total: number;
+    records: Pick<
+      HistoryRecord,
+      | "requestTxHash"
+      | "responseTxHash"
+      | "fromChain"
+      | "toChain"
+      | "startTime"
+      | "sendToken"
+      | "sendAmount"
+      | "result"
+      | "id"
+    >[];
+  };
+}

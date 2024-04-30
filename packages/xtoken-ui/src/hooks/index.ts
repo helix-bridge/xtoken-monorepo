@@ -7,3 +7,4 @@ export * from "./use-transfer-v2";
 export * from "./use-allowance";
 export * from "./use-message-fee";
 export * from "./use-daily-limit";
+export * from "./use-history";

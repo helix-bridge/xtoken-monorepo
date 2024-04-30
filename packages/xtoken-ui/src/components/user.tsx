@@ -1,5 +1,4 @@
 import { useApp, useTransfer } from "@/hooks";
-import { UrlSearchParamKey } from "@/types";
 import Dropdown from "@/ui/dropdown";
 import {
   formatBalance,
@@ -12,7 +11,6 @@ import {
 } from "@/utils";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import Image from "next/image";
-import Link from "next/link";
 import { PropsWithChildren } from "react";
 import { useAccount, useDisconnect } from "wagmi";
 import PrettyAddress from "./pretty-address";
@@ -20,6 +18,7 @@ import AddressIdenticon from "./address-identicon";
 import { Placement } from "@floating-ui/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import ComponentLoading from "@/ui/component-loading";
+import History from "./history";
 
 interface Props {
   placement: Placement;
@@ -28,10 +27,10 @@ interface Props {
   onComplete?: () => void;
 }
 
-export default function User({ placement, prefixLength = 10, suffixLength = 8, onComplete = () => undefined }: Props) {
+export default function User({ placement, prefixLength = 10, suffixLength = 8 }: Props) {
   const { setBridgeCategory, setSourceChain, setTargetChain, setSourceToken, setTargetToken, updateUrlParams } =
     useTransfer();
-  const { balanceAll, loadingBalanceAll, setRecordsSearch } = useApp();
+  const { balanceAll, loadingBalanceAll } = useApp();
 
   const { address } = useAccount();
   const { disconnect } = useDisconnect();
@@ -65,17 +64,10 @@ export default function User({ placement, prefixLength = 10, suffixLength = 8, o
       </div>
 
       <div className="gap-small flex items-center px-5">
-        <Link
-          href={`/records?${UrlSearchParamKey.ADDRESS}=${address}`}
-          onClick={() => {
-            setRecordsSearch(address);
-            onComplete();
-          }}
-          className="user-dropdown-item"
-        >
+        <History className="user-dropdown-item">
           <Image width={18} height={18} alt="History" src="/images/history.svg" className="shrink-0" />
           <ChildSpan>History</ChildSpan>
-        </Link>
+        </History>
         <button onClick={() => disconnect()} className="user-dropdown-item">
           <Image width={18} height={18} alt="Disconnect" src="/images/disconnect.svg" className="shrink-0" />
           <ChildSpan>Disconnect</ChildSpan>

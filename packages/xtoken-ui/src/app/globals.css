@@ -147,6 +147,44 @@ body {
   transition: opacity 200ms;
 }
 
+/* History */
+.history-table-fade-enter {
+  opacity: 0;
+  transform: translateX(-10px);
+}
+.history-table-fade-enter-active {
+  opacity: 1;
+  transform: translateX(0);
+  transition: opacity 100ms, transform 100ms;
+}
+.history-table-fade-exit {
+  opacity: 1;
+  transform: translateX(0);
+}
+.history-table-fade-exit-active {
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: opacity 100ms, transform 100ms;
+}
+.history-detail-fade-enter {
+  opacity: 0;
+  transform: translateX(10px);
+}
+.history-detail-fade-enter-active {
+  opacity: 1;
+  transform: translateX(0);
+  transition: opacity 100ms, transform 100ms;
+}
+.history-detail-fade-exit {
+  opacity: 1;
+  transform: translateX(0);
+}
+.history-detail-fade-exit-active {
+  opacity: 0;
+  transform: translateX(10px);
+  transition: opacity 100ms, transform 100ms;
+}
+
 /* Component loading */
 .component-loading-appear,
 .component-loading-enter {
