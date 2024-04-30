@@ -18,7 +18,8 @@ import { useAccount, useDisconnect } from "wagmi";
 import PrettyAddress from "./pretty-address";
 import AddressIdenticon from "./address-identicon";
 import { Placement } from "@floating-ui/react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import ComponentLoading from "@/ui/component-loading";
 
 interface Props {
   placement: Placement;
@@ -30,14 +31,13 @@ interface Props {
 export default function User({ placement, prefixLength = 10, suffixLength = 8, onComplete = () => undefined }: Props) {
   const { setBridgeCategory, setSourceChain, setTargetChain, setSourceToken, setTargetToken, updateUrlParams } =
     useTransfer();
-  const { balances, setRecordsSearch } = useApp();
+  const { balanceAll, loadingBalanceAll, setRecordsSearch } = useApp();
 
   const { address } = useAccount();
   const { disconnect } = useDisconnect();
   const { openConnectModal } = useConnectModal();
 
   const searchParams = useSearchParams();
-  const pathname = usePathname();
   const router = useRouter();
 
   return address ? (
@@ -84,61 +84,74 @@ export default function User({ placement, prefixLength = 10, suffixLength = 8, o
 
       <div className="mx-5 h-[1px] bg-white/10" />
 
-      <div className="relative flex max-h-[40vh] flex-col overflow-y-auto px-2 lg:max-h-[72vh]">
-        {balances
-          .filter(({ balance }) => 0 < balance)
-          .map((balance) => (
-            <button
-              key={`${balance.chain.network}-${balance.token.symbol}`}
-              className="gap-large lg:py-medium flex items-center rounded-2xl px-3 py-2 transition-colors hover:bg-white/10 disabled:cursor-default"
-              disabled={pathname !== "/"}
-              onClick={() => {
-                const _sourceChain = balance.chain;
-                const _sourceToken = balance.token;
-                const _targetChains = getAvailableTargetChains(_sourceChain);
-                const _targetChain = _targetChains.at(0);
-                const _targetTokens = getAvailableTargetTokens(_sourceChain, _targetChain, _sourceToken);
-                const _targetToken = _targetTokens.at(0);
-                const _category = getAvailableBridges(_sourceChain, _targetChain, _sourceToken).at(0);
+      <div className="relative flex max-h-[40vh] min-h-[2.5rem] flex-col overflow-y-auto px-2 lg:max-h-[72vh]">
+        <ComponentLoading
+          loading={loadingBalanceAll}
+          color="white"
+          size="small"
+          className="bg-background/50 backdrop-blur-[2px]"
+        />
 
-                setBridgeCategory(_category);
-                setSourceChain(_sourceChain);
-                setTargetChain(_targetChain);
-                setSourceToken(_sourceToken);
-                setTargetToken(_targetToken);
-                updateUrlParams(router, searchParams, {
-                  _category,
-                  _sourceChain,
-                  _targetChain,
-                  _sourceToken,
-                  _targetToken,
-                });
-              }}
-            >
-              <div className="relative">
-                <Image
-                  alt="Token"
-                  width={32}
-                  height={32}
-                  src={getTokenLogoSrc(balance.token.logo)}
-                  className="rounded-full"
-                />
-                <Image
-                  alt="Chain"
-                  width={20}
-                  height={20}
-                  src={getChainLogoSrc(balance.chain.logo)}
-                  className="absolute -bottom-1 -right-1 rounded-full"
-                />
-              </div>
-              <div className="flex flex-col items-start">
-                <span className="text-sm font-semibold text-white">
-                  {formatBalance(balance.balance, balance.token.decimals)} {balance.token.symbol}
-                </span>
-                <span className="text-xs font-medium text-white/50">{balance.chain.name}</span>
-              </div>
-            </button>
-          ))}
+        {balanceAll.filter(({ balance }) => 0 < balance).length ? (
+          balanceAll
+            .filter(({ balance }) => 0 < balance)
+            .map((balance) => (
+              <button
+                key={`${balance.chain.network}-${balance.token.symbol}`}
+                className="gap-large lg:py-medium flex items-center rounded-2xl px-3 py-2 transition-colors hover:bg-white/10 disabled:cursor-default"
+                disabled
+                onClick={() => {
+                  const _sourceChain = balance.chain;
+                  const _sourceToken = balance.token;
+                  const _targetChains = getAvailableTargetChains(_sourceChain);
+                  const _targetChain = _targetChains.at(0);
+                  const _targetTokens = getAvailableTargetTokens(_sourceChain, _targetChain, _sourceToken);
+                  const _targetToken = _targetTokens.at(0);
+                  const _category = getAvailableBridges(_sourceChain, _targetChain, _sourceToken).at(0);
+
+                  setBridgeCategory(_category);
+                  setSourceChain(_sourceChain);
+                  setTargetChain(_targetChain);
+                  setSourceToken(_sourceToken);
+                  setTargetToken(_targetToken);
+                  updateUrlParams(router, searchParams, {
+                    _category,
+                    _sourceChain,
+                    _targetChain,
+                    _sourceToken,
+                    _targetToken,
+                  });
+                }}
+              >
+                <div className="relative">
+                  <Image
+                    alt="Token"
+                    width={32}
+                    height={32}
+                    src={getTokenLogoSrc(balance.token.logo)}
+                    className="rounded-full"
+                  />
+                  <Image
+                    alt="Chain"
+                    width={20}
+                    height={20}
+                    src={getChainLogoSrc(balance.chain.logo)}
+                    className="absolute -bottom-1 -right-1 rounded-full"
+                  />
+                </div>
+                <div className="flex flex-col items-start">
+                  <span className="text-sm font-semibold text-white">
+                    {formatBalance(balance.balance, balance.token.decimals)} {balance.token.symbol}
+                  </span>
+                  <span className="text-xs font-medium text-white/50">{balance.chain.name}</span>
+                </div>
+              </button>
+            ))
+        ) : !loadingBalanceAll ? (
+          <div className="inline-flex h-10 items-center justify-center">
+            <span className="text-sm font-medium text-slate-400">No data</span>
+          </div>
+        ) : null}
       </div>
     </Dropdown>
   ) : (
