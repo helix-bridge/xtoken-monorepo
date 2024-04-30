@@ -8,3 +8,5 @@ export * from "./use-allowance";
 export * from "./use-message-fee";
 export * from "./use-daily-limit";
 export * from "./use-history";
+export * from "./use-txs";
+export * from "./use-media-query";

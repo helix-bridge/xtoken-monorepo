@@ -1,4 +1,4 @@
-import { TokenCategory, TokenSymbol } from "./token";
+import { TokenSymbol } from "./token";
 import { BridgeCategory } from "./bridge";
 import { Network } from "./chain";
 import { Address, Hex } from "viem";
@@ -55,21 +55,6 @@ export interface SupportChains {
  * Custom
  */
 
-export interface HistoryRecordsReqParams {
-  row: number;
-  page: number;
-  sender?: string;
-  recipient?: string;
-  results?: RecordResult[];
-  fromChains?: Network[];
-  toChains?: Network[];
-  bridges?: BridgeCategory[];
-}
-
-export interface HistoryRecordsResData {
-  historyRecords: { total: number; records: HistoryRecord[] } | null;
-}
-
 export interface HistoryRecordReqParams {
   id: string;
 }
@@ -98,6 +83,22 @@ export interface HistoryResData {
       | "sendAmount"
       | "result"
       | "id"
+    >[];
+  };
+}
+
+export interface TxsReqParams {
+  sender: string;
+  page: number;
+  row: number;
+}
+
+export interface TxsResData {
+  historyRecords: {
+    total: number;
+    records: Pick<
+      HistoryRecord,
+      "id" | "fromChain" | "toChain" | "sender" | "recipient" | "sendAmount" | "sendToken" | "startTime" | "result"
     >[];
   };
 }
