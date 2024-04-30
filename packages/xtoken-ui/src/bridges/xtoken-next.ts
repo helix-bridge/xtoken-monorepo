@@ -36,6 +36,12 @@ export class XTokenNextBridge extends BaseBridge {
     ) {
       backing = "0x2B496f19A420C02490dB859fefeCCD71eDc2c046";
       issuing = "0xDc0C760c0fB4672D06088515F6446a71Df0c64C1";
+    } else if (
+      (this.sourceChain?.network === "pangoro-dvm" && this.targetChain?.network === "sepolia") ||
+      (this.sourceChain?.network === "sepolia" && this.targetChain?.network === "pangoro-dvm")
+    ) {
+      backing = "0xcCD7B9cA36CC65AfCA2bB06EF9df73980F8E2eC4";
+      issuing = "0xA22BfbAD733772e7e6a9402faa0fbE0e4db06aDE";
     }
     this.initContractByBackingIssuing(backing, issuing);
   }
@@ -87,6 +93,10 @@ export class XTokenNextBridge extends BaseBridge {
       const source = this.sourceToken?.type === "native" ? "0x004D0dE211BC148c3Ce696C51Cbc85BD421727E9" : undefined;
       const target = this.targetToken?.type === "native" ? "0xA8d0E9a45249Ec839C397fa0F371f5F64eCAB7F7" : undefined;
       this.convertor = { source, target };
+    } else if (this.sourceChain?.network === "sepolia" && this.targetChain?.network === "pangoro-dvm") {
+      this.convertor = { source: "0x510A820E41BB6d828a29332dB551B6B3cf7232D3", target: undefined };
+    } else if (this.sourceChain?.network === "pangoro-dvm" && this.targetChain?.network === "sepolia") {
+      this.convertor = { source: undefined, target: "0x510A820E41BB6d828a29332dB551B6B3cf7232D3" };
     }
   }
 

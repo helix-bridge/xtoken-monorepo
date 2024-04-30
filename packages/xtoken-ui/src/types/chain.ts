@@ -5,6 +5,7 @@ export enum ChainID {
   DARWINIA = 46,
   CRAB = 44,
   PANGOLIN = 43,
+  PANGORO_TANSSI = 45,
 
   ETHEREUM = 1,
   SEPOLIA = 11155111,
@@ -32,6 +33,7 @@ export type Network =
   | "darwinia-dvm"
   | "crab-dvm"
   | "pangolin-dvm"
+  | "pangoro-dvm"
   | "ethereum"
   | "sepolia"
   | "arbitrum"
