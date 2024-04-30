@@ -9,11 +9,13 @@ const transferNonceId = "0x01";
 
 function isMsglineContract(event: ethereum.Log): boolean {
     return event.address.toHexString() == '0x0000000005d961f950ada391c1511c92bbc64d9f' ||
-        event.address.toHexString() == '0x00000000001523057a05d6293c1e5171ee33ee0a';
+        event.address.toHexString() == '0x00000000001523057a05d6293c1e5171ee33ee0a' ||
+        event.address.toHexString() == '0x9bec71b9c646653c6c73af8d4b7e5f84a5420005';
 }
 
 function isMsglineAcceptEvent(event: ethereum.Log): boolean {
-    return event.topics[0].toHexString() == '0x327110434bca326d1f70236295f59c8b472ebc683a6549ca9254697564fec4a5' &&
+    return (event.topics[0].toHexString() == '0x327110434bca326d1f70236295f59c8b472ebc683a6549ca9254697564fec4a5' ||
+            event.topics[0].toHexString() == '0xcfb9b3466878aff0c7df17da215fd57d59eb245a5d03f5a7b57294d54581eb18')&&
         isMsglineContract(event);
 }
 

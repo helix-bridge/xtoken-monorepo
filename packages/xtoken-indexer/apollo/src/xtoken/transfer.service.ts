@@ -18,11 +18,18 @@ export class TransferService extends BaseTransferServiceT2 {
   private readonly crabDispatchSubgraph = this.configService.get<string>('XTOKEN_DISPATCH_CRAB');
   private readonly ethereumDispatchSubgraph = this.configService.get<string>('XTOKEN_DISPATCH_ETHEREUM');
 
+  // testnet
+  private readonly ethereumDarwiniaBackingV2Url = this.configService.get<string>('XTOKEN_ETHEREUM_DARWINIA_BACKING_V2');
+  private readonly ethereumDarwiniaIssuingV2Url = this.configService.get<string>('XTOKEN_ETHEREUM_DARWINIA_ISSUING_V2');
+  private readonly ethereumDispatchSubgraphV2 = this.configService.get<string>('XTOKEN_DISPATCH_ETHEREUM_V2');
+  private readonly darwiniaDispatchSubgraphV2 = this.configService.get<string>('XTOKEN_DISPATCH_DARWINIA_V2');
+
   formalChainTransfers: PartnerT2[] = [
     {
       chainId: 46,
       chain: 'darwinia-dvm',
       url: this.darwainiaCrabBackingUrl,
+      dispatchUrl: this.darwiniaDispatchSubgraph,
       bridge: 'xtoken-darwinia-crab',
       symbols: [
         {
@@ -45,6 +52,7 @@ export class TransferService extends BaseTransferServiceT2 {
       chainId: 44,
       chain: 'crab-dvm',
       url: this.darwainiaCrabIssuingUrl,
+      dispatchUrl: this.crabDispatchSubgraph,
       bridge: 'xtoken-darwinia-crab',
       symbols: [
         {
@@ -67,6 +75,7 @@ export class TransferService extends BaseTransferServiceT2 {
       chainId: 46,
       chain: 'darwinia-dvm',
       url: this.crabDarwiniaIssuingUrl,
+      dispatchUrl: this.darwiniaDispatchSubgraph,
       bridge: 'xtoken-crab-darwinia',
       symbols: [
         {
@@ -89,6 +98,7 @@ export class TransferService extends BaseTransferServiceT2 {
       chainId: 44,
       chain: 'crab-dvm',
       url: this.crabDarwiniaBackingUrl,
+      dispatchUrl: this.crabDispatchSubgraph,
       bridge: 'xtoken-crab-darwinia',
       symbols: [
         {
@@ -111,6 +121,7 @@ export class TransferService extends BaseTransferServiceT2 {
       chainId: 46,
       chain: 'darwinia-dvm',
       url: this.darwainiaEthereumBackingUrl,
+      dispatchUrl: this.darwiniaDispatchSubgraph,
       bridge: 'xtoken-darwinia-ethereum',
       symbols: [
         {
@@ -141,6 +152,7 @@ export class TransferService extends BaseTransferServiceT2 {
       chainId: 1,
       chain: 'ethereum',
       url: this.darwainiaEthereumIssuingUrl,
+      dispatchUrl: this.ethereumDispatchSubgraph,
       bridge: 'xtoken-darwinia-ethereum',
       symbols: [
         {
@@ -174,6 +186,7 @@ export class TransferService extends BaseTransferServiceT2 {
       chainId: 43,
       chain: 'pangolin-dvm',
       url: this.darwiniaEthereumBackingUrl,
+      dispatchUrl: this.darwiniaDispatchSubgraph,
       bridge: 'xtoken-pangolin-sepolia',
       symbols: [
         {
@@ -196,6 +209,7 @@ export class TransferService extends BaseTransferServiceT2 {
       chainId: 11155111,
       chain: 'sepolia',
       url: this.darwiniaEthereumIssuingUrl,
+      dispatchUrl: this.ethereumDispatchSubgraph,
       bridge: 'xtoken-pangolin-sepolia',
       symbols: [
         {
@@ -205,7 +219,7 @@ export class TransferService extends BaseTransferServiceT2 {
           outerAddress: '0xdE64c6d8b24eeB16D864841d2873aB7a379c45b6',
           protocolFee: 0,
           decimals: 18,
-        },
+        }
       ],
       channels: [
         {
@@ -214,15 +228,54 @@ export class TransferService extends BaseTransferServiceT2 {
         }
       ]
     },
+    {
+      chainId: 11155111,
+      chain: 'sepolia',
+      url: this.ethereumDarwiniaBackingV2Url,
+      dispatchUrl: this.ethereumDispatchSubgraphV2,
+      bridge: 'xtoken-sepolia-pangoro',
+      symbols: [
+        {
+          key: 'ETH',
+          symbol: 'ETH',
+          address: '0xfB025B0e2FadF33C644fCe3f5409c0cD4a3045dE',
+          outerAddress: '0x0000000000000000000000000000000000000000',
+          protocolFee: 0,
+          decimals: 18,
+        }
+      ],
+      channels: [
+        {
+          chain: 'pangoro-dvm',
+          channel: 'msgport'
+        }
+      ]
+    },
+    {
+      chainId: 45,
+      chain: 'pangoro-dvm',
+      url: this.ethereumDarwiniaIssuingV2Url,
+      dispatchUrl: this.darwiniaDispatchSubgraphV2,
+      bridge: 'xtoken-sepolia-pangoro',
+      symbols: [
+        {
+          key: 'ETH',
+          symbol: 'xETH',
+          address: '0x191121eC17587C3cE0BF689AFA36386F8D9C538F',
+          outerAddress: '0x191121eC17587C3cE0BF689AFA36386F8D9C538F',
+          protocolFee: 0,
+          decimals: 18,
+        },
+      ],
+      channels: [
+        {
+          chain: 'sepolia',
+          channel: 'msgport'
+        }
+      ]
+    },
   ];
 
-  dispatchEndPoints = {
-    'pangolin-dvm': this.darwiniaDispatchSubgraph,
-    sepolia: this.ethereumDispatchSubgraph,
-    'darwinia-dvm': this.darwiniaDispatchSubgraph,
-    ethereum: this.ethereumDispatchSubgraph,
-    'crab-dvm': this.crabDispatchSubgraph,
-  };
   addressToTokenInfo: { [key: string]: AddressTokenMap } = {};
 
   constructor(public configService: ConfigService) {

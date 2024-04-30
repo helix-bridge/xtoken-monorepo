@@ -9,11 +9,13 @@ const transferNonceId = "0x01";
 
 function isMsglineContract(event: ethereum.Log): boolean {
     return event.address.toHexString() == '0x0000000005d961f950ada391c1511c92bbc64d9f' ||
-        event.address.toHexString() == '0x00000000001523057a05d6293c1e5171ee33ee0a';
+        event.address.toHexString() == '0x00000000001523057a05d6293c1e5171ee33ee0a' ||
+        event.address.toHexString() == '0xe46ed7594ffa6ad7c3b5232827ec2af8f94beb38';
 }
 
 function isMsglineAcceptEvent(event: ethereum.Log): boolean {
-    return event.topics[0].toHexString() == '0x327110434bca326d1f70236295f59c8b472ebc683a6549ca9254697564fec4a5' &&
+    return (event.topics[0].toHexString() == '0x327110434bca326d1f70236295f59c8b472ebc683a6549ca9254697564fec4a5' ||
+            event.topics[0].toHexString() == '0xcfb9b3466878aff0c7df17da215fd57d59eb245a5d03f5a7b57294d54581eb18') &&
         isMsglineContract(event);
 }
 
@@ -25,7 +27,8 @@ function isWTokenConvertor(address: string): boolean {
     return address == "0xb3a8db63d6fbe0f50a3d4977c3e892543d772c4a" ||  // testnet
         address == "0xa8d0e9a45249ec839c397fa0f371f5f64ecab7f7" ||
         address == "0x004d0de211bc148c3ce696c51cbc85bd421727e9" ||
-        address == "0x092e19c46c9daab7824393f1cd9c22f5bea13560";
+        address == "0x092e19c46c9daab7824393f1cd9c22f5bea13560" ||
+        address == "0x510a820e41bb6d828a29332db551b6b3cf7232d3";
 }
 
 // abi.encode(address, bytes)
