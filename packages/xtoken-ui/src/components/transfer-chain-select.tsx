@@ -1,6 +1,7 @@
+import { useApp } from "@/hooks";
 import { ChainConfig, Token } from "@/types";
 import Select from "@/ui/select";
-import { getChainLogoSrc, getTokenLogoSrc } from "@/utils";
+import { formatBalance, getChainLogoSrc, getTokenLogoSrc } from "@/utils";
 import Image from "next/image";
 import { useState } from "react";
 
@@ -65,7 +66,13 @@ export default function TransferChainSelect({
               {chainOptions
                 .filter(({ name }) => name.toLowerCase().includes(search.toLowerCase()))
                 .map((option) => (
-                  <ChainOption key={option.id} selected={chain} option={option} onSelect={onChainChange} />
+                  <ChainOption
+                    key={option.id}
+                    selected={chain}
+                    option={option}
+                    token={token}
+                    onSelect={onChainChange}
+                  />
                 ))}
             </div>
           </>
@@ -108,28 +115,44 @@ export default function TransferChainSelect({
 function ChainOption({
   selected,
   option,
+  token,
   onSelect = () => undefined,
 }: {
   selected: ChainConfig;
   option: ChainConfig;
+  token: Token;
   onSelect?: (chain: ChainConfig) => void;
 }) {
+  const { balanceAll } = useApp();
+
   return (
     <button
-      className="gap-large py-medium flex items-center px-5 transition-colors hover:bg-white/5 disabled:bg-white/10"
+      className="gap-small py-medium flex items-center justify-between px-5 transition-colors hover:bg-white/5 disabled:bg-white/10"
       disabled={selected.id === option.id}
       onClick={() => {
         onSelect(option);
       }}
     >
-      <Image
-        width={30}
-        height={30}
-        alt="Chain"
-        src={getChainLogoSrc(option.logo)}
-        className="h-[1.875rem] w-[1.875rem] shrink-0 rounded-full"
-      />
-      <span className="truncate text-base font-semibold text-white">{option.name}</span>
+      <div className="gap-large flex items-center">
+        <Image
+          width={30}
+          height={30}
+          alt="Chain"
+          src={getChainLogoSrc(option.logo)}
+          className="h-[1.875rem] w-[1.875rem] shrink-0 rounded-full"
+        />
+        <span className="truncate text-sm font-semibold text-white">{option.name}</span>
+      </div>
+
+      {balanceAll
+        .filter((b) => b.chain.id === option.id && b.token.category === token.category)
+        .slice(0, 1)
+        .map((b) => (
+          <span
+            className="truncate text-xs font-medium text-white/50"
+            key={`${b.chain.network}-${b.token.symbol}`}
+          >{`${formatBalance(b.balance, b.token.decimals, { precision: 6 })} ${b.token.symbol}`}</span>
+        ))}
     </button>
   );
 }

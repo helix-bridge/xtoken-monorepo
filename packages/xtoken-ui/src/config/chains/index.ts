@@ -16,3 +16,4 @@ export * from "./scroll";
 export * from "./zksync";
 export * from "./zksync-sepolia";
 export * from "./gnosis";
+export * from "./pangoro";

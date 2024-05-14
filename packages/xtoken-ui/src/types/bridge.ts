@@ -19,7 +19,9 @@ export type XTokenBridgeCategory =
   | "xtoken-darwinia-ethereum"
   | "xtoken-ethereum-darwinia"
   | "xtoken-pangolin-sepolia"
-  | "xtoken-sepolia-pangolin";
+  | "xtoken-sepolia-pangolin"
+  | "xtoken-pangoro-sepolia"
+  | "xtoken-sepolia-pangoro";
 export type BridgeCategory =
   | L2BridgeCategory
   | HelixLpBridgeCategory

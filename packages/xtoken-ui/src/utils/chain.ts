@@ -9,6 +9,7 @@ import {
   lineaChain,
   mantleChain,
   pangolinChain,
+  pangoroChain,
   polygonChain,
   polygonZkEvmChain,
   scrollChain,
@@ -77,6 +78,9 @@ export function getChainConfig(chainIdOrNetwork?: ChainID | Network | null): Cha
     case ChainID.SEPOLIA:
     case "sepolia":
       return sepoliaChain;
+    case ChainID.PANGORO_TANSSI:
+    case "pangoro-dvm":
+      return pangoroChain;
     default:
       return;
   }
@@ -102,6 +106,7 @@ export function getChainConfigs(askAll?: boolean) {
     bscChain,
     optimismChain,
     gnosisChain,
+    pangoroChain,
   ].sort((a, b) => a.name.localeCompare(b.name));
 
   if (askAll) {

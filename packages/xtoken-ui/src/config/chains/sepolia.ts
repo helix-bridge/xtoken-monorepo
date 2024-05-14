@@ -31,9 +31,15 @@ export const sepoliaChain: ChainConfig = {
       type: "native",
       address: "0x0000000000000000000000000000000000000000",
       outer: "0x0000000000000000000000000000000000000000",
-      inner: "0x0000000000000000000000000000000000000000",
+      inner: "0xfB025B0e2FadF33C644fCe3f5409c0cD4a3045dE",
       logo: "eth.png",
-      cross: [],
+      cross: [
+        {
+          target: { network: "pangoro-dvm", symbol: "xETH" },
+          bridge: { category: "xtoken-sepolia-pangoro" },
+          action: "issue",
+        },
+      ],
       category: "eth",
     },
     {
@@ -56,6 +62,6 @@ export const sepoliaChain: ChainConfig = {
     },
   ],
   messager: {
-    msgline: "0xf7F461728DC89de5EF6615715678b5f5b12bb98A",
+    msgline: "0x2f868b52407b6886214Eb21dF6456c0b308Cc4ce",
   },
 };

@@ -40,8 +40,11 @@ export async function fetchMsglineFeeAndParams(
   sender: Address,
   payload: Hex,
 ) {
+  const endpoint = "https://api.msgport.xyz/ormp/fee";
+  // const endpoint = 'https://msgport-api.darwinia.network/ormp/fee'
+  // const endpoint = "http://g2.generic.darwinia.network:3378/ormp/fee";
   const feeData = await fetch(
-    `https://msgport-api.darwinia.network/ormp/fee?from_chain_id=${fromChainId}&to_chain_id=${toChainId}&payload=${payload}&from_address=${fromMessager}&to_address=${toMessager}&refund_address=${sender}`,
+    `${endpoint}?from_chain_id=${fromChainId}&to_chain_id=${toChainId}&payload=${payload}&from_address=${fromMessager}&to_address=${toMessager}&refund_address=${sender}`,
   );
   const feeJson = await feeData.json();
   if (feeData.ok && feeJson.code === 0) {

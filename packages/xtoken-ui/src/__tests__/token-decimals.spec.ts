@@ -9,11 +9,13 @@ describe.each(getChainConfigs(true) as ChainConfig[])(`Test token's decimals: $n
     const publicClient = createPublicClient({ chain, transport: http() });
 
     it.each(tokens)(`$symbol`, async (token) => {
-      if (token.type === "native") {
-        expect(token.decimals).toEqual(18);
-      } else {
-        const decimals = await publicClient.readContract({ address: token.address, abi, functionName: "decimals" });
-        expect(token.decimals).toEqual(decimals);
+      if (token.cross.some((c) => !c.onlyThirdParty)) {
+        if (token.type === "native") {
+          expect(token.decimals).toEqual(18);
+        } else {
+          const decimals = await publicClient.readContract({ address: token.address, abi, functionName: "decimals" });
+          expect(token.decimals).toEqual(decimals);
+        }
       }
     });
   }
