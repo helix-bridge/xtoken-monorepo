@@ -87,6 +87,25 @@ export interface HistoryResData {
   };
 }
 
+export interface HistoryDetailsReqParams {
+  txHash: string;
+}
+
+export interface HistoryDetailsResData {
+  historyRecordByTxHash: Pick<
+    HistoryRecord,
+    | "requestTxHash"
+    | "responseTxHash"
+    | "fromChain"
+    | "toChain"
+    | "startTime"
+    | "sendToken"
+    | "sendAmount"
+    | "result"
+    | "id"
+  > | null;
+}
+
 export interface TxsReqParams {
   sender: string;
   page: number;

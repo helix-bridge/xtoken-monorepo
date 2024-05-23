@@ -1,31 +1,50 @@
 "use client";
 
 import { useBalanceAll } from "@/hooks";
-import { ChainConfig, Token } from "@/types";
+import { ChainConfig, HistoryDetailsResData, Token } from "@/types";
 import { Dispatch, PropsWithChildren, SetStateAction, createContext, useState } from "react";
+import { Hash } from "viem";
+
+interface HistoryDetails {
+  data?: HistoryDetailsResData["historyRecordByTxHash"];
+  hash?: Hash;
+}
 
 interface AppCtx {
-  balanceAll: { chain: ChainConfig; token: Token; balance: bigint }[];
-  loadingBalanceAll: boolean;
   recordsSearch: string;
-  setRecordsSearch: Dispatch<SetStateAction<string>>;
+  isHistoryOpen: boolean;
+  loadingBalanceAll: boolean;
+  historyDetails: HistoryDetails | null | undefined;
+  balanceAll: { chain: ChainConfig; token: Token; balance: bigint }[];
+
   updateBalanceAll: () => void;
+  setRecordsSearch: Dispatch<SetStateAction<string>>;
+  setIsHistoryOpen: Dispatch<SetStateAction<boolean>>;
+  setHistoryDetails: Dispatch<SetStateAction<HistoryDetails | null | undefined>>;
 }
 
 export const AppContext = createContext({} as AppCtx);
 
 export default function AppProvider({ children }: PropsWithChildren<unknown>) {
-  const { balanceAll, loadingBalanceAll, updateBalanceAll } = useBalanceAll();
+  const [historyDetails, setHistoryDetails] = useState<HistoryDetails | null>();
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [recordsSearch, setRecordsSearch] = useState("");
+
+  const { balanceAll, loadingBalanceAll, updateBalanceAll } = useBalanceAll();
 
   return (
     <AppContext.Provider
       value={{
         balanceAll,
-        loadingBalanceAll,
         recordsSearch,
-        setRecordsSearch,
+        isHistoryOpen,
+        historyDetails,
+        loadingBalanceAll,
+
         updateBalanceAll,
+        setRecordsSearch,
+        setIsHistoryOpen,
+        setHistoryDetails,
       }}
     >
       {children}
