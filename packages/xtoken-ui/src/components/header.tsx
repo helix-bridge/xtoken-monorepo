@@ -48,7 +48,7 @@ export default function Header() {
                   target="_blank"
                   href={href}
                   key={label}
-                  className={`py-small rounded-full px-3 text-sm font-bold text-white/50 transition hover:bg-white/10 hover:text-white active:translate-y-1`}
+                  className="py-small rounded-full px-3 text-sm font-bold text-white/50 transition-[transform,color] hover:bg-white/10 hover:text-white active:translate-y-1"
                 >
                   {label}
                 </a>
@@ -60,7 +60,7 @@ export default function Header() {
                 <Link
                   key={label}
                   href={href}
-                  className={`py-small rounded-full px-3 text-sm font-bold transition-all hover:bg-white/10 hover:text-white active:translate-y-1 ${
+                  className={`py-small rounded-full px-3 text-sm font-bold transition-[transform,color] hover:bg-white/10 hover:text-white active:translate-y-1 ${
                     pathname === href ? "text-white underline decoration-2 underline-offset-8" : "text-white/50"
                   }`}
                 >
@@ -73,7 +73,7 @@ export default function Header() {
 
         {/* Right */}
         <div className="gap-medium hidden items-center lg:flex">
-          <History className="px-large inline-flex h-8 items-center rounded-full bg-white/20 text-sm font-bold text-white transition-colors hover:bg-white/[0.25]" />
+          <History className="px-large bg-secondary inline-flex h-8 items-center rounded-full text-sm font-bold text-white transition-colors hover:bg-white/20" />
           <User placement="bottom-end" prefixLength={14} suffixLength={10} />
           <ChainSwitch placement="bottom-end" />
         </div>
