@@ -3,7 +3,7 @@ import { ChainConfig, Token } from "@/types";
 import { formatBalance, getChainLogoSrc, toShortAdrress } from "@/utils";
 import dynamic from "next/dynamic";
 import Image from "next/image";
-import { Address, Hex } from "viem";
+import { Address } from "viem";
 
 const Modal = dynamic(() => import("@/ui/modal"), { ssr: false });
 
@@ -14,7 +14,6 @@ interface Props {
   sourceToken: Token;
   targetChain: ChainConfig;
   targetToken: Token;
-  txHash: Hex | null | undefined;
   fee: { token: Token; value: bigint } | null | undefined;
   bridge: BaseBridge | undefined;
   amount: bigint;
@@ -34,7 +33,6 @@ export default function TransferModalV2({
   sourceToken,
   targetChain,
   targetToken,
-  txHash,
   amount,
   isOpen,
   onClose,
@@ -44,16 +42,14 @@ export default function TransferModalV2({
     <Modal
       title="Cross-chain Review"
       isOpen={isOpen}
-      className="w-full lg:w-[34rem]"
+      className="w-full lg:w-[26rem]"
       okText="Confirm"
       disabledCancel={busy}
       busy={busy}
-      forceFooterHidden={!!txHash}
       onClose={onClose}
       onCancel={onClose}
       onOk={onConfirm}
     >
-      {/* From-To */}
       <div className="gap-small flex flex-col">
         <SourceTarget type="source" address={sender} chain={sourceChain} token={sourceToken} amount={amount} />
         <div className="relative">
@@ -64,25 +60,10 @@ export default function TransferModalV2({
         <SourceTarget type="target" address={recipient} chain={targetChain} token={targetToken} amount={amount} />
       </div>
 
-      {/* information */}
       <div className="gap-medium flex flex-col">
         <span className="text-sm font-bold text-white/50">Information</span>
         <Information fee={fee} bridge={bridge} />
       </div>
-
-      {txHash ? (
-        <div className="px-medium inline-flex items-center justify-center text-sm font-semibold italic text-white lg:px-3">
-          View tx on &nbsp;
-          <a
-            className="text-primary hover:underline"
-            target="_blank"
-            href={`${new URL(`tx/${txHash}`, sourceChain?.blockExplorers?.default.url).href}`}
-          >
-            Explorer
-          </a>
-          .
-        </div>
-      ) : null}
     </Modal>
   );
 }
@@ -101,26 +82,24 @@ function SourceTarget({
   address?: Address | null;
 }) {
   return chain && token ? (
-    <div className="bg-background lg:p-large flex items-center justify-between rounded-xl p-3 lg:rounded-2xl">
-      {/* Left */}
-      <div className="gap-medium flex items-center">
-        <Image width={36} height={36} alt="Chain" src={getChainLogoSrc(chain.logo)} className="shrink-0 rounded-full" />
-        <div className="flex flex-col items-start gap-1">
-          <span className="text-base font-bold text-white">{chain.name}</span>
-          <span className="hidden text-sm font-semibold text-white/50 lg:inline">{address}</span>
-          {address ? (
-            <span className="text-sm font-semibold text-white/50 lg:hidden">{toShortAdrress(address, 8, 6)}</span>
-          ) : null}
-        </div>
-      </div>
+    <div className="bg-background lg:p-large flex items-start justify-between gap-2 rounded-xl p-3 lg:rounded-2xl">
+      <Image width={36} height={36} alt="Chain" src={getChainLogoSrc(chain.logo)} className="shrink-0 rounded-full" />
 
-      {/* Right */}
-      <div className="flex flex-col items-end">
-        <span className={`text-base font-semibold ${type === "source" ? "text-app-red" : "text-app-green"}`}>
-          {type === "source" ? "-" : "+"}
-          {formatBalance(amount, token.decimals)}
-        </span>
-        <span className="text-base font-semibold text-white">{token.symbol}</span>
+      <div className="flex w-full flex-col gap-1 truncate">
+        <div className="flex items-center justify-between gap-1">
+          <span className="max-w-[46%] truncate text-base font-semibold text-white">{chain.name}</span>
+          <span
+            className={`max-w-[46%] truncate text-sm font-extrabold ${type === "source" ? "text-app-red" : "text-app-green"}`}
+          >
+            {type === "source" ? "-" : "+"}
+            {formatBalance(amount, token.decimals)}
+          </span>
+        </div>
+
+        <div className="flex items-center justify-between gap-1">
+          <span className="text-sm font-semibold text-white/50">{address ? toShortAdrress(address, 8, 6) : ""}</span>
+          <span className="text-sm font-extrabold text-white">{token.symbol}</span>
+        </div>
       </div>
     </div>
   ) : null;
@@ -129,11 +108,11 @@ function SourceTarget({
 function Information({ fee, bridge }: { fee?: { value: bigint; token: Token } | null; bridge?: BaseBridge | null }) {
   return (
     <div className="gap-small bg-background lg:p-large flex flex-col rounded-xl p-3 lg:rounded-2xl">
+      <Item label="Estimated Arrival Time" value={bridge?.formatEstimateTime()} />
       <Item
         label="Transaction Fee"
         value={fee ? `${formatBalance(fee.value, fee.token.decimals, { precision: 6 })} ${fee.token.symbol}` : null}
       />
-      <Item label="Estimated Arrival Time" value={bridge?.formatEstimateTime()} />
     </div>
   );
 }
