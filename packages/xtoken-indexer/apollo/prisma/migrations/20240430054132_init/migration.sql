@@ -1,0 +1,32 @@
+-- CreateTable
+CREATE TABLE "HistoryRecord" (
+    "id" TEXT NOT NULL,
+    "fromChain" TEXT NOT NULL,
+    "toChain" TEXT NOT NULL,
+    "bridge" TEXT NOT NULL,
+    "nonce" BIGINT NOT NULL,
+    "requestTxHash" TEXT NOT NULL,
+    "sender" TEXT NOT NULL,
+    "recipient" TEXT NOT NULL,
+    "sendToken" TEXT NOT NULL,
+    "recvToken" TEXT NOT NULL,
+    "sendAmount" TEXT NOT NULL,
+    "recvAmount" TEXT NOT NULL,
+    "startTime" INTEGER NOT NULL,
+    "endTime" INTEGER,
+    "result" INTEGER NOT NULL,
+    "fee" TEXT NOT NULL,
+    "feeToken" TEXT NOT NULL,
+    "responseTxHash" TEXT NOT NULL,
+    "reason" TEXT NOT NULL,
+    "messageNonce" TEXT NOT NULL,
+    "sendTokenAddress" TEXT NOT NULL,
+    "recvTokenAddress" TEXT,
+    "sendOuterTokenAddress" TEXT,
+    "recvOuterTokenAddress" TEXT,
+    "guardSignatures" TEXT,
+    "endTxHash" TEXT,
+    "extData" TEXT,
+
+    CONSTRAINT "HistoryRecord_pkey" PRIMARY KEY ("id")
+);

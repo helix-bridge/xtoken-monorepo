@@ -237,7 +237,7 @@ export class xTokenService implements OnModuleInit {
         const sourceId = this.nodeIdToTransferId(uncheckedRecord.id);
         const messageId = this.toMessageId(uncheckedRecord.messageNonce);
         const node = await axios
-          .post(this.transferService.dispatchEndPoints[uncheckedRecord.toChain], {
+          .post(partner.dispatchUrl, {
             query: `query { messageDispatchedResult (id: \"${messageId}\") { id, token, transactionHash, result, timestamp }}`,
             variables: null,
           })
@@ -365,7 +365,7 @@ export class xTokenService implements OnModuleInit {
   async fetchRefundResult(ids: string, transfer: PartnerT2) {
     const query = `query { messageDispatchedResults (where: {id_in: [${ids}]}) { id, token, transactionHash, result, timestamp }}`;
     const refundResults = await axios
-      .post(this.transferService.dispatchEndPoints[transfer.chain], {
+      .post(transfer.dispatchUrl, {
         query: query,
         variables: null,
       })
