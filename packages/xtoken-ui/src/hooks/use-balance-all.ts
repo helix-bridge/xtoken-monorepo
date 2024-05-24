@@ -66,6 +66,7 @@ export function useBalanceAll() {
         });
     } else {
       balanceAllRef.current = [];
+      setBalanceAll([]);
       setLoading(false);
     }
   }, [address]);
