@@ -8,7 +8,7 @@ import abi from "@/abi/erc20";
 import { ChainConfig, Token } from "@/types";
 import { useAccount } from "wagmi";
 
-const chains = getChainConfigs();
+const chains = getChainConfigs().filter((c) => c.network !== "polygon");
 
 interface BalanceAll {
   chain: ChainConfig;
@@ -66,6 +66,7 @@ export function useBalanceAll() {
         });
     } else {
       balanceAllRef.current = [];
+      setBalanceAll([]);
       setLoading(false);
     }
   }, [address]);
