@@ -174,7 +174,7 @@ function Component() {
       const receipt = await approve(
         fee?.token.type === "native" ? deferredAmount.value : deferredAmount.value + (fee?.value ?? 0n),
       );
-      notifyTransaction(receipt, sourceChain);
+      notifyTransaction(receipt, sourceChain, "Approval");
     } else if (actionText === "Deposit" || actionText === "Withdraw") {
       setIsOpen(true);
     }
@@ -196,7 +196,7 @@ function Component() {
         const receipt = await bridge.transfer(account.address, recipient.value, deferredAmount.value, {
           totalFee: fee?.value,
         });
-        notifyTransaction(receipt, sourceChain);
+        notifyTransaction(receipt, sourceChain, "Transfer");
         setIsTransfering(false);
         if (receipt?.status === "success") {
           setAmount({ input: "", valid: true, value: 0n, alert: "" });

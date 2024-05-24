@@ -1,14 +1,6 @@
-import { useApp, useTransfer } from "@/hooks";
+import { useApp } from "@/hooks";
 import Dropdown from "@/ui/dropdown";
-import {
-  formatBalance,
-  getAvailableBridges,
-  getAvailableTargetChains,
-  getAvailableTargetTokens,
-  getChainLogoSrc,
-  getTokenLogoSrc,
-  toShortAdrress,
-} from "@/utils";
+import { formatBalance, getChainLogoSrc, getTokenLogoSrc, toShortAdrress } from "@/utils";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import Image from "next/image";
 import { PropsWithChildren } from "react";
@@ -16,7 +8,6 @@ import { useAccount, useDisconnect } from "wagmi";
 import PrettyAddress from "./pretty-address";
 import AddressIdenticon from "./address-identicon";
 import { Placement } from "@floating-ui/react";
-import { useRouter, useSearchParams } from "next/navigation";
 import ComponentLoading from "@/ui/component-loading";
 import History from "./history";
 
@@ -28,16 +19,11 @@ interface Props {
 }
 
 export default function User({ placement, prefixLength = 10, suffixLength = 8 }: Props) {
-  const { setBridgeCategory, setSourceChain, setTargetChain, setSourceToken, setTargetToken, updateUrlParams } =
-    useTransfer();
   const { balanceAll, loadingBalanceAll } = useApp();
 
   const { address } = useAccount();
   const { disconnect } = useDisconnect();
   const { openConnectModal } = useConnectModal();
-
-  const searchParams = useSearchParams();
-  const router = useRouter();
 
   return address ? (
     <Dropdown
@@ -92,28 +78,6 @@ export default function User({ placement, prefixLength = 10, suffixLength = 8 }:
                 key={`${balance.chain.network}-${balance.token.symbol}`}
                 className="gap-large lg:py-medium flex items-center rounded-2xl px-3 py-2 transition-colors hover:bg-white/10 disabled:cursor-default"
                 disabled
-                onClick={() => {
-                  const _sourceChain = balance.chain;
-                  const _sourceToken = balance.token;
-                  const _targetChains = getAvailableTargetChains(_sourceChain);
-                  const _targetChain = _targetChains.at(0);
-                  const _targetTokens = getAvailableTargetTokens(_sourceChain, _targetChain, _sourceToken);
-                  const _targetToken = _targetTokens.at(0);
-                  const _category = getAvailableBridges(_sourceChain, _targetChain, _sourceToken).at(0);
-
-                  setBridgeCategory(_category);
-                  setSourceChain(_sourceChain);
-                  setTargetChain(_targetChain);
-                  setSourceToken(_sourceToken);
-                  setTargetToken(_targetToken);
-                  updateUrlParams(router, searchParams, {
-                    _category,
-                    _sourceChain,
-                    _targetChain,
-                    _sourceToken,
-                    _targetToken,
-                  });
-                }}
               >
                 <div className="relative">
                   <Image
