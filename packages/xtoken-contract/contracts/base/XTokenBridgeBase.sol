@@ -50,8 +50,6 @@ contract XTokenBridgeBase is Initializable, Pausable, AccessController, DailyLim
         _;
     }
 
-    receive() external payable {}
-
     function initialize(address _dao, string calldata _version) public initializer {
         _initialize(_dao);
         version = _version;
