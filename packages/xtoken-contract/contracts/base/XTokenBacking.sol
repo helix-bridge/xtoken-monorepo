@@ -61,6 +61,9 @@ contract XTokenBacking is XTokenBridgeBase {
     ) external payable returns(bytes32 transferId) {
         bytes32 key = keccak256(abi.encodePacked(_remoteChainId, _originalToken));
         require(originalToken2xTokens[key] != address(0), "token not registered");
+        require(_amount > 0, "invalid transfer amount");
+        require(_recipient != address(0), "invalid recipient");
+        require(_rollbackAccount != address(0), "invalid rollbackAccount");
 
         transferId = getTransferId(_nonce, block.chainid, _remoteChainId, _originalToken, msg.sender, _recipient, _rollbackAccount, _amount);
         _requestTransfer(transferId);

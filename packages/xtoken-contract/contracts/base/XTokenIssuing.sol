@@ -109,6 +109,8 @@ contract XTokenIssuing is XTokenBridgeBase {
         bytes memory _extParams
     ) external payable returns(bytes32 transferId) {
         require(_amount > 0, "can not transfer amount zero");
+        require(_recipient != address(0), "invalid recipient");
+        require(_rollbackAccount != address(0), "invalid rollbackAccount");
         OriginalTokenInfo memory originalInfo = originalTokens[_xToken];
         transferId = getTransferId(_nonce, originalInfo.chainId, block.chainid, originalInfo.token, msg.sender, _recipient, _rollbackAccount, _amount);
         _requestTransfer(transferId);

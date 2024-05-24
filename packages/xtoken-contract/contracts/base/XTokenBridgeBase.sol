@@ -70,16 +70,19 @@ contract XTokenBridgeBase is Initializable, Pausable, AccessController, DailyLim
     }
 
     function setSendService(uint256 _remoteChainId, address _remoteBridge, address _service) external onlyDao {
+        require(_service != address(0), "invalid service address");
         messagers[_remoteChainId].sendService = _service;
         ILowLevelMessageSender(_service).registerRemoteReceiver(_remoteChainId, _remoteBridge);
     }
 
     function setReceiveService(uint256 _remoteChainId, address _remoteBridge, address _service) external onlyDao {
+        require(_service != address(0), "invalid service address");
         messagers[_remoteChainId].receiveService = _service;
         ILowLevelMessageReceiver(_service).registerRemoteSender(_remoteChainId, _remoteBridge);
     }
 
     function withdrawProtocolFee(address _receiver, uint256 _amount) external onlyDao {
+        require(_amount > 0, "invalid amount");
         require(_amount <= protocolFeeReserved, "not enough fee");
         protocolFeeReserved -= _amount;
         TokenTransferHelper.safeTransferNative(_receiver, _amount);
