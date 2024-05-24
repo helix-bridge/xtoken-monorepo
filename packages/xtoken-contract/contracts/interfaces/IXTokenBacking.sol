@@ -16,7 +16,7 @@ interface IXTokenBacking {
     function unlock(
         uint256 remoteChainId,
         address originalToken,
-        address originalSender,
+        address sender,
         address recipient,
         address rollbackAccount,
         uint256 amount,
@@ -27,7 +27,7 @@ interface IXTokenBacking {
     function rollbackLockAndXIssue(
         uint256 remoteChainId,
         address originalToken,
-        address originalSender,
+        address sender,
         address recipient,
         address rollbackAccount,
         uint256 amount,

@@ -81,7 +81,7 @@ contract XTokenBridgeBase is Initializable, Pausable, AccessController, DailyLim
 
     function withdrawProtocolFee(address _receiver, uint256 _amount) external onlyDao {
         require(_amount > 0, "invalid amount");
-        require(_amount <= protocolFeeReserved, "not enough fee");
+        require(_amount <= protocolFeeReserved, "not enough fees");
         protocolFeeReserved -= _amount;
         TokenTransferHelper.safeTransferNative(_receiver, _amount);
     }
@@ -108,7 +108,7 @@ contract XTokenBridgeBase is Initializable, Pausable, AccessController, DailyLim
     // 2. burn and remote unlock
     // save the transferId if not exist, else revert
     function _requestTransfer(bytes32 _transferId) internal {
-        require(requestInfos[_transferId].isRequested == false, "request exist");
+        require(requestInfos[_transferId].isRequested == false, "this request already exists");
         requestInfos[_transferId].isRequested = true;
     }
 
@@ -117,8 +117,8 @@ contract XTokenBridgeBase is Initializable, Pausable, AccessController, DailyLim
     // 2. can't repeat
     function _handleRefund(bytes32 _transferId) internal {
         RequestInfo memory requestInfo = requestInfos[_transferId];
-        require(requestInfo.isRequested == true, "request not exist");
-        require(requestInfo.hasRefundForFailed == false, "request has been refund");
+        require(requestInfo.isRequested == true, "this request does not exist");
+        require(requestInfo.hasRefundForFailed == false, "this request has already been refunded");
         requestInfos[_transferId].hasRefundForFailed = true;
     }
 
@@ -148,12 +148,12 @@ contract XTokenBridgeBase is Initializable, Pausable, AccessController, DailyLim
         uint256 _sourceChainId,
         uint256 _targetChainId,
         address _originalToken,
-        address _originalSender,
+        address _sender,
         address _recipient,
         address _rollbackAccount,
         uint256 _amount
     ) public pure returns(bytes32) {
-        return keccak256(abi.encodePacked(_nonce, _sourceChainId, _targetChainId, _originalToken, _originalSender, _recipient, _rollbackAccount, _amount));
+        return keccak256(abi.encodePacked(_nonce, _sourceChainId, _targetChainId, _originalToken, _sender, _recipient, _rollbackAccount, _amount));
     }
 
     // settings
