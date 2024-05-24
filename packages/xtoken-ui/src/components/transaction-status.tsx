@@ -55,7 +55,7 @@ export default function TransactionStatus({ record }: Props) {
       try {
         setBusy(true);
         const receipt = await bridge?.claim(record);
-        notifyTransaction(receipt, targetChain);
+        notifyTransaction(receipt, targetChain, "Claim");
       } catch (err) {
         console.error(err);
         notification.error({ title: "Claim failed", description: (err as Error).message });
@@ -82,7 +82,7 @@ export default function TransactionStatus({ record }: Props) {
       try {
         setBusy(true);
         const receipt = await bridge?.refund(record);
-        notifyTransaction(receipt, targetChain);
+        notifyTransaction(receipt, targetChain, "Refund");
       } catch (err) {
         console.error(err);
         notification.error({ title: "Refund failed", description: (err as Error).message });
@@ -111,13 +111,13 @@ export default function TransactionStatus({ record }: Props) {
       try {
         setBusy(true);
         const receipt = await bridge?.speedUp(record, n > o ? n - o : 0n);
-        notifyTransaction(receipt, sourceChain);
+        notifyTransaction(receipt, sourceChain, "SpeedUp");
         if (receipt?.status === "success") {
           setIsOpen(false);
         }
       } catch (err) {
         console.error(err);
-        notification.error({ title: "Refund failed", description: (err as Error).message });
+        notification.error({ title: "SpeedUp failed", description: (err as Error).message });
       } finally {
         setBusy(false);
       }

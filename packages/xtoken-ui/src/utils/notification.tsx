@@ -11,19 +11,19 @@ function Link({ href, children }: PropsWithChildren<{ href: string }>) {
   );
 }
 
-export function notifyTransaction(receipt?: TransactionReceipt, chain?: ChainConfig) {
+export function notifyTransaction(receipt?: TransactionReceipt, chain?: ChainConfig, title?: string) {
   const explorer = chain?.blockExplorers?.default.url;
   const txHash = receipt?.transactionHash;
   const href = new URL(`tx/${txHash}`, explorer).href;
 
   if (receipt?.status === "success" && txHash) {
     notification.success({
-      title: "Transaction successful",
+      title: `${title ?? "Transaction"} successful`,
       description: <Link href={href}>{txHash}</Link>,
     });
   } else if (receipt?.status === "reverted" && explorer) {
     notification.error({
-      title: "Transaction failed",
+      title: `${title ?? "Transaction"} failed`,
       description: <Link href={href}>{txHash}</Link>,
     });
   }

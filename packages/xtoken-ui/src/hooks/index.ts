@@ -1,6 +1,5 @@
 export * from "./use-app";
 export * from "./use-toggle";
-export * from "./use-transfer";
 export * from "./use-balance-all";
 export * from "./use-balance";
 export * from "./use-transfer-v2";

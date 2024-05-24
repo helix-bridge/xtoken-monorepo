@@ -127,7 +127,7 @@ export default function WrapUnwrap() {
       try {
         const receipt = await approve(amountRef.current.value);
         setBusy(false);
-        notifyTransaction(receipt, ethereumChain);
+        notifyTransaction(receipt, ethereumChain, "Approval");
         if (receipt?.status === "success") {
           refreshAllowance();
         }
@@ -147,7 +147,7 @@ export default function WrapUnwrap() {
         });
         const receipt = await publicClient.waitForTransactionReceipt({ hash });
         setBusy(false);
-        notifyTransaction(receipt, ethereumChain);
+        notifyTransaction(receipt, ethereumChain, actionText === "Unwrap" ? "Withdraw" : "Deposit");
         if (receipt.status === "success") {
           refreshBalance();
         }
