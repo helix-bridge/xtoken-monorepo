@@ -43,7 +43,7 @@ export const arbitrumChain: ChainConfig = {
             {
               name: "Helix Bridge",
               logo: "helix-bridge.png",
-              url: "https://helixbridge.app/?token_category=ring&source_chain=arbitrum&source_token=RING&target_chain=darwinia-dvm&target_token=RING",
+              url: "https://helixbridge.app/#/?token_category=ring&source_chain=arbitrum&source_token=RING&target_chain=darwinia-dvm&target_token=RING",
             },
           ],
           onlyThirdParty: true,
