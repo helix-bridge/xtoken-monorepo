@@ -11,8 +11,8 @@ import "../interfaces/IXTokenCallback.sol";
 // When sending cross-chain transactions, the user locks the Token in the contract, and when the message reaches the target chain, the corresponding mapped asset (xToken) will be issued;
 // if the target chain fails to issue the xToken, the user can send a reverse message on the target chain to unlock the original asset.
 contract XTokenBacking is XTokenBridgeBase {
-    // save original token => xToken to prevent unregistered token lock
-    mapping(bytes32 => address) public originalToken2xTokens;
+    // save original token => bool to prevent unregistered token lock
+    mapping(bytes32 => bool) public registeredTokens;
 
     event TokenLocked(
         bytes32 transferId,
@@ -36,11 +36,10 @@ contract XTokenBacking is XTokenBridgeBase {
     function registerOriginalToken(
         uint256 _remoteChainId,
         address _originalToken,
-        address _xToken,
         uint256 _dailyLimit
     ) external onlyDao {
         bytes32 key = keccak256(abi.encodePacked(_remoteChainId, _originalToken));
-        originalToken2xTokens[key] = _xToken;
+        registeredTokens[key] = true;
         _setDailyLimit(_originalToken, _dailyLimit);
     }
 
@@ -60,7 +59,7 @@ contract XTokenBacking is XTokenBridgeBase {
         bytes memory _extParams
     ) external payable returns(bytes32 transferId) {
         bytes32 key = keccak256(abi.encodePacked(_remoteChainId, _originalToken));
-        require(originalToken2xTokens[key] != address(0), "token not registered");
+        require(registeredTokens[key], "token not registered");
         require(_amount > 0, "invalid transfer amount");
         require(_recipient != address(0), "invalid recipient");
         require(_rollbackAccount != address(0), "invalid rollbackAccount");
