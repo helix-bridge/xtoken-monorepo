@@ -1,9 +1,9 @@
 name: Deploy develop(xtoken-ui)
 
 on:
-  # pull_request:
-  #   paths:
-  #     - "packages/xtoken-ui/**"
+  pull_request:
+    paths:
+      - "packages/xtoken-ui/**"
   workflow_dispatch:
 
 jobs:
