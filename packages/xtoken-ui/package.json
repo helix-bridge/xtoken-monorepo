@@ -11,7 +11,7 @@
     "build": "npm run build:mainnet",
     "build:mainnet": "tsc && vite build --mode mainnet",
     "build:testnet": "tsc && vite build --mode testnet",
-    "test": "echo TODO",
+    "test": "vitest --run --silent",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "lint:files": "eslint --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
