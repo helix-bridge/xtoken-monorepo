@@ -50,7 +50,7 @@ contract XTokenIssuing is XTokenBridgeBase {
         }
         xTokens[salt] = _xToken;
         originalTokens[_xToken] = OriginalTokenInfo(_originalChainId, _originalToken);
-        IXToken(_xToken).approve(address(this), type(uint256).max);
+        require(IXToken(_xToken).approve(address(this), type(uint256).max), "approve xtoken failed");
         emit IssuingERC20Updated(_originalChainId, _originalToken, _xToken, oldxToken);
     }
 

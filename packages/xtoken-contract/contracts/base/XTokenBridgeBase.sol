@@ -117,7 +117,7 @@ contract XTokenBridgeBase is Initializable, Pausable, AccessController, DailyLim
     // 2. can't repeat
     function _handleRefund(bytes32 _transferId) internal {
         RequestInfo memory requestInfo = requestInfos[_transferId];
-        require(requestInfo.isRequested == true, "this request does not exist");
+        require(requestInfo.isRequested, "this request does not exist");
         require(requestInfo.hasRefundForFailed == false, "this request has already been refunded");
         requestInfos[_transferId].hasRefundForFailed = true;
     }
