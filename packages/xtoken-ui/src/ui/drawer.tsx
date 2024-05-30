@@ -1,9 +1,6 @@
-"use client";
-
-import Image from "next/image";
-import Link from "next/link";
 import { PropsWithChildren, useRef } from "react";
 import { createPortal } from "react-dom";
+import { Link } from "react-router-dom";
 import { CSSTransition } from "react-transition-group";
 
 interface Props {
@@ -48,14 +45,14 @@ export default function Drawer({
         >
           <div className="flex h-full w-full flex-col items-start">
             <div className="p-medium flex w-full items-center justify-between">
-              <Link href="/" onClick={onClose}>
-                <Image width={152} height={18} alt="Logo" src="/images/projects/darwinia.png" />
+              <Link to="/" onClick={onClose}>
+                <img width={152} height={18} alt="Logo" src="images/projects/darwinia.png" />
               </Link>
-              <Image
+              <img
                 width={24}
                 height={24}
                 alt="Close"
-                src="/images/close.svg"
+                src="images/close.svg"
                 className="transition-transform active:scale-95"
                 onClick={onClose}
               />

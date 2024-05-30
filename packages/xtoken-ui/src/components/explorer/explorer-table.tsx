@@ -1,6 +1,5 @@
-import { HistoryRecord, RecordResult } from "@/types";
+import { HistoryRecord, RecordResult } from "../../types";
 import Table, { ColumnType } from "./table";
-import Image from "next/image";
 import {
   formatBalance,
   formatTime,
@@ -8,9 +7,9 @@ import {
   getChainLogoSrc,
   getTokenLogoSrc,
   parseRecordResult,
-} from "@/utils";
+} from "../../utils";
 import PrettyAddress from "../pretty-address";
-import { useMediaQuery } from "@/hooks";
+import { useMediaQuery } from "../../hooks";
 
 type TData = Pick<
   HistoryRecord,
@@ -37,7 +36,7 @@ function getColumns(isLg = false): ColumnType<TData>[] {
         const chain = getChainConfig(row.fromChain);
         return chain ? (
           <div className="gap-medium flex items-center">
-            <Image alt={chain.name} width={32} height={32} src={getChainLogoSrc(chain.logo)} />
+            <img alt={chain.name} width={32} height={32} src={getChainLogoSrc(chain.logo)} />
             <span className="hidden truncate lg:inline">{chain.name}</span>
           </div>
         ) : (
@@ -53,7 +52,7 @@ function getColumns(isLg = false): ColumnType<TData>[] {
         const chain = getChainConfig(row.toChain);
         return chain ? (
           <div className="gap-medium flex items-center">
-            <Image alt={chain.name} width={32} height={32} src={getChainLogoSrc(chain.logo)} />
+            <img alt={chain.name} width={32} height={32} src={getChainLogoSrc(chain.logo)} />
             <span className="hidden truncate lg:inline">{chain.name}</span>
           </div>
         ) : (
@@ -78,7 +77,7 @@ function getColumns(isLg = false): ColumnType<TData>[] {
         const token = getChainConfig(row.fromChain)?.tokens.find(({ symbol }) => symbol === row.sendToken);
         return token ? (
           <div className="gap-medium flex items-center">
-            <Image
+            <img
               width={32}
               height={32}
               alt={token.symbol}

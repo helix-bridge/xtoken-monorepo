@@ -1,5 +1,6 @@
-import { Token } from "@/types";
 import { Address, formatUnits, PublicClient } from "viem";
+import { Token } from "../types";
+import erc20Abi from "../abi/erc20";
 
 export function formatBalance(value: bigint, decimals = 18, options?: { precision?: number; keepZero?: boolean }) {
   const precision = options?.precision ?? 4;
@@ -24,7 +25,7 @@ export async function getBalance(address: Address, token: Token, publicClient: P
   } else {
     value = await publicClient.readContract({
       address: token.address,
-      abi: (await import("@/abi/erc20")).default,
+      abi: erc20Abi,
       functionName: "balanceOf",
       args: [address],
     });

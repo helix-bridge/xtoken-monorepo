@@ -1,7 +1,7 @@
-import { BridgeConstructorArgs, GetFeeArgs, HistoryRecord, Token, TransferOptions } from "@/types";
+import { BridgeConstructorArgs, GetFeeArgs, HistoryRecord, Token, TransferOptions } from "../types";
 import { BaseBridge } from "./base";
 import { Address, Hash, Hex, TransactionReceipt, encodeAbiParameters, encodeFunctionData, isAddressEqual } from "viem";
-import { fetchMsglineFeeAndParams } from "@/utils";
+import { fetchMsglineFeeAndParams } from "../utils";
 
 export class XTokenNextBridge extends BaseBridge {
   constructor(args: BridgeConstructorArgs) {
@@ -120,7 +120,7 @@ export class XTokenNextBridge extends BaseBridge {
       if (this.crossInfo?.action === "issue") {
         if (this.convertor?.source) {
           const defaultParams = {
-            abi: (await import("@/abi/wtoken-convertor")).default,
+            abi: (await import("../abi/wtoken-convertor")).default,
             functionName: "lockAndXIssue",
             args: [BigInt(this.targetChain.id), pRecipient, sender, amount, nonce, extData, feeAndParams.extParams],
             address: this.convertor.source,
@@ -137,7 +137,7 @@ export class XTokenNextBridge extends BaseBridge {
           }
         } else {
           const defaultParams = {
-            abi: (await import("@/abi/xtoken-backing-next")).default,
+            abi: (await import("../abi/xtoken-backing-next")).default,
             functionName: "lockAndXIssue",
             args: [
               BigInt(this.targetChain.id),
@@ -165,7 +165,7 @@ export class XTokenNextBridge extends BaseBridge {
       } else if (this.crossInfo?.action === "redeem") {
         if (this.convertor?.source) {
           const defaultParams = {
-            abi: (await import("@/abi/xtoken-convertor")).default,
+            abi: (await import("../abi/xtoken-convertor")).default,
             functionName: "burnAndXUnlock",
             args: [pRecipient, sender, amount, nonce, extData, feeAndParams.extParams],
             address: this.convertor.source,
@@ -182,7 +182,7 @@ export class XTokenNextBridge extends BaseBridge {
           }
         } else {
           const defaultParams = {
-            abi: (await import("@/abi/xtoken-issuing-next")).default,
+            abi: (await import("../abi/xtoken-issuing-next")).default,
             functionName: "burnAndXUnlock",
             args: [this.sourceToken.inner, pRecipient, sender, amount, nonce, extData, feeAndParams.extParams],
             address: this.contract.sourceAddress,
@@ -257,7 +257,7 @@ export class XTokenNextBridge extends BaseBridge {
 
       if (this.crossInfo?.action === "issue") {
         message = encodeFunctionData({
-          abi: (await import("@/abi/xtoken-issuing-next")).default,
+          abi: (await import("../abi/xtoken-issuing-next")).default,
           functionName: "issue",
           args: [
             BigInt(this.sourceChain.id),
@@ -272,7 +272,7 @@ export class XTokenNextBridge extends BaseBridge {
         });
       } else if (this.crossInfo?.action === "redeem") {
         message = encodeFunctionData({
-          abi: (await import("@/abi/xtoken-backing-next")).default,
+          abi: (await import("../abi/xtoken-backing-next")).default,
           functionName: "unlock",
           args: [
             BigInt(this.sourceChain.id),
@@ -289,7 +289,7 @@ export class XTokenNextBridge extends BaseBridge {
 
       if (message) {
         const payload = encodeFunctionData({
-          abi: (await import("@/abi/msgline-messager")).default,
+          abi: (await import("../abi/msgline-messager")).default,
           functionName: "receiveMessage",
           args: [BigInt(this.sourceChain.id), this.contract.sourceAddress, this.contract.targetAddress, message],
         });
@@ -322,7 +322,7 @@ export class XTokenNextBridge extends BaseBridge {
     if (this.contract && this.sourceToken && this.targetToken && this.targetPublicClient) {
       const limit = await this.targetPublicClient.readContract({
         address: this.contract.targetAddress,
-        abi: (await import("@/abi/xtoken-issuing-next")).default,
+        abi: (await import("../abi/xtoken-issuing-next")).default,
         functionName: "calcMaxWithdraw",
         args: [this.targetToken.inner],
       });
@@ -336,7 +336,7 @@ export class XTokenNextBridge extends BaseBridge {
 
     if (record.recvTokenAddress && guard && this.contract && this.walletClient && this.publicClient) {
       const hash = await this.walletClient.writeContract({
-        abi: (await import("@/abi/guard-next")).default,
+        abi: (await import("../abi/guard-next")).default,
         functionName: "claim",
         args: [
           this.contract.targetAddress,
@@ -374,7 +374,7 @@ export class XTokenNextBridge extends BaseBridge {
 
       if (this.crossInfo?.action === "issue") {
         const message = encodeFunctionData({
-          abi: (await import("@/abi/xtoken-backing-next")).default,
+          abi: (await import("../abi/xtoken-backing-next")).default,
           functionName: "rollbackLockAndXIssue",
           args: [
             BigInt(this.targetChain.id),
@@ -388,7 +388,7 @@ export class XTokenNextBridge extends BaseBridge {
         });
 
         const payload = encodeFunctionData({
-          abi: (await import("@/abi/msgline-messager")).default,
+          abi: (await import("../abi/msgline-messager")).default,
           functionName: "receiveMessage",
           args: [BigInt(this.targetChain.id), this.contract.targetAddress, this.contract.sourceAddress, message],
         });
@@ -405,7 +405,7 @@ export class XTokenNextBridge extends BaseBridge {
         if (feeAndParams) {
           const hash = await this.walletClient.writeContract({
             address: this.contract.targetAddress,
-            abi: (await import("@/abi/xtoken-issuing-next")).default,
+            abi: (await import("../abi/xtoken-issuing-next")).default,
             functionName: "xRollbackLockAndXIssue",
             args: [
               BigInt(this.sourceChain.id),
@@ -424,7 +424,7 @@ export class XTokenNextBridge extends BaseBridge {
         }
       } else if (this.crossInfo?.action === "redeem") {
         const message = encodeFunctionData({
-          abi: (await import("@/abi/xtoken-issuing-next")).default,
+          abi: (await import("../abi/xtoken-issuing-next")).default,
           functionName: "rollbackBurnAndXUnlock",
           args: [
             BigInt(this.targetChain.id),
@@ -438,7 +438,7 @@ export class XTokenNextBridge extends BaseBridge {
         });
 
         const payload = encodeFunctionData({
-          abi: (await import("@/abi/msgline-messager")).default,
+          abi: (await import("../abi/msgline-messager")).default,
           functionName: "receiveMessage",
           args: [BigInt(this.targetChain.id), this.contract.targetAddress, this.contract.sourceAddress, message],
         });
@@ -455,7 +455,7 @@ export class XTokenNextBridge extends BaseBridge {
         if (feeAndParams) {
           const hash = await this.walletClient.writeContract({
             address: this.contract.targetAddress,
-            abi: (await import("@/abi/xtoken-backing-next")).default,
+            abi: (await import("../abi/xtoken-backing-next")).default,
             functionName: "xRollbackBurnAndXUnlock",
             args: [
               BigInt(this.sourceChain.id),
@@ -479,7 +479,7 @@ export class XTokenNextBridge extends BaseBridge {
   // private async _getSourceGuard() {
   //   if (this.contract && this.sourcePublicClient) {
   //     const guard = await this.sourcePublicClient.readContract({
-  //       abi: (await import("@/abi/xtoken-issuing-next")).default,
+  //       abi: (await import("../abi/xtoken-issuing-next")).default,
   //       functionName: "guard",
   //       address: this.contract.sourceAddress,
   //     });
@@ -490,7 +490,7 @@ export class XTokenNextBridge extends BaseBridge {
   private async _getTargetGuard() {
     if (this.contract && this.targetPublicClient) {
       const guard = await this.targetPublicClient.readContract({
-        abi: (await import("@/abi/xtoken-issuing-next")).default,
+        abi: (await import("../abi/xtoken-issuing-next")).default,
         functionName: "guard",
         address: this.contract.targetAddress,
       });

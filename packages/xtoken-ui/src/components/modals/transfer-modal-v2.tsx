@@ -1,11 +1,8 @@
-import { BaseBridge } from "@/bridges";
-import { ChainConfig, Token } from "@/types";
-import { formatBalance, getChainLogoSrc, toShortAdrress } from "@/utils";
-import dynamic from "next/dynamic";
-import Image from "next/image";
+import { BaseBridge } from "../../bridges";
+import { ChainConfig, Token } from "../../types";
+import Modal from "../../ui/modal";
+import { formatBalance, getChainLogoSrc, toShortAdrress } from "../../utils";
 import { Address } from "viem";
-
-const Modal = dynamic(() => import("@/ui/modal"), { ssr: false });
 
 interface Props {
   sender?: `0x${string}` | null;
@@ -54,7 +51,7 @@ export default function TransferModalV2({
         <SourceTarget type="source" address={sender} chain={sourceChain} token={sourceToken} amount={amount} />
         <div className="relative">
           <div className="absolute bottom-0 left-0 right-0 top-0 flex items-center justify-center">
-            <Image width={36} height={36} alt="Transfer to" src="images/transfer-to.svg" className="shrink-0" />
+            <img width={36} height={36} alt="Transfer to" src="images/transfer-to.svg" className="shrink-0" />
           </div>
         </div>
         <SourceTarget type="target" address={recipient} chain={targetChain} token={targetToken} amount={amount} />
@@ -83,7 +80,7 @@ function SourceTarget({
 }) {
   return chain && token ? (
     <div className="bg-background lg:p-large flex items-start justify-between gap-2 rounded-xl p-3 lg:rounded-2xl">
-      <Image width={36} height={36} alt="Chain" src={getChainLogoSrc(chain.logo)} className="shrink-0 rounded-full" />
+      <img width={36} height={36} alt="Chain" src={getChainLogoSrc(chain.logo)} className="shrink-0 rounded-full" />
 
       <div className="flex w-full flex-col gap-1 truncate">
         <div className="flex items-center justify-between gap-1">

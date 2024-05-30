@@ -1,8 +1,7 @@
-import { ChainConfig } from "@/types";
-import Select from "@/ui/select";
-import { getChainLogoSrc } from "@/utils";
+import { ChainConfig } from "../types";
+import Select from "../ui/select";
+import { getChainLogoSrc } from "../utils";
 import { Placement } from "@floating-ui/react";
-import Image from "next/image";
 
 interface Props {
   options?: ChainConfig[];
@@ -33,7 +32,7 @@ export default function ChainSelect({
         value ? (
           <div className="gap-medium flex items-center truncate">
             {compact ? null : (
-              <Image
+              <img
                 alt="Chain"
                 width={32}
                 height={32}
@@ -61,7 +60,7 @@ export default function ChainSelect({
                 onClick={() => onChange(option)}
                 className="gap-medium px-large flex items-center py-2 text-start transition-colors hover:bg-white/10"
               >
-                <Image
+                <img
                   width={20}
                   height={20}
                   alt="Chain logo"
@@ -80,7 +79,7 @@ export default function ChainSelect({
                 className="gap-small rounded-medium bg-component flex w-36 shrink-0 items-center truncate px-2 py-2 transition-colors hover:bg-white/20"
                 onClick={() => onChange(option)}
               >
-                <Image
+                <img
                   width={20}
                   height={20}
                   alt="Chain logo"

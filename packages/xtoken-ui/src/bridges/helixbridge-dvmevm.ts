@@ -1,7 +1,7 @@
-import { BridgeConstructorArgs, TransferOptions } from "@/types/bridge";
+import { BridgeConstructorArgs, TransferOptions } from "../types/bridge";
 import { BaseBridge } from "./base";
 import { Address, TransactionReceipt } from "viem";
-import { HistoryRecord } from "@/types/graphql";
+import { HistoryRecord } from "../types/graphql";
 
 /**
  * DVM <=> EVM
@@ -47,7 +47,7 @@ export class HelixBridgeDVMEVM extends BaseBridge {
       const totalFee = options?.totalFee ?? 0n;
       const askEstimateGas = options?.askEstimateGas ?? false;
 
-      const abi = (await import("@/abi/backing-dvmevm")).default;
+      const abi = (await import("../abi/backing-dvmevm")).default;
       const address = this.contract.sourceAddress;
       const gas = this.getTxGasLimit();
 
@@ -91,7 +91,7 @@ export class HelixBridgeDVMEVM extends BaseBridge {
     options?: TransferOptions & { askEstimateGas?: boolean },
   ) {
     if (this.contract && this.sourceToken && this.targetToken && this.sourcePublicClient) {
-      const abi = (await import("@/abi/mappingtoken-dvmevm")).default;
+      const abi = (await import("../abi/mappingtoken-dvmevm")).default;
       const address = this.contract.sourceAddress;
       const gas = this.getTxGasLimit();
       const value = options?.totalFee ?? 0n;
@@ -150,7 +150,7 @@ export class HelixBridgeDVMEVM extends BaseBridge {
     if (this.guard && this.publicClient && this.walletClient) {
       const hash = await this.walletClient.writeContract({
         address: this.guard,
-        abi: (await import("@/abi/guard")).default,
+        abi: (await import("../abi/guard")).default,
         functionName: "claim",
         args: [
           BigInt(record.messageNonce || 0),
@@ -180,7 +180,7 @@ export class HelixBridgeDVMEVM extends BaseBridge {
       let hash: Address | undefined;
 
       if (this.crossInfo?.action === "issue") {
-        const abi = (await import("@/abi/mappingtoken-dvmevm")).default;
+        const abi = (await import("../abi/mappingtoken-dvmevm")).default;
         if (this.sourceToken?.type === "native") {
           hash = await this.walletClient.writeContract({
             address,
@@ -201,7 +201,7 @@ export class HelixBridgeDVMEVM extends BaseBridge {
           });
         }
       } else {
-        const abi = (await import("@/abi/backing-dvmevm")).default;
+        const abi = (await import("../abi/backing-dvmevm")).default;
         hash = await this.walletClient.writeContract({
           address,
           value,
@@ -224,12 +224,12 @@ export class HelixBridgeDVMEVM extends BaseBridge {
         ? this.sourcePublicClient.readContract({
             address,
             functionName,
-            abi: (await import("@/abi/backing-dvmevm")).default,
+            abi: (await import("../abi/backing-dvmevm")).default,
           })
         : this.sourcePublicClient.readContract({
             address,
             functionName,
-            abi: (await import("@/abi/mappingtoken-dvmevm")).default,
+            abi: (await import("../abi/mappingtoken-dvmevm")).default,
           }));
       return { value, token: this.sourceNativeToken };
     }
@@ -246,13 +246,13 @@ export class HelixBridgeDVMEVM extends BaseBridge {
             address,
             functionName,
             args,
-            abi: (await import("@/abi/mappingtoken-dvmevm")).default,
+            abi: (await import("../abi/mappingtoken-dvmevm")).default,
           })
         : this.targetPublicClient.readContract({
             address,
             functionName,
             args,
-            abi: (await import("@/abi/backing-dvmevm")).default,
+            abi: (await import("../abi/backing-dvmevm")).default,
           }));
       return { limit, spent: 0n, token: this.sourceToken };
     }

@@ -1,9 +1,7 @@
-import { BridgeConstructorArgs, TransferOptions } from "@/types/bridge";
+import { BridgeConstructorArgs, TransferOptions } from "../types/bridge";
 import { BaseBridge } from "./base";
 import { Address, TransactionReceipt } from "viem";
-import { ApiPromise, WsProvider } from "@polkadot/api";
-import { SpecVersion } from "@polkadot/types/interfaces";
-import { HistoryRecord } from "@/types/graphql";
+import { HistoryRecord } from "../types/graphql";
 
 /**
  * DVM <=> DVM
@@ -51,25 +49,7 @@ export class HelixBridgeDVMDVM extends BaseBridge {
 
   private async ensureSpecVersion() {
     if (!this.specVersion) {
-      const sourceRpc = this.sourceChain?.rpcUrls.default.webSocket?.at(0);
-      const targetRpc = this.targetChain?.rpcUrls.default.webSocket?.at(0);
-
-      const source = sourceRpc
-        ? (
-            (await ApiPromise.create({ provider: new WsProvider(sourceRpc) })).consts.system.version as unknown as {
-              specVersion: SpecVersion;
-            }
-          ).specVersion.toNumber()
-        : 0;
-      const target = targetRpc
-        ? (
-            (await ApiPromise.create({ provider: new WsProvider(targetRpc) })).consts.system.version as unknown as {
-              specVersion: SpecVersion;
-            }
-          ).specVersion.toNumber()
-        : 0;
-
-      this.specVersion = { source, target };
+      this.specVersion = { source: 0, target: 0 };
     }
   }
 
@@ -84,7 +64,7 @@ export class HelixBridgeDVMDVM extends BaseBridge {
       const totalFee = options?.totalFee ?? 0n;
       const askEstimateGas = options?.askEstimateGas ?? false;
 
-      const abi = (await import("@/abi/backing-dvmdvm")).default;
+      const abi = (await import("../abi/backing-dvmdvm")).default;
       const address = this.contract.sourceAddress;
       const gas = this.getTxGasLimit();
 
@@ -128,7 +108,7 @@ export class HelixBridgeDVMDVM extends BaseBridge {
     options?: TransferOptions & { askEstimateGas?: boolean },
   ) {
     if (this.contract && this.specVersion && this.sourceToken && this.sourcePublicClient) {
-      const abi = (await import("@/abi/mappingtoken-dvmdvm")).default;
+      const abi = (await import("../abi/mappingtoken-dvmdvm")).default;
       const address = this.contract.sourceAddress;
       const gas = this.getTxGasLimit();
       const value = options?.totalFee ?? 0n;
@@ -197,7 +177,7 @@ export class HelixBridgeDVMDVM extends BaseBridge {
       const sendTokenAddress = record.sendTokenAddress || "0x";
 
       if (this.crossInfo?.action === "issue") {
-        const abi = (await import("@/abi/mappingtoken-dvmdvm")).default;
+        const abi = (await import("../abi/mappingtoken-dvmdvm")).default;
         if (this.sourceToken?.type === "native") {
           hash = await this.walletClient.writeContract({
             address,
@@ -218,7 +198,7 @@ export class HelixBridgeDVMDVM extends BaseBridge {
           });
         }
       } else if (this.crossInfo?.action === "redeem") {
-        const abi = (await import("@/abi/backing-dvmdvm")).default;
+        const abi = (await import("../abi/backing-dvmdvm")).default;
         hash = await this.walletClient.writeContract({
           address,
           value,
@@ -241,12 +221,12 @@ export class HelixBridgeDVMDVM extends BaseBridge {
         ? this.sourcePublicClient.readContract({
             address,
             functionName,
-            abi: (await import("@/abi/backing-dvmdvm")).default,
+            abi: (await import("../abi/backing-dvmdvm")).default,
           })
         : this.sourcePublicClient.readContract({
             address,
             functionName,
-            abi: (await import("@/abi/mappingtoken-dvmdvm")).default,
+            abi: (await import("../abi/mappingtoken-dvmdvm")).default,
           }));
       return { value, token: this.sourceNativeToken };
     }
@@ -263,13 +243,13 @@ export class HelixBridgeDVMDVM extends BaseBridge {
             address,
             functionName,
             args,
-            abi: (await import("@/abi/backing-dvmdvm")).default,
+            abi: (await import("../abi/backing-dvmdvm")).default,
           })
         : this.targetPublicClient.readContract({
             address,
             functionName,
             args,
-            abi: (await import("@/abi/mappingtoken-dvmdvm")).default,
+            abi: (await import("../abi/mappingtoken-dvmdvm")).default,
           }));
 
       return { limit, spent: 0n, token: this.sourceToken };

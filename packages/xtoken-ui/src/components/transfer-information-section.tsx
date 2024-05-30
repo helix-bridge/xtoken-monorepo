@@ -1,7 +1,7 @@
-import { Token } from "@/types";
+import { Token } from "../types";
 import TransferInformation from "./transfer-information";
 import TransferSection from "./transfer-section";
-import { BaseBridge } from "@/bridges";
+import { BaseBridge } from "../bridges";
 
 interface Props {
   bridge: BaseBridge | undefined;

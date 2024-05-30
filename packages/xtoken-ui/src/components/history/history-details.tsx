@@ -1,12 +1,12 @@
-import { useHistoryDetails } from "@/hooks";
-import { ChainConfig, HistoryDetailsResData, HistoryRecord, RecordResult } from "@/types";
-import { formatBalance, formatTime, getChainConfig, getChainLogoSrc, toShortAdrress } from "@/utils";
-import Image from "next/image";
+import { useHistoryDetails } from "../../hooks";
+import { ChainConfig, HistoryDetailsResData, HistoryRecord, RecordResult } from "../../types";
+import { formatBalance, formatTime, getChainConfig, getChainLogoSrc, toShortAdrress } from "../../utils";
 import { useMemo } from "react";
 import { Hash, Hex } from "viem";
 import Completed from "../icons/completed";
 import Pending from "../icons/pending";
-import ComponentLoading from "@/ui/component-loading";
+import ComponentLoading from "../../ui/component-loading";
+import { Link } from "react-router-dom";
 
 interface Props {
   requestTxHash?: Hash | null;
@@ -48,14 +48,14 @@ export default function HistoryDetails({ defaultData, requestTxHash }: Props) {
 
         {data && (
           <div className="mt-2 inline-flex w-full justify-end pr-2">
-            <a
+            <Link
               className="hover:text-primary text-sm font-light text-white underline transition-colors"
               target="_blank"
-              href={`records/${data.id}`}
+              to={`/tx/${data.id}`}
               rel="noopener noreferrer"
             >
               {`More`}
-            </a>
+            </Link>
           </div>
         )}
       </div>
@@ -84,7 +84,7 @@ function Column({ completed, chain, tx }: { completed: boolean; chain?: ChainCon
           />
         )}
         {chain ? (
-          <Image alt={chain.name} width={64} height={64} src={getChainLogoSrc(chain.logo)} className="rounded-full" />
+          <img alt={chain.name} width={64} height={64} src={getChainLogoSrc(chain.logo)} className="rounded-full" />
         ) : (
           "-"
         )}

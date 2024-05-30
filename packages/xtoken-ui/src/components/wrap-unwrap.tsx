@@ -1,19 +1,16 @@
-"use client";
-
 import { useCallback, useMemo, useRef, useState } from "react";
 import TransferAmountSection from "./transfer-amount-section";
 import TransferSwitch from "./transfer-switch";
 import WrapTokenSection from "./wrap-token-section";
-import abi from "@/abi/wrap-unwrap";
+import abi from "../abi/wrap-unwrap";
 import { Address } from "viem";
 import { useAccount, useNetwork, usePublicClient, useSwitchNetwork, useWalletClient } from "wagmi";
-import { ChainID, Token } from "@/types";
-import { useAllowance, useBalance } from "@/hooks";
-import { ethereumChain } from "@/config/chains";
-import Image from "next/image";
-import Button from "@/ui/button";
+import { ChainID, Token } from "../types";
+import { useAllowance, useBalance } from "../hooks";
+import { ethereumChain } from "../config/chains";
+import Button from "../ui/button";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
-import { notifyError, notifyTransaction } from "@/utils";
+import { notifyError, notifyTransaction } from "../utils";
 
 interface Amount {
   input: string;
@@ -205,11 +202,11 @@ export default function WrapUnwrap() {
 
           {network.chain?.id && network.chain.id !== ChainID.ETHEREUM ? (
             <div className="mx-auto flex flex-wrap items-center gap-1">
-              <Image
+              <img
                 alt="Wrong network"
                 width={18}
                 height={18}
-                src="/images/warning.svg"
+                src="images/warning.svg"
                 className="shrink-0 rounded-full"
               />
               <span className="text-xs font-bold text-orange-400">Wrong chain, wrap/unwrap is only for Ethereum</span>

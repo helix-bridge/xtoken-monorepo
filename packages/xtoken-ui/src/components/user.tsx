@@ -1,14 +1,13 @@
-import { useApp } from "@/hooks";
-import Dropdown from "@/ui/dropdown";
-import { formatBalance, getChainLogoSrc, getTokenLogoSrc, toShortAdrress } from "@/utils";
+import { useApp } from "../hooks";
+import Dropdown from "../ui/dropdown";
+import { formatBalance, getChainLogoSrc, getTokenLogoSrc, toShortAdrress } from "../utils";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
-import Image from "next/image";
 import { PropsWithChildren } from "react";
 import { useAccount, useDisconnect } from "wagmi";
 import PrettyAddress from "./pretty-address";
 import AddressIdenticon from "./address-identicon";
 import { Placement } from "@floating-ui/react";
-import ComponentLoading from "@/ui/component-loading";
+import ComponentLoading from "../ui/component-loading";
 import History from "./history";
 
 interface Props {
@@ -45,17 +44,18 @@ export default function User({ placement, prefixLength = 10, suffixLength = 8 }:
           suffixLength={suffixLength}
           address={address}
           copyable
+          disabledTooltip
           className="text-sm font-bold text-white"
         />
       </div>
 
       <div className="gap-small flex items-center px-5">
         <History className="user-dropdown-item">
-          <Image width={18} height={18} alt="History" src="/images/history.svg" className="shrink-0" />
+          <img width={18} height={18} alt="History" src="images/history.svg" className="shrink-0" />
           <ChildSpan>History</ChildSpan>
         </History>
         <button onClick={() => disconnect()} className="user-dropdown-item">
-          <Image width={18} height={18} alt="Disconnect" src="/images/disconnect.svg" className="shrink-0" />
+          <img width={18} height={18} alt="Disconnect" src="images/disconnect.svg" className="shrink-0" />
           <ChildSpan>Disconnect</ChildSpan>
         </button>
       </div>
@@ -80,14 +80,14 @@ export default function User({ placement, prefixLength = 10, suffixLength = 8 }:
                 disabled
               >
                 <div className="relative">
-                  <Image
+                  <img
                     alt="Token"
                     width={32}
                     height={32}
                     src={getTokenLogoSrc(balance.token.logo)}
                     className="rounded-full"
                   />
-                  <Image
+                  <img
                     alt="Chain"
                     width={20}
                     height={20}

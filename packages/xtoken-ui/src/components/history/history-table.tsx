@@ -1,7 +1,6 @@
-import { HistoryRecord, RecordResult } from "@/types";
+import { HistoryRecord, RecordResult } from "../../types";
 import Table, { ColumnType } from "./table";
-import { formatBalance, formatTime, getChainConfig, getChainLogoSrc } from "@/utils";
-import Image from "next/image";
+import { formatBalance, formatTime, getChainConfig, getChainLogoSrc } from "../../utils";
 
 type TData = Pick<
   HistoryRecord,
@@ -51,7 +50,7 @@ const columns: ColumnType<TData>[] = [
       const chain = getChainConfig(row.fromChain);
       return (
         <div className="flex justify-center">
-          {chain ? <Image alt={chain.name} width={20} height={20} src={getChainLogoSrc(chain.logo)} /> : <span>-</span>}
+          {chain ? <img alt={chain.name} width={20} height={20} src={getChainLogoSrc(chain.logo)} /> : <span>-</span>}
         </div>
       );
     },
@@ -64,7 +63,7 @@ const columns: ColumnType<TData>[] = [
       const chain = getChainConfig(row.toChain);
       return (
         <div className="flex justify-center">
-          {chain ? <Image alt={chain.name} width={20} height={20} src={getChainLogoSrc(chain.logo)} /> : <span>-</span>}
+          {chain ? <img alt={chain.name} width={20} height={20} src={getChainLogoSrc(chain.logo)} /> : <span>-</span>}
         </div>
       );
     },

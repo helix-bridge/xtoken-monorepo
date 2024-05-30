@@ -1,12 +1,9 @@
-"use client";
-
-import { useToggle } from "@/hooks/use-toggle";
-import Button from "@/ui/button";
-import dynamic from "next/dynamic";
+import { useToggle } from "../../hooks/use-toggle";
+import Button from "../../ui/button";
 import { useEffect } from "react";
+import Modal from "../../ui/modal";
 
 const KEY = "disclaimer";
-const Modal = dynamic(() => import("@/ui/modal"), { ssr: false });
 
 export default function DisclaimerModal() {
   const { state: isOpen, setState: setIsOpen, setFalse: setIsOpenFalse } = useToggle(false);

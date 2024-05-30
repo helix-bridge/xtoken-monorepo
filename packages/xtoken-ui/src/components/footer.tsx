@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { PropsWithChildren } from "react";
 
 export default function Footer() {
@@ -27,16 +26,16 @@ export default function Footer() {
         <div className="h-3 w-[1px] bg-white/30" />
 
         <SocialLink href="https://github.com/helix-bridge">
-          <Image width={16} height={16} alt="Github" src="/images/social/github.svg" />
+          <img width={16} height={16} alt="Github" src="images/social/github.svg" />
         </SocialLink>
         <SocialLink href="https://twitter.com/helixbridges">
-          <Image width={16} height={16} alt="Twitter" src="/images/social/twitter.svg" />
+          <img width={16} height={16} alt="Twitter" src="images/social/twitter.svg" />
         </SocialLink>
         <SocialLink href="https://discord.gg/6XyyNGugdE">
-          <Image width={20} height={20} alt="Discord" src="/images/social/discord.svg" />
+          <img width={20} height={20} alt="Discord" src="images/social/discord.svg" />
         </SocialLink>
         <SocialLink href="mailto:hello@helixbridge.app">
-          <Image width={16} height={16} alt="Email" src="/images/social/email.svg" />
+          <img width={16} height={16} alt="Email" src="images/social/email.svg" />
         </SocialLink>
       </div>
     </div>

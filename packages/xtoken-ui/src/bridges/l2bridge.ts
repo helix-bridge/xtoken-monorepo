@@ -1,4 +1,4 @@
-import { BridgeConstructorArgs, TransferOptions } from "@/types/bridge";
+import { BridgeConstructorArgs, TransferOptions } from "../types/bridge";
 import { BaseBridge } from "./base";
 import { Address, TransactionReceipt, encodeAbiParameters } from "viem";
 
@@ -61,7 +61,7 @@ export class L2ArbitrumBridge extends BaseBridge {
 
       const defaultParams = {
         address: this.contract.sourceAddress,
-        abi: (await import("@/abi/l1-gateway-router")).default,
+        abi: (await import("../abi/l1-gateway-router")).default,
         functionName: "outboundTransferCustomRefund",
         args: [this.sourceToken.address, this.helixDAO, recipient, amount, this.l2GasLimit, params.gasPrice, innerData],
         value: params.deposit,
@@ -90,13 +90,13 @@ export class L2ArbitrumBridge extends BaseBridge {
 
       const inboxAddress = await l1Client.readContract({
         address: this.contract.sourceAddress,
-        abi: (await import("@/abi/l1-gateway-router")).default,
+        abi: (await import("../abi/l1-gateway-router")).default,
         functionName: "inbox",
       });
 
       const maxSubmissionCost = await l1Client.readContract({
         address: inboxAddress,
-        abi: (await import("@/abi/inbox")).default,
+        abi: (await import("../abi/inbox")).default,
         functionName: "calculateRetryableSubmissionFee",
         args: [this.l2FixedDataSize, scaleL1BaseFee],
       });

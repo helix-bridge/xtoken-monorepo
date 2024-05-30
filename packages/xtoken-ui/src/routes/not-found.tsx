@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "react-router-dom";
 
 export default function NotFound() {
   return (
@@ -6,7 +6,7 @@ export default function NotFound() {
       <div className="gap-medium flex w-fit flex-col items-start">
         <h2 className="text-base font-medium text-white">Not Found !</h2>
         <p className="text-sm font-normal text-white">Could not find requested resource</p>
-        <Link href="/" className="text-primary text-sm font-normal hover:underline">
+        <Link to="/" className="text-primary text-sm font-normal hover:underline">
           Return Home
         </Link>
       </div>

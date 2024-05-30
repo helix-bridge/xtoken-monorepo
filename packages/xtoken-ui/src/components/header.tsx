@@ -1,16 +1,10 @@
-"use client";
-
-import { useToggle } from "@/hooks";
-import Tooltip from "@/ui/tooltip";
-import Image from "next/image";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import dynamic from "next/dynamic";
-
-const ChainSwitch = dynamic(() => import("@/components/chain-switch"), { ssr: false });
-const User = dynamic(() => import("@/components/user"), { ssr: false });
-const Drawer = dynamic(() => import("@/ui/drawer"), { ssr: false });
-const History = dynamic(() => import("./history"), { ssr: false });
+import { Link, useLocation } from "react-router-dom";
+import { useToggle } from "../hooks";
+import Tooltip from "../ui/tooltip";
+import History from "./history";
+import User from "./user";
+import ChainSwitch from "./chain-switch";
+import Drawer from "../ui/drawer";
 
 interface NavigationConfig {
   label: string;
@@ -22,22 +16,22 @@ interface NavigationConfig {
 
 const navigationsConfig: NavigationConfig[] = [
   { href: "/", label: "Bridge" },
-  { href: "/records", label: "Explorer" },
+  { href: "/explorer", label: "Explorer" },
   { href: "https://assethub-bridge.darwinia.network", label: "Assethub", external: true },
   { href: "/wrap", label: "Wrap" },
 ];
 
 export default function Header() {
   const { state: isOpen, setTrue: setIsOpenTrue, setFalse: setIsOpenFalse } = useToggle(false);
-  const pathname = usePathname();
+  const { pathname } = useLocation();
 
   return (
     <>
       <div className="app-header px-medium fixed left-0 top-0 z-10 flex w-full items-center justify-between border-b border-b-white/25 bg-transparent lg:border-b-transparent lg:px-5">
         {/* Left */}
         <div className="flex items-center gap-5">
-          <Link href="/">
-            <Image width={152} height={18} alt="Logo" src="/images/projects/darwinia.png" />
+          <Link to="/">
+            <img width={152} height={18} alt="Logo" src="images/projects/darwinia.png" />
           </Link>
 
           <div className="gap-medium hidden items-center lg:flex">
@@ -59,7 +53,7 @@ export default function Header() {
               ) : (
                 <Link
                   key={label}
-                  href={href}
+                  to={href}
                   className={`py-small rounded-full px-3 text-sm font-bold transition-[transform,color] hover:bg-white/10 hover:text-white active:translate-y-1 ${
                     pathname === href ? "text-white underline decoration-2 underline-offset-8" : "text-white/50"
                   }`}
@@ -77,11 +71,11 @@ export default function Header() {
           <User placement="bottom-end" prefixLength={14} suffixLength={10} />
           <ChainSwitch placement="bottom-end" />
         </div>
-        <Image
+        <img
           width={24}
           height={24}
           alt="Menu"
-          src="/images/menu.svg"
+          src="images/menu.svg"
           className="inline transition-transform active:translate-y-1 lg:hidden"
           onClick={setIsOpenTrue}
         />
@@ -111,7 +105,7 @@ export default function Header() {
                 ) : (
                   <Link
                     key={label}
-                    href={href}
+                    to={href}
                     className={`text-sm font-bold ${
                       pathname === href ? "text-primary underline decoration-2 underline-offset-4" : "text-white"
                     }`}

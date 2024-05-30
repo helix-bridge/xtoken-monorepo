@@ -1,15 +1,11 @@
-"use client";
-
-import { useApp, useHistory } from "@/hooks";
+import { useApp, useHistory } from "../../hooks";
 import { PropsWithChildren, useCallback, useEffect, useRef, useState } from "react";
-import dynamic from "next/dynamic";
 import { CSSTransition, SwitchTransition } from "react-transition-group";
 import HistoryDetails from "./history-details";
 import HistoryTable from "./history-table";
 import { useAccount } from "wagmi";
-import { RecordResult } from "@/types";
-
-const Modal = dynamic(() => import("./modal"), { ssr: false });
+import { RecordResult } from "../../types";
+import Modal from "./modal";
 
 export default function History({ children, className }: PropsWithChildren<{ className: string }>) {
   const account = useAccount();

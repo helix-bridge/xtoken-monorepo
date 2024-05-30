@@ -10,10 +10,11 @@ import {
   Location,
   Token,
   TransferOptions,
-} from "@/types";
-import { getBalance } from "@/utils";
+} from "../types";
+import { getBalance } from "../utils";
 import { Address, PublicClient as ViemPublicClient, TransactionReceipt, createPublicClient, http } from "viem";
 import { PublicClient as WagmiPublicClient, WalletClient } from "wagmi";
+import erc20Abi from "../abi/erc20";
 
 export abstract class BaseBridge {
   protected logo: BridgeLogo = { symbol: "", horizontal: "" };
@@ -137,6 +138,7 @@ export abstract class BaseBridge {
       : undefined;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async getFee(_?: GetFeeArgs): Promise<{ value: bigint; token: Token } | undefined> {
     return undefined;
   }
@@ -145,14 +147,17 @@ export abstract class BaseBridge {
     return undefined;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async claim(_record: HistoryRecord): Promise<TransactionReceipt | undefined> {
     return undefined;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async refund(_record: HistoryRecord): Promise<TransactionReceipt | undefined> {
     return undefined;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async speedUp(_record: HistoryRecord, _newFee: bigint): Promise<TransactionReceipt | undefined> {
     return undefined;
   }
@@ -173,7 +178,7 @@ export abstract class BaseBridge {
     if (token.type === "erc20") {
       const value = await publicClient.readContract({
         address: token.address,
-        abi: (await import("@/abi/erc20")).default,
+        abi: erc20Abi,
         functionName: "allowance",
         args: [owner, spender],
       });
@@ -199,7 +204,7 @@ export abstract class BaseBridge {
     if (this.publicClient && this.walletClient) {
       const { request } = await this.publicClient.simulateContract({
         address: token.address,
-        abi: (await import("@/abi/erc20")).default,
+        abi: erc20Abi,
         functionName: "approve",
         args: [spender, amount],
         account: owner,

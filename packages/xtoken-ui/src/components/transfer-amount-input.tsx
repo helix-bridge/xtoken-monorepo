@@ -1,6 +1,5 @@
-import { ChainConfig, Token } from "@/types";
-import { formatBalance } from "@/utils";
-import Image from "next/image";
+import { ChainConfig, Token } from "../types";
+import { formatBalance } from "../utils";
 import { ChangeEventHandler, useCallback, useEffect, useRef, useState } from "react";
 import { formatUnits, parseUnits } from "viem";
 import Faucet from "./faucet";
@@ -121,7 +120,7 @@ export default function TransferAmountInput({
           }`}
           onClick={onRefresh}
         >
-          <Image alt="Refresh balance" width={14} height={14} src="/images/refresh.svg" />
+          <img alt="Refresh balance" width={14} height={14} src="images/refresh.svg" />
         </button>
         {maxInput && max ? (
           <button

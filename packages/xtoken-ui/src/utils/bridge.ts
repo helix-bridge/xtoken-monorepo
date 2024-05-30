@@ -5,13 +5,14 @@ import {
   HelixLpBridge,
   L2ArbitrumBridge,
   XTokenNextBridge,
-} from "@/bridges";
-import { BridgeConstructorArgs } from "@/types";
+} from "../bridges";
+import { BridgeConstructorArgs } from "../types";
 
 export function bridgeFactory(args: BridgeConstructorArgs): BaseBridge | undefined {
   if (args.category.startsWith("xtoken-")) {
     return new XTokenNextBridge(args);
   }
+
   switch (args.category) {
     case "helix-sub2ethv2(lock)":
     case "helix-sub2ethv2(unlock)":

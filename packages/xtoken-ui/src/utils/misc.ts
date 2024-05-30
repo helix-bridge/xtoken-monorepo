@@ -1,4 +1,4 @@
-import { RecordResult } from "@/types/graphql";
+import { RecordResult } from "../types/graphql";
 import { Address, Hex } from "viem";
 
 export function parseRecordResult(result: RecordResult) {
@@ -21,15 +21,15 @@ export function parseRecordResult(result: RecordResult) {
 }
 
 export function getTokenLogoSrc(fileName: string | null | undefined) {
-  return `/images/token/${fileName || "unknown.svg"}`;
+  return `images/token/${fileName || "unknown.svg"}`;
 }
 
 export function getChainLogoSrc(fileName: string | null | undefined) {
-  return `/images/network/${fileName || "unknown.png"}`;
+  return `images/network/${fileName || "unknown.png"}`;
 }
 
 export function getBridgeLogoSrc(fileName: string) {
-  return `/images/bridge/${fileName}`;
+  return `images/bridge/${fileName}`;
 }
 
 export async function fetchMsglineFeeAndParams(

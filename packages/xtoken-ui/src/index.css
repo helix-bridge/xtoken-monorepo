@@ -2,30 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
-}
-
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
-} */
-
 @layer components {
   /* Layout */
   .app-header {
@@ -42,15 +18,15 @@ body {
 
   /* Page */
   .page-container {
-    @apply max-w-8xl w-full mx-auto px-medium py-5;
+    @apply max-w-8xl px-medium mx-auto w-full py-5;
   }
 
   /* User */
   .user-connect-wallet {
-    @apply flex h-8 shrink-0 items-center gap-medium rounded-xl bg-primary px-large transition lg:hover:bg-primary/80 lg:active:translate-y-1;
+    @apply gap-medium bg-primary px-large lg:hover:bg-primary/80 flex h-8 shrink-0 items-center rounded-xl transition lg:active:translate-y-1;
   }
   .user-dropdown-item {
-    @apply inline-flex items-center gap-medium rounded-xl px-medium py-small text-start transition hover:bg-white/10 lg:active:translate-y-1;
+    @apply gap-medium px-medium py-small inline-flex items-center rounded-xl text-start transition hover:bg-white/10 lg:active:translate-y-1;
   }
 
   .button {
@@ -68,13 +44,13 @@ body {
   }
 
   .select {
-    @apply border transition duration-300 focus-within:border-primary hover:border-primary disabled:cursor-not-allowed disabled:opacity-60 lg:active:translate-y-1 lg:disabled:translate-y-0;
+    @apply focus-within:border-primary hover:border-primary border transition duration-300 disabled:cursor-not-allowed disabled:opacity-60 lg:active:translate-y-1 lg:disabled:translate-y-0;
   }
 }
 
 /* Page header loading bar */
 .loading-bar {
-  background: linear-gradient(90deg, #ffffff 35%, #0085FF 50%, #ffffff 65%);
+  background: linear-gradient(90deg, #ffffff 35%, #0085ff 50%, #ffffff 65%);
   background-position: 100% 50%;
   background-size: 40% 100%;
   animation: bar-loading 2.4s linear infinite;
@@ -273,7 +249,9 @@ body {
 .history-table-fade-enter-active {
   opacity: 1;
   transform: translateX(0);
-  transition: opacity 100ms, transform 100ms;
+  transition:
+    opacity 100ms,
+    transform 100ms;
 }
 .history-table-fade-exit {
   opacity: 1;
@@ -282,7 +260,9 @@ body {
 .history-table-fade-exit-active {
   opacity: 0;
   transform: translateX(-10px);
-  transition: opacity 100ms, transform 100ms;
+  transition:
+    opacity 100ms,
+    transform 100ms;
 }
 .history-detail-fade-enter {
   opacity: 0;
@@ -291,7 +271,9 @@ body {
 .history-detail-fade-enter-active {
   opacity: 1;
   transform: translateX(0);
-  transition: opacity 100ms, transform 100ms;
+  transition:
+    opacity 100ms,
+    transform 100ms;
 }
 .history-detail-fade-exit {
   opacity: 1;
@@ -300,7 +282,9 @@ body {
 .history-detail-fade-exit-active {
   opacity: 0;
   transform: translateX(10px);
-  transition: opacity 100ms, transform 100ms;
+  transition:
+    opacity 100ms,
+    transform 100ms;
 }
 
 /* Component loading */

@@ -1,7 +1,5 @@
-"use client";
-
-import { useBalanceAll } from "@/hooks";
-import { ChainConfig, HistoryDetailsResData, Token } from "@/types";
+import { useBalanceAll } from "../hooks";
+import { ChainConfig, HistoryDetailsResData, Token } from "../types";
 import { Dispatch, PropsWithChildren, SetStateAction, createContext, useState } from "react";
 import { Hash } from "viem";
 

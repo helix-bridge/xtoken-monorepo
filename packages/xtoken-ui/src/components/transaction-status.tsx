@@ -1,19 +1,18 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { bridgeFactory } from "@/utils/bridge";
+import { bridgeFactory } from "../utils/bridge";
 import { interval } from "rxjs";
-import { formatCountdown } from "@/utils/time";
-import Button from "@/ui/button";
+import { formatCountdown } from "../utils/time";
+import Button from "../ui/button";
 import { useNetwork, usePublicClient, useSwitchNetwork, useWalletClient } from "wagmi";
-import { getChainConfig } from "@/utils/chain";
-import { notification } from "@/ui/notification";
-import { notifyTransaction } from "@/utils/notification";
+import { getChainConfig } from "../utils/chain";
+import { notification } from "../ui/notification";
+import { notifyTransaction } from "../utils/notification";
 import { BalanceInput } from "./balance-input";
-import { formatBalance } from "@/utils/balance";
-import dynamic from "next/dynamic";
-import { HistoryRecord, InputValue, RecordResult } from "@/types";
-import { RecordResultTag } from "@/ui/record-result-tag";
+import { formatBalance } from "../utils/balance";
+import { HistoryRecord, InputValue, RecordResult } from "../types";
+import { RecordResultTag } from "../ui/record-result-tag";
+import Modal from "../ui/modal";
 
-const Modal = dynamic(() => import("@/ui/modal"), { ssr: false });
 interface Props {
   record?: HistoryRecord | null;
 }

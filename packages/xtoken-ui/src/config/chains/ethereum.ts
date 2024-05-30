@@ -1,4 +1,4 @@
-import { ChainConfig } from "@/types/chain";
+import { ChainConfig } from "../../types/chain";
 import { parseUnits } from "viem";
 import { mainnet } from "viem/chains";
 

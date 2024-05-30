@@ -1,5 +1,5 @@
-import { ChainConfig, Token, TokenCategory, TokenOption } from "@/types";
-import { getChainConfig, getChainConfigs, isProduction } from ".";
+import { ChainConfig, Token, TokenCategory, TokenOption } from "../types";
+import { getChainConfig, getChainConfigs, isMainnet } from ".";
 
 const allTokenOptions: Record<Exclude<TokenCategory, "others">, TokenOption> = {
   crab: { logo: "crab.png", category: "crab", symbol: "CRAB" },
@@ -9,7 +9,7 @@ const allTokenOptions: Record<Exclude<TokenCategory, "others">, TokenOption> = {
   usdt: { logo: "usdt.png", category: "usdt", symbol: "USDT" },
   kton: { logo: "kton.png", category: "kton", symbol: "KTON" },
 };
-const sortedTokenCategories: Exclude<TokenCategory, "others">[] = isProduction()
+const sortedTokenCategories: Exclude<TokenCategory, "others">[] = isMainnet()
   ? ["usdt", "usdc", "eth", "ring", "crab", "kton"]
   : ["usdt", "usdc", "eth", "ring", "crab", "kton"];
 const availableTokenCategories = new Set<TokenCategory>();

@@ -16,11 +16,11 @@ import {
   sepoliaChain,
   zksyncChain,
   zksyncSepoliaChain,
-} from "@/config/chains";
-import { ChainConfig, ChainID, Network } from "@/types";
-import { isProduction } from "./env";
-import { bscChain } from "@/config/chains/bsc";
-import { optimismChain } from "@/config/chains/optimism";
+} from "../config/chains";
+import { ChainConfig, ChainID, Network } from "../types";
+import { isMainnet } from "./env";
+import { bscChain } from "../config/chains/bsc";
+import { optimismChain } from "../config/chains/optimism";
 
 export function getChainConfig(chainIdOrNetwork?: ChainID | Network | null): ChainConfig | undefined {
   switch (chainIdOrNetwork) {
@@ -111,7 +111,7 @@ export function getChainConfigs(askAll?: boolean) {
 
   if (askAll) {
     return all;
-  } else if (isProduction()) {
+  } else if (isMainnet()) {
     return all.filter((c) => !c.hidden && !c.testnet);
   } else {
     return all.filter((c) => !c.hidden && !!c.testnet);

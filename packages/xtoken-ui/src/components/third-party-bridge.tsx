@@ -1,5 +1,3 @@
-import Image from "next/image";
-
 interface Props {
   data: { name: string; url: string; logo: string }[];
 }
@@ -16,11 +14,11 @@ export default function ThirdPartyBridge({ data }: Props) {
           href={option.url}
         >
           <div className="gap-medium inline-flex items-center truncate">
-            <Image
+            <img
               width={38}
               height={38}
               alt={option.name}
-              src={`/images/third-party-bridges/${option.logo}`}
+              src={`images/third-party-bridges/${option.logo}`}
               className="shrink-0"
             />
             <span className="truncate text-sm font-bold italic text-white">{option.name}</span>

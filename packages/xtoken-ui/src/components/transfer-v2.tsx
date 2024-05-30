@@ -1,5 +1,3 @@
-"use client";
-
 import { useCallback, useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
 import TransferTokenSection from "./transfer-token-section";
 import {
@@ -9,14 +7,14 @@ import {
   getTokenOptions,
   notifyError,
   notifyTransaction,
-} from "@/utils";
+} from "../utils";
 import TransferChainSection from "./transfer-chain-section";
 import TransferAmountSection from "./transfer-amount-section";
 import TransferInformationSection from "./transfer-information-section";
-import Button from "@/ui/button";
-import { useAllowance, useApp, useBalance, useDailyLimit, useMessageFee, useTransferV2 } from "@/hooks";
+import Button from "../ui/button";
+import { useAllowance, useApp, useBalance, useDailyLimit, useMessageFee, useTransferV2 } from "../hooks";
 import { useAccount, useNetwork, usePublicClient, useSwitchNetwork, useWalletClient } from "wagmi";
-import TransferProviderV2 from "@/providers/transfer-provider-v2";
+import TransferProviderV2 from "../providers/transfer-provider-v2";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { Address } from "viem";
 import TransferModalV2 from "./modals/transfer-modal-v2";
@@ -313,7 +311,7 @@ function Component() {
                   {
                     children: <ThirdPartyBridge data={cross.thirdPartyBridges} />,
                     tab: BridgeTab.THIRD_PARTY,
-                    label: "Third Party Bridge",
+                    label: "Third Party Bridges",
                   },
                 ]
               : []),

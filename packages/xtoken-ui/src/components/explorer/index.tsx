@@ -1,14 +1,13 @@
-"use client";
-
-import { useApp, useTxs } from "@/hooks";
+import { useApp, useTxs } from "../../hooks";
 import { useDeferredValue, useEffect, useState } from "react";
 import ExplorerTable from "./explorer-table";
-import { UrlSearchParamKey } from "@/types";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import Search from "@/ui/search";
-import CountdownRefresh from "@/ui/countdown-refresh";
+import { UrlSearchParamKey } from "../../types";
+
+import Search from "../../ui/search";
+import CountdownRefresh from "../../ui/countdown-refresh";
 import { NetworkStatus } from "@apollo/client";
 import { isAddress } from "viem";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 const pageSize = 11;
 
@@ -16,20 +15,19 @@ export default function Explorer() {
   const { recordsSearch, setRecordsSearch } = useApp();
   const deferredSearchValue = useDeferredValue(recordsSearch);
 
-  const searchParams = useSearchParams();
-  const pathName = usePathname();
-  const router = useRouter();
+  const [, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
 
   const [currentPage, setCurrentPage] = useState(0);
   const [isManualRefresh, setIsManualRefresh] = useState(false);
   const { data, total, networkStatus, refetch } = useTxs(deferredSearchValue.toLowerCase(), currentPage, pageSize);
 
   useEffect(() => {
-    setRecordsSearch(new URLSearchParams(window.location.search).get(UrlSearchParamKey.ADDRESS) || "");
+    setRecordsSearch(new URLSearchParams(window.location.hash.split("?")[1]).get(UrlSearchParamKey.ADDRESS) || "");
   }, [setRecordsSearch]);
 
   useEffect(() => {
-    const page = Number(new URLSearchParams(window.location.search).get(UrlSearchParamKey.PAGE));
+    const page = Number(new URLSearchParams(window.location.hash.split("?")[1]).get(UrlSearchParamKey.PAGE));
     if (!Number.isNaN(page) && page > 0) {
       setCurrentPage(page - 1);
     }
@@ -46,24 +44,24 @@ export default function Explorer() {
             setRecordsSearch(value);
             setCurrentPage(0);
 
-            const params = new URLSearchParams(searchParams.toString());
-            params.delete(UrlSearchParamKey.PAGE);
-            if (isAddress(value)) {
-              params.set(UrlSearchParamKey.ADDRESS, value);
-              router.push(`?${params.toString()}`);
-            } else if (params.has(UrlSearchParamKey.ADDRESS)) {
-              params.delete(UrlSearchParamKey.ADDRESS);
-              router.push(`?${params.toString()}`);
-            }
+            setSearchParams((params) => {
+              params.delete(UrlSearchParamKey.PAGE);
+              if (isAddress(value)) {
+                params.set(UrlSearchParamKey.ADDRESS, value);
+              } else {
+                params.delete(UrlSearchParamKey.ADDRESS);
+              }
+              return params;
+            });
           }}
           onClear={() => {
             setRecordsSearch("");
-
-            const params = new URLSearchParams(searchParams.toString());
-            if (params.has(UrlSearchParamKey.ADDRESS)) {
+            setCurrentPage(0);
+            setSearchParams((params) => {
               params.delete(UrlSearchParamKey.ADDRESS);
-              router.push(`?${params.toString()}`);
-            }
+              params.delete(UrlSearchParamKey.PAGE);
+              return params;
+            });
           }}
         />
         <CountdownRefresh
@@ -91,11 +89,12 @@ export default function Explorer() {
         }
         onPageChange={(page) => {
           setCurrentPage(page);
-          const params = new URLSearchParams(searchParams.toString());
-          params.set(UrlSearchParamKey.PAGE, (page + 1).toString());
-          router.push(`?${params.toString()}`);
+          setSearchParams((params) => {
+            params.set(UrlSearchParamKey.PAGE, (page + 1).toString());
+            return params;
+          });
         }}
-        onRowClick={({ id }) => router.push(`${pathName}/${id}`)}
+        onRowClick={({ id }) => navigate(`/tx/${id}`, { state: { source: "explorer" } })}
       />
     </div>
   );

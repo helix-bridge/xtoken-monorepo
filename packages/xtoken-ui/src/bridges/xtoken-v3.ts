@@ -1,7 +1,7 @@
-import { BridgeConstructorArgs, GetFeeArgs, HistoryRecord, Token, TransferOptions } from "@/types";
+import { BridgeConstructorArgs, GetFeeArgs, HistoryRecord, Token, TransferOptions } from "../types";
 import { BaseBridge } from ".";
 import { Address, Hex, TransactionReceipt, encodeFunctionData, isAddressEqual } from "viem";
-import { fetchMsglineFeeAndParams } from "@/utils";
+import { fetchMsglineFeeAndParams } from "../utils";
 
 export class XTokenV3Bridge extends BaseBridge {
   constructor(args: BridgeConstructorArgs) {
@@ -53,7 +53,7 @@ export class XTokenV3Bridge extends BaseBridge {
       if (this.crossInfo?.action === "issue") {
         const defaultParams = {
           address: this.contract.sourceAddress,
-          abi: (await import("@/abi/xtoken-backing")).default,
+          abi: (await import("../abi/xtoken-backing")).default,
           functionName: "lockAndRemoteIssuing",
           args: [
             BigInt(this.targetChain.id),
@@ -77,7 +77,7 @@ export class XTokenV3Bridge extends BaseBridge {
       } else if (this.crossInfo?.action === "redeem") {
         const defaultParams = {
           address: this.contract.sourceAddress,
-          abi: (await import("@/abi/xtoken-issuing")).default,
+          abi: (await import("../abi/xtoken-issuing")).default,
           functionName: "burnAndRemoteUnlock",
           args: [this.sourceToken.address, recipient, amount, nonce, feeAndParams.extParams],
           value: this.sourceToken.type === "native" ? amount + feeAndParams.fee : feeAndParams.fee,
@@ -111,18 +111,18 @@ export class XTokenV3Bridge extends BaseBridge {
       const message =
         this.crossInfo?.action === "issue"
           ? encodeFunctionData({
-              abi: (await import("@/abi/xtoken-issuing")).default,
+              abi: (await import("../abi/xtoken-issuing")).default,
               functionName: "issuexToken",
               args: [BigInt(this.sourceChain.id), this.sourceToken.address, sender, recipient, amount, nonce],
             })
           : encodeFunctionData({
-              abi: (await import("@/abi/xtoken-backing")).default,
+              abi: (await import("../abi/xtoken-backing")).default,
               functionName: "unlockFromRemote",
               args: [BigInt(this.sourceChain.id), this.targetToken.address, sender, recipient, amount, nonce],
             });
 
       const payload = encodeFunctionData({
-        abi: (await import("@/abi/msgline-messager")).default,
+        abi: (await import("../abi/msgline-messager")).default,
         functionName: "receiveMessage",
         args: [BigInt(this.sourceChain.id), this.contract.sourceAddress, this.contract.targetAddress, message],
       });
@@ -154,7 +154,7 @@ export class XTokenV3Bridge extends BaseBridge {
     if (this.contract && this.sourceToken && this.targetToken && this.targetPublicClient) {
       const limit = await this.targetPublicClient.readContract({
         address: this.contract.targetAddress,
-        abi: (await import("@/abi/xtoken-issuing")).default,
+        abi: (await import("../abi/xtoken-issuing")).default,
         functionName: "calcMaxWithdraw",
         args: [this.targetToken.address],
       });
@@ -170,13 +170,13 @@ export class XTokenV3Bridge extends BaseBridge {
 
       if (this.crossInfo?.action === "issue") {
         guardContract = await this.publicClient.readContract({
-          abi: (await import("@/abi/xtoken-issuing")).default,
+          abi: (await import("../abi/xtoken-issuing")).default,
           functionName: "guard",
           address: this.contract.targetAddress,
         });
       } else if (this.crossInfo?.action === "redeem") {
         guardContract = await this.publicClient.readContract({
-          abi: (await import("@/abi/xtoken-backing")).default,
+          abi: (await import("../abi/xtoken-backing")).default,
           functionName: "guard",
           address: this.contract.targetAddress,
         });
@@ -184,7 +184,7 @@ export class XTokenV3Bridge extends BaseBridge {
 
       if (!isAddressEqual(guardContract, "0x0000000000000000000000000000000000000000")) {
         const hash = await this.walletClient.writeContract({
-          abi: (await import("@/abi/guard-v3")).default,
+          abi: (await import("../abi/guard-v3")).default,
           functionName: "claim",
           args: [
             this.contract.targetAddress,
@@ -213,7 +213,7 @@ export class XTokenV3Bridge extends BaseBridge {
       let hash: Address | undefined;
 
       if (this.crossInfo?.action === "issue") {
-        const abi = (await import("@/abi/xtoken-issuing")).default;
+        const abi = (await import("../abi/xtoken-issuing")).default;
         const commonArgs = [
           BigInt(this.sourceChain.id),
           record.sendTokenAddress,
@@ -229,7 +229,7 @@ export class XTokenV3Bridge extends BaseBridge {
           args: commonArgs,
         });
         const payload = encodeFunctionData({
-          abi: (await import("@/abi/msgline-messager")).default,
+          abi: (await import("../abi/msgline-messager")).default,
           functionName: "receiveMessage",
           args: [BigInt(this.targetChain.id), this.contract.targetAddress, this.contract.sourceAddress, message],
         });
@@ -253,7 +253,7 @@ export class XTokenV3Bridge extends BaseBridge {
           });
         }
       } else if (this.crossInfo?.action === "redeem" && record.recvTokenAddress) {
-        const abi = (await import("@/abi/xtoken-backing")).default;
+        const abi = (await import("../abi/xtoken-backing")).default;
         const commonArgs = [
           BigInt(this.sourceChain.id),
           record.recvTokenAddress,
@@ -269,7 +269,7 @@ export class XTokenV3Bridge extends BaseBridge {
           args: commonArgs,
         });
         const payload = encodeFunctionData({
-          abi: (await import("@/abi/msgline-messager")).default,
+          abi: (await import("../abi/msgline-messager")).default,
           functionName: "receiveMessage",
           args: [BigInt(this.targetChain.id), this.contract.targetAddress, this.contract.sourceAddress, message],
         });

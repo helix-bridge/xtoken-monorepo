@@ -1,8 +1,7 @@
-import { InputValue, Token } from "@/types";
-import Input from "@/ui/input";
-import InputAlert from "@/ui/input-alert";
-import { formatBalance, getTokenLogoSrc } from "@/utils";
-import Image from "next/image";
+import { InputValue, Token } from "../types";
+import Input from "../ui/input";
+import InputAlert from "../ui/input-alert";
+import { formatBalance, getTokenLogoSrc } from "../utils";
 import { ChangeEventHandler, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { parseUnits } from "viem";
 
@@ -171,14 +170,14 @@ export function BalanceInput({
           <div className="gap-medium flex shrink-0 items-center self-end">
             {token ? (
               <div className="gap-small flex shrink-0 items-center">
-                <Image width={32} height={32} alt="Token" src={getTokenLogoSrc(token.logo)} className="rounded-full" />
+                <img width={32} height={32} alt="Token" src={getTokenLogoSrc(token.logo)} className="rounded-full" />
                 <span className="text-sm font-extrabold text-white">{token.symbol}</span>
               </div>
             ) : null}
             {tokenOptions
               .filter((t) => t.symbol !== token?.symbol)
               .map((t) => (
-                <Image
+                <img
                   key={t.symbol}
                   width={26}
                   height={26}
@@ -203,7 +202,7 @@ export function BalanceInput({
             }`}
             onClick={onBalanceRefresh}
           >
-            <Image alt="Refresh" width={14} height={14} src="/images/refresh.svg" />
+            <img alt="Refresh" width={14} height={14} src="images/refresh.svg" />
           </button>
         </div>
       ) : null}

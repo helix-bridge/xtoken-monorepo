@@ -1,12 +1,12 @@
-import { ChainConfig, Token, TokenOption, UrlSearchParamKey } from "@/types";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { ChainConfig, Token, TokenOption, UrlSearchParamKey } from "../types";
 import {
   getSourceChainOptions,
   getSourceTokenOptions,
   getTargetChainOptions,
   getTargetTokenOptions,
   getTokenOptions,
-} from "@/utils";
-import { useRouter, useSearchParams } from "next/navigation";
+} from "../utils";
 import {
   Dispatch,
   PropsWithChildren,
@@ -79,7 +79,7 @@ export default function TransferProviderV2({ children }: PropsWithChildren<unkno
   }, []);
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
+    const params = new URLSearchParams(window.location.hash.split("?")[1]);
 
     const pT = params.get(UrlSearchParamKey.TOKEN_CATEGORY);
     const _token = tokenOptions.find(({ category }) => category === pT) || tokenOptions[0];
@@ -107,13 +107,13 @@ export default function TransferProviderV2({ children }: PropsWithChildren<unkno
     setToken(_token);
   }, [setToken]);
 
-  const searchParams = useSearchParams();
+  const [searchParams] = useSearchParams();
   const searchParamsRef = useRef(searchParams);
   useEffect(() => {
     searchParamsRef.current = searchParams;
   }, [searchParams]);
 
-  const router = useRouter();
+  const navigate = useNavigate();
   const changeUrl = useCallback(
     (onlyTokenCategory = false) => {
       const params = onlyTokenCategory
@@ -126,9 +126,9 @@ export default function TransferProviderV2({ children }: PropsWithChildren<unkno
         params.set(UrlSearchParamKey.TARGET_CHAIN, targetChainRef.current.network);
         params.set(UrlSearchParamKey.TARGET_TOKEN, targetTokenRef.current.symbol);
       }
-      router.push(`?${params.toString()}`);
+      navigate(`?${params.toString()}`);
     },
-    [router],
+    [navigate],
   );
 
   useEffect(() => {

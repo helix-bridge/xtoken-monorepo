@@ -15,5 +15,11 @@ jobs:
       - name: Install
         run: npm install
 
+      - name: Lint
+        run: npm run lint -w xtoken-ui
+
       - name: Test
-        run: npm run test:xtoken-ui
+        run: npm run test -w xtoken-ui
+
+      - name: Build
+        run: npm run build -w xtoken-ui

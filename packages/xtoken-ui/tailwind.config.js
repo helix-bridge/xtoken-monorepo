@@ -1,13 +1,6 @@
-import type { Config } from "tailwindcss";
-
-const config: Config = {
-  content: [
-    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/utils/**/*.{jsx,tsx}",
-    "./src/ui/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
-  ],
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: ["./index.html", "./src/**/*.{jsx,tsx}"],
   theme: {
     extend: {
       backgroundImage: {
@@ -95,5 +88,3 @@ const config: Config = {
   },
   plugins: [],
 };
-
-export default config;

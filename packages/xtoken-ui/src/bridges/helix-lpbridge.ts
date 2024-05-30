@@ -1,7 +1,7 @@
-import { BridgeConstructorArgs, GetFeeArgs, TransferOptions } from "@/types/bridge";
+import { BridgeConstructorArgs, GetFeeArgs, TransferOptions } from "../types/bridge";
 import { BaseBridge } from "./base";
 import { Address, TransactionReceipt } from "viem";
-import { HistoryRecord } from "@/types/graphql";
+import { HistoryRecord } from "../types/graphql";
 
 export class HelixLpBridge extends BaseBridge {
   private readonly prefix = BigInt("0x6878000000000000");
@@ -47,7 +47,7 @@ export class HelixLpBridge extends BaseBridge {
       const totalFee = options?.totalFee ?? 0n;
       const askEstimateGas = options?.askEstimateGas ?? false;
 
-      const abi = (await import("@/abi/lpbridge")).default;
+      const abi = (await import("../abi/lpbridge")).default;
       const address = this.contract.sourceAddress;
       const gas = this.getTxGasLimit();
 
@@ -91,7 +91,7 @@ export class HelixLpBridge extends BaseBridge {
     if (this.contract && this.publicClient && this.walletClient) {
       const hash = await this.walletClient.writeContract({
         address: this.contract.targetAddress,
-        abi: (await import("@/abi/lpbridge-sub2eth")).default,
+        abi: (await import("../abi/lpbridge-sub2eth")).default,
         functionName: "requestCancelIssuing",
         args: [
           BigInt(record.messageNonce || 0),
@@ -114,7 +114,7 @@ export class HelixLpBridge extends BaseBridge {
     if (this.contract && this.sourcePublicClient) {
       return this.sourcePublicClient.readContract({
         address: this.contract.sourceAddress,
-        abi: (await import("@/abi/lpbridge")).default,
+        abi: (await import("../abi/lpbridge")).default,
         functionName: "fee",
       }); // Native token
     }
@@ -124,7 +124,7 @@ export class HelixLpBridge extends BaseBridge {
     if (this.contract && this.walletClient && this.publicClient) {
       const transferId = record.id.split("-").slice(-1).join("") as Address;
 
-      const abi = (await import("@/abi/lpbridge")).default;
+      const abi = (await import("../abi/lpbridge")).default;
       const address = this.contract.sourceAddress;
       const gas = this.getTxGasLimit();
 
