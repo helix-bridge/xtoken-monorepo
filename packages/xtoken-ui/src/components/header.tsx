@@ -27,7 +27,9 @@ export default function Header() {
 
   return (
     <>
-      <div className="app-header px-medium fixed left-0 top-0 z-10 flex w-full items-center justify-between border-b border-b-white/25 bg-transparent lg:border-b-transparent lg:px-5">
+      <div
+        className={`app-header px-medium fixed left-0 top-0 z-10 flex w-full items-center justify-between border-b border-b-white/25 lg:border-b-transparent lg:px-5 ${pathname === "/" ? "backdrop-blur lg:bg-transparent lg:backdrop-blur-none" : "bg-background"}`}
+      >
         {/* Left */}
         <div className="flex items-center gap-5">
           <Link to="/">
