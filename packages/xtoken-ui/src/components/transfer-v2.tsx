@@ -311,7 +311,7 @@ function Component() {
                   {
                     children: <ThirdPartyBridge data={cross.thirdPartyBridges} />,
                     tab: BridgeTab.THIRD_PARTY,
-                    label: "Third Party Bridge",
+                    label: "Third Party Bridges",
                   },
                 ]
               : []),
