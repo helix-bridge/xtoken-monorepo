@@ -23,7 +23,7 @@ export default function TransferInformationSection({
       <TransferInformation
         estimatedTime={bridge ? { loading: false, value: bridge.formatEstimateTime() } : undefined}
         fee={{
-          warning: fee ? undefined : "Liquidity is not enough",
+          warning: fee ? undefined : "Failed to get message fee",
           loading: isLoadingFee,
           value: fee?.value,
           token: fee?.token,
