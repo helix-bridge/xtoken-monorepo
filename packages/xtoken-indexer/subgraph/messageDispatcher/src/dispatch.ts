@@ -20,7 +20,8 @@ function isMsglineContract(event: ethereum.Log): boolean {
     return event.address.toHexString() == '0x0000000005d961f950ada391c1511c92bbc64d9f' ||
         event.address.toHexString() == '0x00000000001523057a05d6293c1e5171ee33ee0a' ||
         event.address.toHexString() == '0xe46ed7594ffa6ad7c3b5232827ec2af8f94beb38'||
-        event.address.toHexString() == '0x9bec71b9c646653c6c73af8d4b7e5f84a5420005';
+        event.address.toHexString() == '0x9bec71b9c646653c6c73af8d4b7e5f84a5420005' ||
+        event.address.toHexString() == '0x13b2211a7ca45db2808f6db05557ce5347e3634e';
 }
 
 function isMsglineDispatchEvent(event: ethereum.Log): boolean {

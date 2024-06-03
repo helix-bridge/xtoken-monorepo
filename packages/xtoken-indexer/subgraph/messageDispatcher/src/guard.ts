@@ -11,7 +11,8 @@ const STATUS_CLAIMED = 4;
 
 function isMsglineContract(event: ethereum.Log): boolean {
     return event.address.toHexString() == '0x00000000001523057a05d6293c1e5171ee33ee0a' ||
-        event.address.toHexString() == '0x00000000046bc530804d66b6b64f7af69b4e4e81';
+        event.address.toHexString() == '0x00000000046bc530804d66b6b64f7af69b4e4e81' ||
+        event.address.toHexString() == '0x13b2211a7ca45db2808f6db05557ce5347e3634e';
 }
 
 function isMsglineDispatchEvent(event: ethereum.Log): boolean {
