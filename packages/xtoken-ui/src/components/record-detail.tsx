@@ -14,7 +14,7 @@ import PrettyAddress from "./pretty-address";
 import TokenTransfer from "./token-transfer";
 import TokenToReceive from "./token-to-receive";
 import TransactionValue from "./transaction-value";
-import TransactionFee from "./transaction-fee";
+import MessageFee from "./message-fee";
 import { RecordItemTitle } from "../ui/record-item-title";
 import Back from "./icons/back";
 import { useNavigate } from "react-router-dom";
@@ -131,8 +131,8 @@ export default function RecordDetail(props: Props) {
           <Item label="Value" tips="The amount to be transferred to the recipient with the cross-chain transaction.">
             <TransactionValue record={record?.historyRecordById} />
           </Item>
-          <Item label="Transaction Fee" tips="Amount paid for processing the cross-chain transaction.">
-            <TransactionFee record={record?.historyRecordById} />
+          <Item label="Message Fee" tips="Cross-chain message fees.">
+            <MessageFee record={record?.historyRecordById} />
           </Item>
 
           <Divider />
