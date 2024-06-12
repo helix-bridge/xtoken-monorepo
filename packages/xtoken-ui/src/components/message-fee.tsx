@@ -6,8 +6,8 @@ interface Props {
   record?: HistoryRecord | null;
 }
 
-export default function TransactionFee({ record }: Props) {
-  const token = getChainConfig(record?.fromChain)?.tokens.find(({ symbol }) => symbol === record?.feeToken);
+export default function MessageFee({ record }: Props) {
+  const token = getChainConfig(record?.fromChain)?.tokens.find((t) => t.type === "native");
 
   return (
     <span className="text-sm font-medium text-white">
