@@ -144,7 +144,7 @@ describe("xtoken tests", () => {
           await backing.registerOriginalToken(
               issuingChainId,
               originalTokenAddress,
-              xTokenAddress,
+              //xTokenAddress,
               dailyLimit
           );
           console.log("register original token finished, address:", xTokenAddress);

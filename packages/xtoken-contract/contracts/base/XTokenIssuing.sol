@@ -50,7 +50,7 @@ contract XTokenIssuing is XTokenBridgeBase {
         }
         xTokens[salt] = _xToken;
         originalTokens[_xToken] = OriginalTokenInfo(_originalChainId, _originalToken);
-        require(IXToken(_xToken).approve(address(this), type(uint256).max) == true, "approve xtoken failed");
+        require(IXToken(_xToken).approve(address(this), type(uint256).max), "approve xtoken failed");
         emit IssuingERC20Updated(_originalChainId, _originalToken, _xToken, oldxToken);
     }
 
@@ -67,14 +67,14 @@ contract XTokenIssuing is XTokenBridgeBase {
     function issue(
         uint256 _remoteChainId,
         address _originalToken,
-        address _originalSender,
+        address _sender,
         address _recipient,
         address _rollbackAccount,
         uint256 _amount,
         uint256 _nonce,
         bytes calldata _extData
     ) external calledByMessager(_remoteChainId) whenNotPaused {
-        bytes32 transferId = getTransferId(_nonce, _remoteChainId, block.chainid, _originalToken, _originalSender, _recipient, _rollbackAccount, _amount);
+        bytes32 transferId = getTransferId(_nonce, _remoteChainId, block.chainid, _originalToken, _sender, _recipient, _rollbackAccount, _amount);
         bytes32 salt = xTokenSalt(_remoteChainId, _originalToken);
         address xToken = xTokens[salt];
         require(xToken != address(0), "xToken not exist");
@@ -109,6 +109,8 @@ contract XTokenIssuing is XTokenBridgeBase {
         bytes memory _extParams
     ) external payable returns(bytes32 transferId) {
         require(_amount > 0, "can not transfer amount zero");
+        require(_recipient != address(0), "invalid recipient");
+        require(_rollbackAccount != address(0), "invalid rollbackAccount");
         OriginalTokenInfo memory originalInfo = originalTokens[_xToken];
         transferId = getTransferId(_nonce, originalInfo.chainId, block.chainid, originalInfo.token, msg.sender, _recipient, _rollbackAccount, _amount);
         _requestTransfer(transferId);
@@ -131,7 +133,7 @@ contract XTokenIssuing is XTokenBridgeBase {
 
     function encodeXUnlock(
         address _originalToken,
-        address _originalSender,
+        address _sender,
         address _recipient,
         address _rollbackAccount,
         uint256 _amount,
@@ -142,7 +144,7 @@ contract XTokenIssuing is XTokenBridgeBase {
             IXTokenBacking.unlock.selector,
             block.chainid,
             _originalToken,
-            _originalSender,
+            _sender,
             _recipient,
             _rollbackAccount,
             _amount,
@@ -158,7 +160,7 @@ contract XTokenIssuing is XTokenBridgeBase {
     function xRollbackLockAndXIssue(
         uint256 _originalChainId,
         address _originalToken,
-        address _originalSender,
+        address _sender,
         address _recipient,
         address _rollbackAccount,
         uint256 _amount,
@@ -166,23 +168,23 @@ contract XTokenIssuing is XTokenBridgeBase {
         bytes memory _extParams
     ) external payable {
         require(_rollbackAccount == msg.sender || dao == msg.sender, "invalid msgSender");
-        bytes32 transferId = getTransferId(_nonce, _originalChainId, block.chainid, _originalToken, _originalSender, _recipient, _rollbackAccount, _amount);
+        bytes32 transferId = getTransferId(_nonce, _originalChainId, block.chainid, _originalToken, _sender, _recipient, _rollbackAccount, _amount);
         _requestRefund(transferId);
         bytes memory handleUnlockForFailed = encodeRollbackLockAndXIssue(
             _originalToken,
-            _originalSender,
+            _sender,
             _recipient,
             _rollbackAccount,
             _amount,
             _nonce
         );
         _sendMessage(_originalChainId, handleUnlockForFailed, msg.value, _extParams);
-        emit RollbackLockAndXIssueRequested(transferId, _originalToken, _originalSender, _amount, msg.value);
+        emit RollbackLockAndXIssueRequested(transferId, _originalToken, _sender, _amount, msg.value);
     }
 
     function encodeRollbackLockAndXIssue(
         address _originalToken,
-        address _originalSender,
+        address _sender,
         address _recipient,
         address _rollbackAccount,
         uint256 _amount,
@@ -192,7 +194,7 @@ contract XTokenIssuing is XTokenBridgeBase {
             IXTokenBacking.rollbackLockAndXIssue.selector,
             block.chainid,
             _originalToken,
-            _originalSender,
+            _sender,
             _recipient,
             _rollbackAccount,
             _amount,
@@ -208,24 +210,24 @@ contract XTokenIssuing is XTokenBridgeBase {
     function rollbackBurnAndXUnlock(
         uint256 _originalChainId,
         address _originalToken,
-        address _originalSender,
+        address _sender,
         address _recipient,
         address _rollbackAccount,
         uint256 _amount,
         uint256 _nonce
     ) external calledByMessager(_originalChainId) whenNotPaused {
-        bytes32 transferId = getTransferId(_nonce, _originalChainId, block.chainid, _originalToken, _originalSender, _recipient, _rollbackAccount, _amount);
+        bytes32 transferId = getTransferId(_nonce, _originalChainId, block.chainid, _originalToken, _sender, _recipient, _rollbackAccount, _amount);
         _handleRefund(transferId);
 
         bytes32 salt = xTokenSalt(_originalChainId, _originalToken);
         address xToken = xTokens[salt];
         require(xToken != address(0), "xToken not exist");
 
-        IXToken(xToken).mint(_originalSender, _amount);
-        if (ERC165Checker.supportsInterface(_originalSender, type(IXTokenRollbackCallback).interfaceId)) {
-            IXTokenRollbackCallback(_originalSender).xTokenRollbackCallback(uint256(transferId), xToken, _amount);
+        IXToken(xToken).mint(_sender, _amount);
+        if (ERC165Checker.supportsInterface(_sender, type(IXTokenRollbackCallback).interfaceId)) {
+            IXTokenRollbackCallback(_sender).xTokenRollbackCallback(uint256(transferId), xToken, _amount);
         }
-        emit TokenRemintForFailed(transferId, _originalChainId, _originalToken, xToken, _originalSender, _amount);
+        emit TokenRemintForFailed(transferId, _originalChainId, _originalToken, xToken, _sender, _amount);
     }
 
     function xTokenSalt(

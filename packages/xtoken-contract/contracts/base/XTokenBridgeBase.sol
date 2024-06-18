@@ -27,10 +27,6 @@ contract XTokenBridgeBase is Initializable, Pausable, AccessController, DailyLim
 
     // the version is to issue different xTokens for different version of bridge.
     string public version;
-    // the protocol fee for each time user send transaction
-    uint256 public protocolFee;
-    // the reserved protocol fee in the contract
-    uint256 public protocolFeeReserved;
     address public guard;
     // remoteChainId => info
     mapping(uint256 => MessagerService) public messagers;
@@ -50,8 +46,6 @@ contract XTokenBridgeBase is Initializable, Pausable, AccessController, DailyLim
         _;
     }
 
-    receive() external payable {}
-
     function initialize(address _dao, string calldata _version) public initializer {
         _initialize(_dao);
         version = _version;
@@ -65,24 +59,16 @@ contract XTokenBridgeBase is Initializable, Pausable, AccessController, DailyLim
         _pause();
     }
 
-    function setProtocolFee(uint256 _protocolFee) external onlyOperator {
-        protocolFee = _protocolFee;
-    }
-
     function setSendService(uint256 _remoteChainId, address _remoteBridge, address _service) external onlyDao {
+        require(_service != address(0), "invalid service address");
         messagers[_remoteChainId].sendService = _service;
         ILowLevelMessageSender(_service).registerRemoteReceiver(_remoteChainId, _remoteBridge);
     }
 
     function setReceiveService(uint256 _remoteChainId, address _remoteBridge, address _service) external onlyDao {
+        require(_service != address(0), "invalid service address");
         messagers[_remoteChainId].receiveService = _service;
         ILowLevelMessageReceiver(_service).registerRemoteSender(_remoteChainId, _remoteBridge);
-    }
-
-    function withdrawProtocolFee(address _receiver, uint256 _amount) external onlyDao {
-        require(_amount <= protocolFeeReserved, "not enough fee");
-        protocolFeeReserved -= _amount;
-        TokenTransferHelper.safeTransferNative(_receiver, _amount);
     }
 
     function _sendMessage(
@@ -93,9 +79,7 @@ contract XTokenBridgeBase is Initializable, Pausable, AccessController, DailyLim
     ) internal whenNotPaused {
         MessagerService memory service = messagers[_remoteChainId];
         require(service.sendService != address(0), "bridge not configured");
-        uint256 _protocolFee = protocolFee;
-        protocolFeeReserved += _protocolFee;
-        ILowLevelMessageSender(service.sendService).sendMessage{value: _feePrepaid - _protocolFee}(
+        ILowLevelMessageSender(service.sendService).sendMessage{value: _feePrepaid}(
             _remoteChainId,
             _payload,
             _extParams
@@ -107,7 +91,7 @@ contract XTokenBridgeBase is Initializable, Pausable, AccessController, DailyLim
     // 2. burn and remote unlock
     // save the transferId if not exist, else revert
     function _requestTransfer(bytes32 _transferId) internal {
-        require(requestInfos[_transferId].isRequested == false, "request exist");
+        require(requestInfos[_transferId].isRequested == false, "this request already exists");
         requestInfos[_transferId].isRequested = true;
     }
 
@@ -116,8 +100,8 @@ contract XTokenBridgeBase is Initializable, Pausable, AccessController, DailyLim
     // 2. can't repeat
     function _handleRefund(bytes32 _transferId) internal {
         RequestInfo memory requestInfo = requestInfos[_transferId];
-        require(requestInfo.isRequested == true, "request not exist");
-        require(requestInfo.hasRefundForFailed == false, "request has been refund");
+        require(requestInfo.isRequested, "this request does not exist");
+        require(requestInfo.hasRefundForFailed == false, "this request has already been refunded");
         requestInfos[_transferId].hasRefundForFailed = true;
     }
 
@@ -147,12 +131,12 @@ contract XTokenBridgeBase is Initializable, Pausable, AccessController, DailyLim
         uint256 _sourceChainId,
         uint256 _targetChainId,
         address _originalToken,
-        address _originalSender,
+        address _sender,
         address _recipient,
         address _rollbackAccount,
         uint256 _amount
     ) public pure returns(bytes32) {
-        return keccak256(abi.encodePacked(_nonce, _sourceChainId, _targetChainId, _originalToken, _originalSender, _recipient, _rollbackAccount, _amount));
+        return keccak256(abi.encodePacked(_nonce, _sourceChainId, _targetChainId, _originalToken, _sender, _recipient, _rollbackAccount, _amount));
     }
 
     // settings
