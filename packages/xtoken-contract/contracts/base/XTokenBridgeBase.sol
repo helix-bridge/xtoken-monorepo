@@ -27,10 +27,6 @@ contract XTokenBridgeBase is Initializable, Pausable, AccessController, DailyLim
 
     // the version is to issue different xTokens for different version of bridge.
     string public version;
-    // the protocol fee for each time user send transaction
-    uint256 public protocolFee;
-    // the reserved protocol fee in the contract
-    uint256 public protocolFeeReserved;
     address public guard;
     // remoteChainId => info
     mapping(uint256 => MessagerService) public messagers;
@@ -63,10 +59,6 @@ contract XTokenBridgeBase is Initializable, Pausable, AccessController, DailyLim
         _pause();
     }
 
-    function setProtocolFee(uint256 _protocolFee) external onlyOperator {
-        protocolFee = _protocolFee;
-    }
-
     function setSendService(uint256 _remoteChainId, address _remoteBridge, address _service) external onlyDao {
         require(_service != address(0), "invalid service address");
         messagers[_remoteChainId].sendService = _service;
@@ -79,13 +71,6 @@ contract XTokenBridgeBase is Initializable, Pausable, AccessController, DailyLim
         ILowLevelMessageReceiver(_service).registerRemoteSender(_remoteChainId, _remoteBridge);
     }
 
-    function withdrawProtocolFee(address _receiver, uint256 _amount) external onlyDao {
-        require(_amount > 0, "invalid amount");
-        require(_amount <= protocolFeeReserved, "not enough fees");
-        protocolFeeReserved -= _amount;
-        TokenTransferHelper.safeTransferNative(_receiver, _amount);
-    }
-
     function _sendMessage(
         uint256 _remoteChainId,
         bytes memory _payload,
@@ -94,9 +79,7 @@ contract XTokenBridgeBase is Initializable, Pausable, AccessController, DailyLim
     ) internal whenNotPaused {
         MessagerService memory service = messagers[_remoteChainId];
         require(service.sendService != address(0), "bridge not configured");
-        uint256 _protocolFee = protocolFee;
-        protocolFeeReserved += _protocolFee;
-        ILowLevelMessageSender(service.sendService).sendMessage{value: _feePrepaid - _protocolFee}(
+        ILowLevelMessageSender(service.sendService).sendMessage{value: _feePrepaid}(
             _remoteChainId,
             _payload,
             _extParams
