@@ -119,7 +119,7 @@ function Component() {
     busy: isApproving,
     approve,
     refresh: refreshAllowance,
-  } = useAllowance(sourceChain, sourceToken, account.address, bridge?.getContract()?.sourceAddress);
+  } = useAllowance(sourceChain, sourceToken, account.address, bridge?.getApproveSpenderWhenTransfer());
 
   const [actionText, disableAction] = useMemo(() => {
     let text: "Connect Wallet" | "Switch Chain" | "Approve" | "Deposit" | "Withdraw" = "Deposit";

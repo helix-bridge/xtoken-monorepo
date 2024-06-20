@@ -138,6 +138,12 @@ export abstract class BaseBridge {
       : undefined;
   }
 
+  getApproveSpenderWhenTransfer() {
+    if (this.sourceToken && this.sourceToken.type !== "native") {
+      return this.convertor?.source ?? this.contract?.sourceAddress;
+    }
+  }
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async getFee(_?: GetFeeArgs): Promise<{ value: bigint; token: Token } | undefined> {
     return undefined;
