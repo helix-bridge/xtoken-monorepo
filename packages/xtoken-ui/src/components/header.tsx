@@ -17,7 +17,7 @@ interface NavigationConfig {
 const navigationsConfig: NavigationConfig[] = [
   { href: "/", label: "Bridge" },
   { href: "/explorer", label: "Explorer" },
-  { href: "https://assethub-bridge.darwinia.network", label: "Assethub", external: true },
+  { href: "https://paralink.darwinia.network", label: "Paralink", external: true },
   { href: "/wrap", label: "Wrap" },
 ];
 

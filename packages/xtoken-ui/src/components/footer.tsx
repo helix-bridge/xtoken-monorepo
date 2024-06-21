@@ -8,11 +8,11 @@ export default function Footer() {
       <div className="hidden items-center gap-5 lg:flex">
         <a
           className="text-xs font-semibold text-white/50 transition hover:text-white active:scale-95"
-          href="https://assethub-bridge.darwinia.network/"
+          href="https://paralink.darwinia.network"
           rel="noopener noreferrer"
           target="_blank"
         >
-          Assethub Bridge
+          Darwinia Paralink
         </a>
         <a
           className="text-xs font-semibold text-white/50 transition hover:text-white active:scale-95"
