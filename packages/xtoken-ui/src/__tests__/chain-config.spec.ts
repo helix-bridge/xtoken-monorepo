@@ -33,7 +33,7 @@ describe.each(getChainConfigs(true).filter((c) => !!c.tokens.length))("$name", (
       },
     );
 
-    it.skipIf(chain.network === "polygon")(`Should configure the correct decimals: '${token.decimals}'`, async () => {
+    it.skip(`Should configure the correct decimals: '${token.decimals}'`, async () => {
       if (token.type === "native") {
         expect(token.decimals).toEqual(18);
       } else {

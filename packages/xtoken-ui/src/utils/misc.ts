@@ -1,3 +1,4 @@
+import { ChainConfig } from "../types";
 import { RecordResult } from "../types/graphql";
 import { Address, Hex } from "viem";
 
@@ -40,8 +41,8 @@ export async function fetchMsglineFeeAndParams(
   sender: Address,
   payload: Hex,
 ) {
-   const endpoint = "https://api.msgport.xyz/ormp/fee"; // v2
-  //const endpoint = "https://msgport-api.darwinia.network/ormp/fee"; // v1
+  const endpoint = "https://api.msgport.xyz/ormp/fee"; // v2
+  // const endpoint = "https://msgport-api.darwinia.network/ormp/fee"; // v1
   // const endpoint = "http://g2.generic.darwinia.network:3378/ormp/fee";
   const feeData = await fetch(
     `${endpoint}?from_chain_id=${fromChainId}&to_chain_id=${toChainId}&payload=${payload}&from_address=${fromMessager}&to_address=${toMessager}&refund_address=${sender}`,
@@ -52,4 +53,15 @@ export async function fetchMsglineFeeAndParams(
     const extParams = feeJson.data.params as Hex;
     return { fee, extParams };
   }
+}
+
+export function getMessagerAddress(sourceChain: ChainConfig | undefined, targetChain: ChainConfig | undefined) {
+  let sourceMessager = sourceChain?.messager?.msgline;
+  let targetMessager = targetChain?.messager?.msgline;
+  if (sourceChain?.network === "darwinia-dvm" && targetChain?.network === "crab-dvm") {
+    sourceMessager = "0x65Be094765731F394bc6d9DF53bDF3376F1Fc8B0";
+  } else if (sourceChain?.network === "crab-dvm" && targetChain?.network === "darwinia-dvm") {
+    targetMessager = "0x65Be094765731F394bc6d9DF53bDF3376F1Fc8B0";
+  }
+  return { sourceMessager, targetMessager };
 }
