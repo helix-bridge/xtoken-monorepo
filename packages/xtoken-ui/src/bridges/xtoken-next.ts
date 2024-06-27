@@ -1,7 +1,7 @@
 import { BridgeConstructorArgs, GetFeeArgs, HistoryRecord, Token, TransferOptions } from "../types";
 import { BaseBridge } from "./base";
 import { Address, Hash, Hex, TransactionReceipt, encodeAbiParameters, encodeFunctionData, isAddressEqual } from "viem";
-import { fetchMsglineFeeAndParams } from "../utils";
+import { fetchMsglineFeeAndParams, getMessagerAddress } from "../utils";
 
 export class XTokenNextBridge extends BaseBridge {
   constructor(args: BridgeConstructorArgs) {
@@ -240,12 +240,13 @@ export class XTokenNextBridge extends BaseBridge {
   }
 
   private async _getTransferFeeAndParams(sender: Address, recipient: Address, amount: bigint, nonce: bigint) {
-    const sourceMessager = this.sourceChain?.messager?.msgline;
-    const targetMessager = this.targetChain?.messager?.msgline;
+    const { sourceMessager, targetMessager } = getMessagerAddress(this.sourceChain, this.targetChain);
 
     if (
       sourceMessager &&
       targetMessager &&
+      this.sourceChain &&
+      this.targetChain &&
       this.contract &&
       this.sourceToken &&
       this.targetToken &&
@@ -356,13 +357,14 @@ export class XTokenNextBridge extends BaseBridge {
 
   async refund(record: HistoryRecord): Promise<TransactionReceipt | undefined> {
     await this.validateNetwork("target");
-    const sourceMessager = this.sourceChain?.messager?.msgline;
-    const targetMessager = this.targetChain?.messager?.msgline;
     const nonce = record.messageNonce?.split("-").at(0);
+    const { sourceMessager, targetMessager } = getMessagerAddress(this.sourceChain, this.targetChain);
 
     if (
       sourceMessager &&
       targetMessager &&
+      this.sourceChain &&
+      this.targetChain &&
       this.contract &&
       this.publicClient &&
       this.walletClient &&

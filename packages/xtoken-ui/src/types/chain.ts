@@ -62,6 +62,6 @@ export interface ChainConfig extends Chain {
    */
   logo: string; // File name
   tokens: Token[];
-  messager?: { msgline?: Address };
+  messager?: { msgline?: Address }; // TODO: https://github.com/helix-bridge/xtoken-monorepo/issues/42
   hidden?: boolean;
 }
