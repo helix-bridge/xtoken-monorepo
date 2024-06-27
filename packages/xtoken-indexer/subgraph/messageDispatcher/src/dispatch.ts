@@ -76,7 +76,7 @@ export function handleCallResult(event: CallResult): void {
   entity.transactionHash = event.transaction.hash;
   if (!event.params.result) {
       entity.result = STATUS_FAILED;
-  } else if(entity.result < STATUS_DELIVERED_SUCCESSED && !usingGuard) {
+  } else if((!entity.result || entity.result < STATUS_DELIVERED_SUCCESSED) && !usingGuard) {
       entity.result = STATUS_DELIVERED_SUCCESSED;
   }
   entity.save();

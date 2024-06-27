@@ -7,9 +7,9 @@ dataSources:
     name: ormp
     network: $1
     source:
-      address: \"$3\"
+      address: \"$2\"
       abi: ormp
-      startBlock: $2
+      startBlock: $3
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -22,14 +22,17 @@ dataSources:
       eventHandlers:
         - event: MessageDispatched(indexed bytes32,bool)
           handler: handleMessageDispatched
-      file: ./src/dispatch.ts
-  - kind: ethereum/contract
-    name: MsglineMessager
-    network: $1
+      file: ./src/dispatch.ts" > subgraph.yaml
+}
+
+function messager() {
+echo "  - kind: ethereum/contract
+    name: $1 
+    network: $2
     source:
-      address: \"$4\"
+      address: \"$3\"
       abi: MsglineMessager
-      startBlock: $2
+      startBlock: $4
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -43,7 +46,7 @@ dataSources:
         - event: CallResult(uint256,bool)
           handler: handleCallResult
           receipt: true
-      file: ./src/dispatch.ts" > subgraph.yaml
+      file: ./src/dispatch.ts" >> subgraph.yaml
 }
 
 function guard() {
@@ -72,8 +75,4 @@ echo "  - kind: ethereum/contract
       file: ./src/guard.ts" >> subgraph.yaml
 }
 
-if [ $1 == 'dispatch' ]; then
-    dispatch $2 $3 $4 $5
-elif [ $1 == 'guard' ]; then
-    guard $2 $3 $4
-fi
+`$1 $2 $3 $4 $5`
