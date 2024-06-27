@@ -139,5 +139,5 @@ export const ethereumChain: ChainConfig = {
       category: "kton",
     },
   ],
-  messager: { msgline: "0x65Be094765731F394bc6d9DF53bDF3376F1Fc8B0" },
+  messager: { msgline: "0x02e5C0a36Fb0C83CCEBCD4D6177A7E223D6f0b7c" },
 };
