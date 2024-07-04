@@ -11,8 +11,8 @@ import "../interfaces/IXTokenCallback.sol";
 // When sending cross-chain transactions, the user locks the Token in the contract, and when the message reaches the target chain, the corresponding mapped asset (xToken) will be issued;
 // if the target chain fails to issue the xToken, the user can send a reverse message on the target chain to unlock the original asset.
 contract XTokenBacking is XTokenBridgeBase {
-    // save original token => xToken to prevent unregistered token lock
-    mapping(bytes32 => address) public originalToken2xTokens;
+    // save original token => bool to prevent unregistered token lock
+    mapping(bytes32 => bool) public registeredTokens;
 
     event TokenLocked(
         bytes32 transferId,
@@ -36,11 +36,10 @@ contract XTokenBacking is XTokenBridgeBase {
     function registerOriginalToken(
         uint256 _remoteChainId,
         address _originalToken,
-        address _xToken,
         uint256 _dailyLimit
     ) external onlyDao {
         bytes32 key = keccak256(abi.encodePacked(_remoteChainId, _originalToken));
-        originalToken2xTokens[key] = _xToken;
+        registeredTokens[key] = true;
         _setDailyLimit(_originalToken, _dailyLimit);
     }
 
@@ -60,7 +59,10 @@ contract XTokenBacking is XTokenBridgeBase {
         bytes memory _extParams
     ) external payable returns(bytes32 transferId) {
         bytes32 key = keccak256(abi.encodePacked(_remoteChainId, _originalToken));
-        require(originalToken2xTokens[key] != address(0), "token not registered");
+        require(registeredTokens[key], "token not registered");
+        require(_amount > 0, "invalid transfer amount");
+        require(_recipient != address(0), "invalid recipient");
+        require(_rollbackAccount != address(0), "invalid rollbackAccount");
 
         transferId = getTransferId(_nonce, block.chainid, _remoteChainId, _originalToken, msg.sender, _recipient, _rollbackAccount, _amount);
         _requestTransfer(transferId);
@@ -72,7 +74,7 @@ contract XTokenBacking is XTokenBridgeBase {
             address(this),
             _amount
         );
-        bytes memory issuxToken = encodeXIssue(
+        bytes memory issueXToken = encodeXIssue(
             _originalToken,
             msg.sender,
             _recipient,
@@ -81,24 +83,24 @@ contract XTokenBacking is XTokenBridgeBase {
             _nonce,
             _extData
         );
-        _sendMessage(_remoteChainId, issuxToken, msg.value, _extParams);
+        _sendMessage(_remoteChainId, issueXToken, msg.value, _extParams);
         emit TokenLocked(transferId, _nonce, _remoteChainId, _originalToken, msg.sender, _recipient, _rollbackAccount, _amount, msg.value, _extData);
     }
 
     function encodeXIssue(
         address _originalToken,
-        address _originalSender,
+        address _sender,
         address _recipient,
         address _rollbackAccount,
         uint256 _amount,
         uint256 _nonce,
         bytes calldata _extData
-    ) public view returns(bytes memory) {
+    ) internal view returns(bytes memory) {
         return abi.encodeWithSelector(
             IXTokenIssuing.issue.selector,
             block.chainid,
             _originalToken,
-            _originalSender,
+            _sender,
             _recipient,
             _rollbackAccount,
             _amount,
@@ -111,7 +113,7 @@ contract XTokenBacking is XTokenBridgeBase {
     function unlock(
         uint256 _remoteChainId,
         address _originalToken,
-        address _originSender,
+        address _sender,
         address _recipient,
         address _rollbackAccount,
         uint256 _amount,
@@ -120,7 +122,7 @@ contract XTokenBacking is XTokenBridgeBase {
     ) external calledByMessager(_remoteChainId) whenNotPaused {
         expendDailyLimit(_originalToken, _amount);
 
-        bytes32 transferId = getTransferId(_nonce, block.chainid, _remoteChainId, _originalToken, _originSender, _recipient, _rollbackAccount, _amount);
+        bytes32 transferId = getTransferId(_nonce, block.chainid, _remoteChainId, _originalToken, _sender, _recipient, _rollbackAccount, _amount);
         _handleTransfer(transferId);
 
         address _guard = guard;
@@ -140,7 +142,7 @@ contract XTokenBacking is XTokenBridgeBase {
     function xRollbackBurnAndXUnlock(
         uint256 _remoteChainId,
         address _originalToken,
-        address _originalSender,
+        address _sender,
         address _recipient,
         address _rollbackAccount,
         uint256 _amount,
@@ -148,23 +150,23 @@ contract XTokenBacking is XTokenBridgeBase {
         bytes memory _extParams
     ) external payable {
         require(_rollbackAccount == msg.sender || dao == msg.sender, "invalid msgSender");
-        bytes32 transferId = getTransferId(_nonce, block.chainid, _remoteChainId, _originalToken, _originalSender, _recipient, _rollbackAccount, _amount);
+        bytes32 transferId = getTransferId(_nonce, block.chainid, _remoteChainId, _originalToken, _sender, _recipient, _rollbackAccount, _amount);
         _requestRefund(transferId);
         bytes memory unlockForFailed = encodeRollbackBurnAndXUnlock(
             _originalToken,
-            _originalSender,
+            _sender,
             _recipient,
             _rollbackAccount,
             _amount,
             _nonce
         );
         _sendMessage(_remoteChainId, unlockForFailed, msg.value, _extParams);
-        emit RemoteIssuingFailure(transferId, _originalToken, _originalSender, _amount, msg.value);
+        emit RemoteIssuingFailure(transferId, _originalToken, _sender, _amount, msg.value);
     }
 
     function encodeRollbackBurnAndXUnlock(
         address _originalToken,
-        address _originalSender,
+        address _sender,
         address _recipient,
         address _rollbackAccount,
         uint256 _amount,
@@ -174,7 +176,7 @@ contract XTokenBacking is XTokenBridgeBase {
             IXTokenIssuing.rollbackBurnAndXUnlock.selector,
             block.chainid,
             _originalToken,
-            _originalSender,
+            _sender,
             _recipient,
             _rollbackAccount,
             _amount,
@@ -190,20 +192,20 @@ contract XTokenBacking is XTokenBridgeBase {
     function rollbackLockAndXIssue(
         uint256 _remoteChainId,
         address _originalToken,
-        address _originalSender,
+        address _sender,
         address _recipient,
         address _rollbackAccount,
         uint256 _amount,
         uint256 _nonce
     ) external calledByMessager(_remoteChainId) whenNotPaused {
-        bytes32 transferId = getTransferId(_nonce, block.chainid, _remoteChainId, _originalToken, _originalSender, _recipient, _rollbackAccount, _amount);
+        bytes32 transferId = getTransferId(_nonce, block.chainid, _remoteChainId, _originalToken, _sender, _recipient, _rollbackAccount, _amount);
         _handleRefund(transferId);
-        TokenTransferHelper.safeTransfer(_originalToken, _originalSender, _amount);
+        TokenTransferHelper.safeTransfer(_originalToken, _sender, _amount);
 
-        if (ERC165Checker.supportsInterface(_originalSender, type(IXTokenRollbackCallback).interfaceId)) {
-            IXTokenRollbackCallback(_originalSender).xTokenRollbackCallback(uint256(transferId), _originalToken, _amount);
+        if (ERC165Checker.supportsInterface(_sender, type(IXTokenRollbackCallback).interfaceId)) {
+            IXTokenRollbackCallback(_sender).xTokenRollbackCallback(uint256(transferId), _originalToken, _amount);
         }
-        emit TokenUnlockedForFailed(transferId, _remoteChainId, _originalToken, _originalSender, _amount);
+        emit TokenUnlockedForFailed(transferId, _remoteChainId, _originalToken, _sender, _amount);
     }
 }
  

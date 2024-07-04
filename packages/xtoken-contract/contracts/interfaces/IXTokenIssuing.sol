@@ -15,7 +15,7 @@ interface IXTokenIssuing {
     function rollbackBurnAndXUnlock(
         uint256 originalChainId,
         address originalToken,
-        address originalSender,
+        address sender,
         address recipient,
         address rollbackAccount,
         uint256 amount,
@@ -25,7 +25,7 @@ interface IXTokenIssuing {
     function issue(
         uint256 remoteChainId,
         address originalToken,
-        address originalSender,
+        address sender,
         address recipient,
         address rollbackAccount,
         uint256 amount,
