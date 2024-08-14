@@ -5,7 +5,8 @@ MsgportMessager: TSyvtuVJsqFwDH6cGazHyBNwMjdiFDVCji
 ProxyAdmin: TJHe5fHrG3STBN1msW77C2wJiNBW1SLtqV
 XTokenIssuing_logic: TWqBdSsVS9h49fmsxGgqoavqEaCFxATxnW
 XTokenIssuing_proxy: TWtdaDvBVt9KXTTtZi4obBYRCd6QaCwQZL
-RING: TJMmNd78XVr9ZfGHjfVhiDPSTRjXWFskB1
+RING: TXpHh528nJWoBj5qwCj2pwDBGSsGt7UPAn
+RINGAuthority: TT3oQtSBeAMFCynizaiKQ49XVNfYy7znQ3
 ```
 
 ## Koi (701)
