@@ -30,7 +30,10 @@ export function useTronWallet() {
       error: console.error,
     });
 
-    const connectListener = (address: string | null) => setTronWalletAddr(address ?? "");
+    const connectListener = async (address: string | null) => {
+      setTronWalletAddr(address ?? "");
+      setTronWalletChain((await adapter.network()).chainId);
+    };
     const disconnectListener = () => setTronWalletAddr("");
     const accountsChangedListener = (address: string | null) => setTronWalletAddr(address ?? "");
     const chainChangedListener = (chainInfo: unknown) =>
