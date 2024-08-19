@@ -1,4 +1,4 @@
-import { atom, useAtomValue, useSetAtom } from "jotai";
+import { atom, useSetAtom } from "jotai";
 import { useEffect } from "react";
 import { TronLinkAdapter } from "@tronweb3/tronwallet-adapter-tronlink";
 import { from } from "rxjs";
@@ -13,12 +13,13 @@ interface ChainInfo {
   chainId: string;
 }
 
+const adapter = new TronLinkAdapter();
+export const tronWalletAdapter = adapter;
+
 export const tronWalletAddrAtom = atom("");
 export const tronWalletChainAtom = atom(""); // e.g., ChainID.Mainnet
-export const tronWalletAdapterAtom = atom(new TronLinkAdapter());
 
 export function useTronWallet() {
-  const adapter = useAtomValue(tronWalletAdapterAtom);
   const setTronWalletAddr = useSetAtom(tronWalletAddrAtom);
   const setTronWalletChain = useSetAtom(tronWalletChainAtom);
 
@@ -50,7 +51,7 @@ export function useTronWallet() {
       adapter.off("chainChanged", chainChangedListener);
       adapter.off("error", errorListener);
     };
-  }, [adapter, setTronWalletChain, setTronWalletAddr]);
+  }, [setTronWalletChain, setTronWalletAddr]);
 
   return null;
 }
