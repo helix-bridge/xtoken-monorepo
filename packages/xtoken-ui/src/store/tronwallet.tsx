@@ -1,7 +1,7 @@
 import { atom, useSetAtom } from "jotai";
 import { useEffect } from "react";
 import { TronLinkAdapter } from "@tronweb3/tronwallet-adapter-tronlink";
-import { from } from "rxjs";
+import { from, Subscription } from "rxjs";
 
 export enum TronChainID {
   Mainnet = "0x2b6653dc",
@@ -24,11 +24,14 @@ export function useTronWallet() {
   const setTronWalletChain = useSetAtom(tronWalletChainAtom);
 
   useEffect(() => {
+    let sub$$: Subscription | undefined;
+    if (adapter.address) {
+      sub$$ = from(adapter.network()).subscribe({
+        next: (network) => setTronWalletChain(network.chainId),
+        error: console.error,
+      });
+    }
     setTronWalletAddr(adapter.address ?? "");
-    const sub$$ = from(adapter.network()).subscribe({
-      next: (network) => setTronWalletChain(network.chainId),
-      error: console.error,
-    });
 
     const connectListener = async (address: string | null) => {
       setTronWalletAddr(address ?? "");
@@ -47,7 +50,7 @@ export function useTronWallet() {
     adapter.on("error", errorListener);
 
     return () => {
-      sub$$.unsubscribe();
+      sub$$?.unsubscribe();
       adapter.off("connect", connectListener);
       adapter.off("disconnect", disconnectListener);
       adapter.off("accountsChanged", accountsChangedListener);
