@@ -1,0 +1,55 @@
+import { atom, useSetAtom } from "jotai";
+import { useEffect, useMemo } from "react";
+import { TronLinkAdapter } from "@tronweb3/tronwallet-adapter-tronlink";
+import { from } from "rxjs";
+
+export enum TronChainID {
+  Mainnet = "0x2b6653dc",
+  Shasta = "0x94a9059e",
+  Nile = "0xcd8690dc",
+}
+
+interface ChainInfo {
+  chainId: string;
+}
+
+export const tronWalletAddrAtom = atom("");
+export const tronWalletChainAtom = atom(""); // e.g., ChainID.Mainnet
+
+export function useTronWallet() {
+  const adapter = useMemo(() => new TronLinkAdapter(), []);
+  const setTronWalletAddr = useSetAtom(tronWalletAddrAtom);
+  const setTronWalletChain = useSetAtom(tronWalletChainAtom);
+
+  useEffect(() => {
+    setTronWalletAddr(adapter.address ?? "");
+    const sub$$ = from(adapter.network()).subscribe({
+      next: (network) => setTronWalletChain(network.chainId),
+      error: console.error,
+    });
+
+    const connectListener = (address: string | null) => setTronWalletAddr(address ?? "");
+    const disconnectListener = () => setTronWalletAddr("");
+    const accountsChangedListener = (address: string | null) => setTronWalletAddr(address ?? "");
+    const chainChangedListener = (chainInfo: unknown) =>
+      setTronWalletChain((chainInfo as ChainInfo | null)?.chainId ?? "");
+    const errorListener = console.error;
+
+    adapter.on("connect", connectListener);
+    adapter.on("disconnect", disconnectListener);
+    adapter.on("accountsChanged", accountsChangedListener);
+    adapter.on("chainChanged", chainChangedListener);
+    adapter.on("error", errorListener);
+
+    return () => {
+      sub$$.unsubscribe();
+      adapter.off("connect", connectListener);
+      adapter.off("disconnect", disconnectListener);
+      adapter.off("accountsChanged", accountsChangedListener);
+      adapter.off("chainChanged", chainChangedListener);
+      adapter.off("error", errorListener);
+    };
+  }, [adapter, setTronWalletChain, setTronWalletAddr]);
+
+  return null;
+}
