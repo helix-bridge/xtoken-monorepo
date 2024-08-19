@@ -12,7 +12,7 @@ export function useHistory(page: number, enabled?: boolean) {
     refetch,
   } = useQuery<HistoryResData, HistoryReqParams>(GQL_GET_HISTORY, {
     variables: { sender: account.address, row: 10, page },
-    fetchPolicy: "no-cache",
+    fetchPolicy: "cache-and-network",
     pollInterval: enabled ? 3000 : 0,
     skip: !enabled,
   });
