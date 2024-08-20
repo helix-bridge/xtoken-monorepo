@@ -94,11 +94,6 @@ export function getChainConfig(chainIdOrNetwork?: ChainID | Network | null): Cha
   }
 }
 
-/**
- * Get chains. Please note that the Tron network is excluded here.
- * @param askAll Mainnet and Testnet
- * @returns Chains
- */
 export function getChainConfigs(askAll?: boolean) {
   const all = [
     arbitrumChain,
@@ -121,6 +116,7 @@ export function getChainConfigs(askAll?: boolean) {
     gnosisChain,
     pangoroChain,
     koiChain,
+    tronShastaChain,
   ].sort((a, b) => a.name.localeCompare(b.name));
 
   if (askAll) {
@@ -130,4 +126,8 @@ export function getChainConfigs(askAll?: boolean) {
   } else {
     return all.filter((c) => !c.hidden && !!c.testnet);
   }
+}
+
+export function isTronChain(chain: { id: ChainID }) {
+  return [ChainID.TRON_MAINNET, ChainID.TRON_SHASTA].includes(chain.id);
 }

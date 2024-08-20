@@ -1,4 +1,4 @@
-import { getChainConfig, getChainConfigs, getChainLogoSrc } from "../utils";
+import { getChainConfig, getChainConfigs, getChainLogoSrc, isTronChain } from "../utils";
 import {
   FloatingPortal,
   Placement,
@@ -11,6 +11,8 @@ import {
 } from "@floating-ui/react";
 import { useMemo, useState } from "react";
 import { useAccount, useNetwork, useSwitchNetwork } from "wagmi";
+import { tronWalletAdapter } from "../store/tronwallet";
+import { toHex } from "viem";
 
 const chainOptions = getChainConfigs();
 
@@ -76,7 +78,18 @@ export default function ChainSwitch({ placement }: { placement?: Placement }) {
                   className="gap-medium px-large py-medium flex items-center transition-colors hover:bg-white/5 disabled:bg-white/10"
                   disabled={option.id === chain?.id}
                   key={option.id}
-                  onClick={() => switchNetwork?.(option.id)}
+                  onClick={async () => {
+                    if (isTronChain(option)) {
+                      try {
+                        await tronWalletAdapter.connect();
+                        await tronWalletAdapter.switchChain(toHex(option.id));
+                      } catch (err) {
+                        console.error(err);
+                      }
+                    } else {
+                      switchNetwork?.(option.id);
+                    }
+                  }}
                 >
                   <img alt="Chain" width={20} height={20} src={getChainLogoSrc(option.logo)} />
                   <span className="text-sm font-bold text-white">{option.name}</span>

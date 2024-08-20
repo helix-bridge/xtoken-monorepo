@@ -4,14 +4,16 @@ import { imTokenWallet, okxWallet, safeWallet, talismanWallet } from "@rainbow-m
 import { PropsWithChildren } from "react";
 import { WagmiConfig, configureChains, createConfig } from "wagmi";
 import { publicProvider } from "wagmi/providers/public";
-import { getChainConfigs } from "../utils";
+import { getChainConfigs, isTronChain } from "../utils";
 
 const projectId = import.meta.env.VITE_WALLET_CONNECT_ID || "";
 const appName = "Darwinia Bridge";
 
 const { chains, publicClient } = configureChains(
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  getChainConfigs().map(({ tokens, ...chain }) => chain),
+  getChainConfigs()
+    .filter((c) => !isTronChain(c))
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    .map(({ tokens, ...chain }) => chain),
   [publicProvider()],
 );
 

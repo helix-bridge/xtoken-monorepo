@@ -1,4 +1,4 @@
-import { getChainConfigs } from "../utils";
+import { getChainConfigs, isTronChain } from "../utils";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPublicClient, getContract, http } from "viem";
 import { forkJoin, map, of, merge, mergeAll } from "rxjs";
@@ -6,7 +6,7 @@ import abi from "../abi/erc20";
 import { ChainConfig, Token } from "../types";
 import { useAccount } from "wagmi";
 
-const chains = getChainConfigs().filter((c) => c.network !== "polygon");
+const chains = getChainConfigs().filter((c) => c.network !== "polygon" && !isTronChain(c));
 
 interface BalanceAll {
   chain: ChainConfig;
