@@ -17,3 +17,5 @@ export * from "./zksync";
 export * from "./zksync-sepolia";
 export * from "./gnosis";
 export * from "./pangoro";
+export * from "./koi";
+export * from "./tron-shasta";

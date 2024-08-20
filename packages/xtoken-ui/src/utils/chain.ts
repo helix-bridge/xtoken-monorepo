@@ -6,6 +6,7 @@ import {
   darwiniaChain,
   ethereumChain,
   gnosisChain,
+  koiChain,
   lineaChain,
   mantleChain,
   pangolinChain,
@@ -14,6 +15,7 @@ import {
   polygonZkEvmChain,
   scrollChain,
   sepoliaChain,
+  tronShastaChain,
   zksyncChain,
   zksyncSepoliaChain,
 } from "../config/chains";
@@ -81,11 +83,22 @@ export function getChainConfig(chainIdOrNetwork?: ChainID | Network | null): Cha
     case ChainID.PANGORO_TANSSI:
     case "pangoro-dvm":
       return pangoroChain;
+    case ChainID.TRON_SHASTA:
+    case "tron-shasta":
+      return tronShastaChain;
+    case ChainID.KOI:
+    case "koi":
+      return koiChain;
     default:
       return;
   }
 }
 
+/**
+ * Get chains. Please note that the Tron network is excluded here.
+ * @param askAll Mainnet and Testnet
+ * @returns Chains
+ */
 export function getChainConfigs(askAll?: boolean) {
   const all = [
     arbitrumChain,
@@ -107,6 +120,7 @@ export function getChainConfigs(askAll?: boolean) {
     optimismChain,
     gnosisChain,
     pangoroChain,
+    koiChain,
   ].sort((a, b) => a.name.localeCompare(b.name));
 
   if (askAll) {
