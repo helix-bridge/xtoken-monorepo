@@ -33,13 +33,16 @@ describe.each(getChainConfigs(true).filter((c) => !!c.tokens.length))("$name", (
       },
     );
 
-    it.skip(`Should configure the correct decimals: '${token.decimals}'`, async () => {
-      if (token.type === "native") {
-        expect(token.decimals).toEqual(18);
-      } else {
-        const decimals = await publicClient.readContract({ address: token.address, abi, functionName: "decimals" });
-        expect(token.decimals).toEqual(decimals);
-      }
-    });
+    it.skipIf(token.cross.some((c) => c.onlyThirdParty))(
+      `Should configure the correct decimals: '${token.decimals}'`,
+      async () => {
+        if (token.type === "native") {
+          expect(token.decimals).toEqual(18);
+        } else {
+          const decimals = await publicClient.readContract({ address: token.address, abi, functionName: "decimals" });
+          expect(token.decimals).toEqual(decimals);
+        }
+      },
+    );
   });
 });
