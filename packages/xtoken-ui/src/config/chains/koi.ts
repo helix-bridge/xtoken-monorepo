@@ -49,8 +49,8 @@ export const koiChain: ChainConfig = {
     },
     {
       decimals: 18,
-      symbol: "WKRING",
-      name: "WKRING",
+      symbol: "RING",
+      name: "RING",
       type: "erc20",
       address: "0xec8406f4e6B1b853E50c53872648b7BD5e4a7b8a",
       outer: "0xec8406f4e6B1b853E50c53872648b7BD5e4a7b8a",
