@@ -1,6 +1,7 @@
 import { ChainConfig } from "../types";
 import { RecordResult } from "../types/graphql";
 import { Address, Hex } from "viem";
+import { isTronChain } from "./chain";
 
 export function parseRecordResult(result: RecordResult) {
   switch (result) {
@@ -64,4 +65,15 @@ export function getMessagerAddress(sourceChain: ChainConfig | undefined, targetC
     targetMessager = "0x65Be094765731F394bc6d9DF53bDF3376F1Fc8B0";
   }
   return { sourceMessager, targetMessager };
+}
+
+export function getExplorerTxUrl(chain?: ChainConfig | null, tx?: string | null) {
+  if (chain && tx) {
+    if (isTronChain(chain)) {
+      return new URL(`/#/transaction/${tx.startsWith("0x") ? tx.slice(2) : tx}`, chain.blockExplorers?.default.url)
+        .href;
+    }
+    return new URL(`tx/${tx}`, chain.blockExplorers?.default.url).href;
+  }
+  return "#";
 }
