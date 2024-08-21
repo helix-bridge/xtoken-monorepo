@@ -2,6 +2,7 @@ import { ChainConfig } from "../types";
 import { RecordResult } from "../types/graphql";
 import { Address, Hex } from "viem";
 import { isTronChain } from "./chain";
+import TronWeb from "tronweb";
 
 export function parseRecordResult(result: RecordResult) {
   switch (result) {
@@ -76,4 +77,12 @@ export function getExplorerTxUrl(chain?: ChainConfig | null, tx?: string | null)
     return new URL(`tx/${tx}`, chain.blockExplorers?.default.url).href;
   }
   return "#";
+}
+
+export function getAddressForChain(chain?: ChainConfig, address?: string) {
+  if (chain && isTronChain(chain) && address?.startsWith("0x")) {
+    const tronweb = new TronWeb(chain.fullNode, chain.solidityNode, chain.eventServer);
+    return tronweb.address.fromHex(address);
+  }
+  return address;
 }

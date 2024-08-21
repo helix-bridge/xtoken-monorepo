@@ -71,4 +71,9 @@ export interface ChainConfig extends Chain {
   tokens: Token[];
   messager?: { msgline?: Address }; // TODO: https://github.com/helix-bridge/xtoken-monorepo/issues/42
   hidden?: boolean;
+
+  // Tron
+  fullNode?: string;
+  solidityNode?: string;
+  eventServer?: string;
 }

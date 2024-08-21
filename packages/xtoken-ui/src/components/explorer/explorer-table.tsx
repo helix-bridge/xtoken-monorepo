@@ -3,6 +3,7 @@ import Table, { ColumnType } from "./table";
 import {
   formatBalance,
   formatTime,
+  getAddressForChain,
   getChainConfig,
   getChainLogoSrc,
   getTokenLogoSrc,
@@ -63,12 +64,20 @@ function getColumns(isLg = false): ColumnType<TData>[] {
     {
       title: "Sender",
       key: "sender",
-      render: (row) => (row.sender ? <PrettyAddress address={row.sender} copyable forceShort /> : <span>-</span>),
+      render: (row) => {
+        const chain = getChainConfig(row.fromChain);
+        const address = getAddressForChain(chain, row.sender);
+        return address ? <PrettyAddress address={address} copyable forceShort /> : <span>-</span>;
+      },
     },
     {
       title: "Recipient",
       key: "recipient",
-      render: (row) => (row.recipient ? <PrettyAddress address={row.recipient} copyable forceShort /> : <span>-</span>),
+      render: (row) => {
+        const chain = getChainConfig(row.toChain);
+        const address = getAddressForChain(chain, row.recipient);
+        return address ? <PrettyAddress address={address} copyable forceShort /> : <span>-</span>;
+      },
     },
     {
       title: "Amount",

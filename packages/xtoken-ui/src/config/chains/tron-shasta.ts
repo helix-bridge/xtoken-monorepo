@@ -62,4 +62,8 @@ export const tronShastaChain: ChainConfig = {
     },
   ],
   messager: { msgline: "TSyvtuVJsqFwDH6cGazHyBNwMjdiFDVCji" as Address },
+
+  fullNode: "https://api.shasta.trongrid.io",
+  solidityNode: "https://api.shasta.trongrid.io",
+  eventServer: "https://api.shasta.trongrid.io",
 };

@@ -7,4 +7,11 @@ import react from "@vitejs/plugin-react-swc";
 export default defineConfig({
   base: "",
   plugins: [react()],
+  resolve: {
+    alias: {
+      crypto: "crypto-browserify",
+      buffer: "buffer/",
+      stream: "readable-stream",
+    },
+  },
 });
