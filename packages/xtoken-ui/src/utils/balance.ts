@@ -12,7 +12,7 @@ export function formatBalance(value: bigint, decimals = 18, options?: { precisio
   let _decimals = Number(`0.${d || 0}`).toFixed(precision);
 
   if (!keepZero) {
-    _decimals = Number(_decimals).toString();
+    _decimals = _decimals.replace(/(\.\d*?)0+$/, "$1").replace(/\.$/, "");
   }
 
   return `${_integers}${_decimals.slice(1)}`;
