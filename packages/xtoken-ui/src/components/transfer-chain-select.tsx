@@ -22,13 +22,17 @@ export default function TransferChainSelect({
   onTokenChange,
 }: Props) {
   const [search, setSearch] = useState("");
+  const [isChainSelectorOpen, setIsChainSelectorOpen] = useState(false);
+  const [isTokenSelectorOpen, setIsTokenSelectorOpen] = useState(false);
 
   return (
     <div className="flex items-center">
       <Select
         placeholder={<span className="text-base font-bold text-slate-400">Select a chain</span>}
         label={
-          <div className="gap-medium flex items-center transition-transform group-hover:translate-x-2">
+          <div
+            className={`gap-medium flex items-center transition-transform group-hover:translate-x-2 ${isChainSelectorOpen ? "translate-x-2" : ""}`}
+          >
             <img
               width={32}
               height={32}
@@ -39,10 +43,12 @@ export default function TransferChainSelect({
             <span className="truncate text-base font-bold text-white">{chain.name}</span>
           </div>
         }
-        labelClassName="flex items-center justify-between gap-small w-full mx-medium transition-colors hover:bg-white/5 group py-small rounded-[0.625rem]"
+        labelClassName={`flex items-center justify-between gap-small w-full mx-medium transition-colors hover:bg-white/5 group py-small rounded-[0.625rem] ${isChainSelectorOpen ? "bg-white/5" : ""}`}
         childClassName="py-medium rounded-large bg-[#00141D] border border-white/20 flex flex-col gap-2"
         offsetSize={6}
         sameWidth
+        isOpen={isChainSelectorOpen}
+        onOpenChange={setIsChainSelectorOpen}
       >
         {chainOptions.length ? (
           <>
@@ -101,6 +107,8 @@ export default function TransferChainSelect({
           childClassName="flex flex-col gap-small p-small rounded-[0.625rem] bg-[#00141D] border border-white/20"
           offsetSize={12}
           sameWidth
+          isOpen={isTokenSelectorOpen}
+          onOpenChange={setIsTokenSelectorOpen}
         >
           {tokenOptions.map((option) => (
             <TokenOption key={option.symbol} selected={token} option={option} onSelect={onTokenChange} />

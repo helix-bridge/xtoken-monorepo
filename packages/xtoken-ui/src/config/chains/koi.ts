@@ -6,7 +6,7 @@ export const koiChain: ChainConfig = {
    */
   id: ChainID.KOI,
   network: "koi",
-  name: "Koi",
+  name: "Koi Testnet",
   nativeCurrency: {
     name: "KRING",
     symbol: "KRING",
@@ -37,30 +37,18 @@ export const koiChain: ChainConfig = {
   tokens: [
     {
       decimals: 18,
-      symbol: "KRING",
-      name: "KRING",
+      symbol: "RING",
+      name: "RING",
       type: "native",
       address: "0x0000000000000000000000000000000000000000",
       outer: "0x0000000000000000000000000000000000000000",
-      inner: "0x0000000000000000000000000000000000000000", // TODO
-      logo: "ring.png",
-      cross: [],
-      category: "ring",
-    },
-    {
-      decimals: 18,
-      symbol: "RING",
-      name: "RING",
-      type: "erc20",
-      address: "0xec8406f4e6B1b853E50c53872648b7BD5e4a7b8a",
-      outer: "0xec8406f4e6B1b853E50c53872648b7BD5e4a7b8a",
       inner: "0xec8406f4e6B1b853E50c53872648b7BD5e4a7b8a",
       logo: "ring.png",
       cross: [
         {
           target: { network: "tron-shasta", symbol: "RING" },
           bridge: { category: "xtoken-koi-tron" },
-          action: "redeem",
+          action: "issue",
         },
       ],
       category: "ring",

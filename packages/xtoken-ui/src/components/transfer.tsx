@@ -2,9 +2,13 @@ import { useCallback, useDeferredValue, useEffect, useMemo, useRef, useState } f
 import TransferTokenSection from "./transfer-token-section";
 import {
   bridgeFactory,
+  convertAddressToTron,
+  getAddressForChain,
   getSourceTokenOptions,
   getTargetTokenOptions,
   getTokenOptions,
+  isTronChain,
+  isTxSuccess,
   notifyError,
   notifyTransaction,
 } from "../utils";
@@ -12,10 +16,9 @@ import TransferChainSection from "./transfer-chain-section";
 import TransferAmountSection from "./transfer-amount-section";
 import TransferInformationSection from "./transfer-information-section";
 import Button from "../ui/button";
-import { useAllowance, useApp, useBalance, useDailyLimit, useMessageFee, useTransferV2 } from "../hooks";
-import { useAccount, useNetwork, usePublicClient, useSwitchNetwork, useWalletClient } from "wagmi";
-import TransferProviderV2 from "../providers/transfer-provider-v2";
-import { useConnectModal } from "@rainbow-me/rainbowkit";
+import { useAllowance, useApp, useBalance, useDailyLimit, useMessageFee, useTransfer, useWallet } from "../hooks";
+import { usePublicClient, useWalletClient } from "wagmi";
+import TransferProvider from "../providers/transfer-provider";
 import { Address } from "viem";
 import TransferModalV2 from "./modals/transfer-modal-v2";
 import BridgeTabs from "./bridge-tabs";
@@ -54,32 +57,46 @@ function Component() {
     handleTargetChainChange,
     handleTargetTokenChange,
     handleSwitch,
-  } = useTransferV2();
+  } = useTransfer();
   const deferredAmount = useDeferredValue(amount);
 
-  const account = useAccount();
-  const { chain } = useNetwork();
   const publicClient = usePublicClient();
   const { data: walletClient } = useWalletClient();
-  const { switchNetwork } = useSwitchNetwork();
-  const { openConnectModal } = useConnectModal();
+  const { addressForSelectedSourceChain, needSwitchChain, connectWallet, switchChain } = useWallet();
 
   const [recipient, setRecipient] = useState<Recipient>({
-    input: account.address ?? "",
-    value: account.address,
+    input:
+      addressForSelectedSourceChain && isTronChain(targetChain)
+        ? convertAddressToTron(addressForSelectedSourceChain)
+        : addressForSelectedSourceChain ?? "",
+    value: addressForSelectedSourceChain,
     alert: undefined,
   });
   const [expandRecipient, setExpandRecipient] = useState(false);
   const isCustomRecipient = useRef(false); // After input recipient manually, set to `true`
   useEffect(() => {
     if (!isCustomRecipient.current) {
-      if (account.address) {
-        setRecipient({ input: account.address, value: account.address, alert: undefined });
+      if (addressForSelectedSourceChain) {
+        setRecipient({
+          input:
+            addressForSelectedSourceChain && isTronChain(targetChain)
+              ? convertAddressToTron(addressForSelectedSourceChain)
+              : addressForSelectedSourceChain,
+          value: addressForSelectedSourceChain,
+          alert: undefined,
+        });
       } else {
         setRecipient({ input: "", value: undefined, alert: undefined });
       }
+    } else {
+      setRecipient((prev) => {
+        if (prev.input && prev.value) {
+          return { ...prev, input: getAddressForChain(targetChain, prev.input) ?? prev.input };
+        }
+        return prev;
+      });
     }
-  }, [account.address]);
+  }, [addressForSelectedSourceChain, targetChain]);
   const handleRecipientChange = useCallback((value: Recipient) => {
     setRecipient(value);
     isCustomRecipient.current = true;
@@ -90,7 +107,7 @@ function Component() {
     balance,
     loading: loadingBalance,
     refresh: refreshBalance,
-  } = useBalance(sourceChain, sourceToken, account.address);
+  } = useBalance(sourceChain, sourceToken, addressForSelectedSourceChain);
 
   const [bridge, cross] = useMemo(() => {
     const cross = sourceToken.cross.find(
@@ -111,7 +128,12 @@ function Component() {
   }, [publicClient, sourceChain, sourceToken, targetChain, targetToken, walletClient]);
 
   const { loading: loadingDailyLimit, dailyLimit } = useDailyLimit(bridge);
-  const { loading: loadingFee, fee } = useMessageFee(bridge, account.address, account.address, deferredAmount.value);
+  const { loading: loadingFee, fee } = useMessageFee(
+    bridge,
+    addressForSelectedSourceChain,
+    addressForSelectedSourceChain,
+    deferredAmount.value,
+  );
 
   const {
     allowance,
@@ -119,55 +141,53 @@ function Component() {
     busy: isApproving,
     approve,
     refresh: refreshAllowance,
-  } = useAllowance(sourceChain, sourceToken, account.address, bridge?.getApproveSpenderWhenTransfer());
+  } = useAllowance(sourceChain, sourceToken, addressForSelectedSourceChain, bridge?.getApproveSpenderWhenTransfer());
 
   const [actionText, disableAction] = useMemo(() => {
     let text: "Connect Wallet" | "Switch Chain" | "Approve" | "Deposit" | "Withdraw" = "Deposit";
     let disabled = false;
 
-    if (chain?.id) {
-      if (chain.id !== sourceChain.id) {
-        text = "Switch Chain";
-        disabled = false;
-      } else if (
-        allowance < (fee?.token.type === "native" ? deferredAmount.value : deferredAmount.value + (fee?.value ?? 0n))
-      ) {
-        text = "Approve";
-        disabled = false;
-      } else {
-        text = cross?.action === "redeem" ? "Withdraw" : "Deposit";
-        disabled =
-          loadingAllowance ||
-          fee?.value === undefined ||
-          !deferredAmount.input ||
-          !deferredAmount.valid ||
-          !recipient.value ||
-          !!recipient.alert;
-      }
-    } else {
+    if (!addressForSelectedSourceChain) {
       text = "Connect Wallet";
       disabled = false;
+    } else if (needSwitchChain(sourceChain)) {
+      text = "Switch Chain";
+      disabled = false;
+    } else if (
+      allowance < (fee?.token.type === "native" ? deferredAmount.value : deferredAmount.value + (fee?.value ?? 0n))
+    ) {
+      text = "Approve";
+      disabled = false;
+    } else {
+      text = cross?.action === "redeem" ? "Withdraw" : "Deposit";
+      disabled =
+        loadingAllowance ||
+        fee?.value === undefined ||
+        !deferredAmount.input ||
+        !deferredAmount.valid ||
+        !recipient.value ||
+        !!recipient.alert;
     }
 
     return [text, disabled];
   }, [
-    cross,
+    addressForSelectedSourceChain,
     allowance,
-    loadingAllowance,
-    chain?.id,
+    cross?.action,
     deferredAmount,
-    sourceChain.id,
-    fee?.value,
     fee?.token.type,
-    recipient.alert,
-    recipient.value,
+    fee?.value,
+    loadingAllowance,
+    needSwitchChain,
+    recipient,
+    sourceChain,
   ]);
 
   const handleAction = useCallback(async () => {
     if (actionText === "Connect Wallet") {
-      openConnectModal?.();
+      connectWallet(sourceChain);
     } else if (actionText === "Switch Chain") {
-      switchNetwork?.(sourceChain.id);
+      switchChain(sourceChain);
     } else if (actionText === "Approve") {
       const receipt = await approve(
         fee?.token.type === "native" ? deferredAmount.value : deferredAmount.value + (fee?.value ?? 0n),
@@ -176,29 +196,28 @@ function Component() {
     } else if (actionText === "Deposit" || actionText === "Withdraw") {
       setIsOpen(true);
     }
-  }, [
-    actionText,
-    sourceChain,
-    deferredAmount.value,
-    fee?.value,
-    fee?.token.type,
-    approve,
-    openConnectModal,
-    switchNetwork,
-  ]);
+  }, [actionText, approve, connectWallet, deferredAmount.value, fee?.token.type, fee?.value, sourceChain, switchChain]);
 
   const handleTransfer = useCallback(async () => {
-    if (bridge && account.address && recipient.value) {
+    const sender = addressForSelectedSourceChain;
+    if (bridge && sender && recipient.value) {
       try {
         setIsTransfering(true);
-        const receipt = await bridge.transfer(account.address, recipient.value, deferredAmount.value, {
+        const receipt = await bridge.transfer(sender, recipient.value, deferredAmount.value, {
           totalFee: fee?.value,
         });
         notifyTransaction(receipt, sourceChain, "Transfer");
         setIsTransfering(false);
-        if (receipt?.status === "success") {
+        if (isTxSuccess(receipt) && receipt) {
+          const requestTxHash = ("status" in receipt ? receipt.transactionHash : `0x${receipt.txID}`) as Address;
           setAmount({ input: "", valid: true, value: 0n, alert: "" });
-          setHistoryDetails({ hash: receipt.transactionHash });
+          setHistoryDetails({
+            requestTxHash,
+            fromChain: sourceChain?.network,
+            toChain: targetChain?.network,
+            sendToken: bridge.getSourceToken()?.symbol,
+            sendAmount: deferredAmount.value.toString(),
+          });
           setIsOpen(false);
           setIsHistoryOpen(true);
           refreshBalance();
@@ -212,18 +231,19 @@ function Component() {
       }
     }
   }, [
-    account.address,
-    recipient.value,
+    addressForSelectedSourceChain,
     bridge,
-    sourceChain,
-    fee?.value,
     deferredAmount.value,
-    setAmount,
-    refreshBalance,
+    fee?.value,
+    recipient.value,
     refreshAllowance,
-    updateBalanceAll,
-    setIsHistoryOpen,
+    refreshBalance,
+    setAmount,
     setHistoryDetails,
+    setIsHistoryOpen,
+    sourceChain,
+    updateBalanceAll,
+    targetChain?.network,
   ]);
 
   return (
@@ -233,7 +253,7 @@ function Component() {
         <TransferChainSection
           recipient={recipient}
           expandRecipient={expandRecipient}
-          recipientOptions={account.address ? [account.address] : []}
+          recipientOptions={addressForSelectedSourceChain ? [addressForSelectedSourceChain] : []}
           sourceChain={sourceChain}
           targetChain={targetChain}
           sourceToken={sourceToken}
@@ -322,7 +342,7 @@ function Component() {
       </div>
 
       <TransferModalV2
-        sender={account.address}
+        sender={addressForSelectedSourceChain}
         recipient={recipient.value}
         sourceChain={sourceChain}
         sourceToken={sourceToken}
@@ -340,10 +360,10 @@ function Component() {
   );
 }
 
-export default function TransferV2() {
+export default function Transfer() {
   return (
-    <TransferProviderV2>
+    <TransferProvider>
       <Component />
-    </TransferProviderV2>
+    </TransferProvider>
   );
 }

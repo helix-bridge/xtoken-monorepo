@@ -19,3 +19,4 @@ export * from "./gnosis";
 export * from "./pangoro";
 export * from "./koi";
 export * from "./tron-shasta";
+export * from "./tron";

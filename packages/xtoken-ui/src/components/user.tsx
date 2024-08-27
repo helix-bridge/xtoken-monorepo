@@ -1,14 +1,21 @@
-import { useApp } from "../hooks";
+import { useApp, useWallet } from "../hooks";
 import Dropdown from "../ui/dropdown";
-import { formatBalance, getChainLogoSrc, getTokenLogoSrc, toShortAdrress } from "../utils";
-import { useConnectModal } from "@rainbow-me/rainbowkit";
-import { PropsWithChildren } from "react";
-import { useAccount, useDisconnect } from "wagmi";
+import {
+  convertAddressToTron,
+  formatBalance,
+  getChainLogoSrc,
+  getTokenLogoSrc,
+  isTronChain,
+  toShortAdrress,
+} from "../utils";
+import { PropsWithChildren, useMemo } from "react";
 import PrettyAddress from "./pretty-address";
 import AddressIdenticon from "./address-identicon";
 import { Placement } from "@floating-ui/react";
 import ComponentLoading from "../ui/component-loading";
 import History from "./history";
+import { useAtomValue } from "jotai";
+import { selectedSourceChainAtom } from "../store/chain";
 
 interface Props {
   placement: Placement;
@@ -20,29 +27,38 @@ interface Props {
 export default function User({ placement, prefixLength = 10, suffixLength = 8 }: Props) {
   const { balanceAll, loadingBalanceAll } = useApp();
 
-  const { address } = useAccount();
-  const { disconnect } = useDisconnect();
-  const { openConnectModal } = useConnectModal();
+  const { addressForSelectedSourceChain, disconnectWallet, connectWallet } = useWallet();
 
-  return address ? (
+  const selectedSourceChain = useAtomValue(selectedSourceChainAtom);
+  const addressToDisplay = useMemo(() => {
+    if (selectedSourceChain && addressForSelectedSourceChain) {
+      if (isTronChain(selectedSourceChain)) {
+        return convertAddressToTron(addressForSelectedSourceChain);
+      }
+      return addressForSelectedSourceChain;
+    }
+    return undefined;
+  }, [addressForSelectedSourceChain, selectedSourceChain]);
+
+  return addressToDisplay ? (
     <Dropdown
       childClassName="bg-background py-large rounded-large border border-white/20 flex flex-col gap-large"
       labelClassName="h-9 lg:h-8 px-large items-center justify-center flex bg-white/10 lg:bg-secondary hover:bg-white/20 rounded-xl gap-2 transition-colors"
       placement={placement}
       label={
         <div className="gap-small flex items-center">
-          <AddressIdenticon address={address} diameter={20} />
-          <LabelSpan>{toShortAdrress(address)}</LabelSpan>
+          <AddressIdenticon address={addressToDisplay} diameter={20} />
+          <LabelSpan>{toShortAdrress(addressToDisplay)}</LabelSpan>
         </div>
       }
     >
       <div className="gap-medium flex items-center px-5">
-        <AddressIdenticon address={address} diameter={32} />
+        <AddressIdenticon address={addressToDisplay} diameter={32} />
         <PrettyAddress
           forceShort
           prefixLength={prefixLength}
           suffixLength={suffixLength}
-          address={address}
+          address={addressToDisplay}
           copyable
           disabledTooltip
           className="text-sm font-bold text-white"
@@ -54,7 +70,12 @@ export default function User({ placement, prefixLength = 10, suffixLength = 8 }:
           <img width={18} height={18} alt="History" src="images/history.svg" className="shrink-0" />
           <ChildSpan>History</ChildSpan>
         </History>
-        <button onClick={() => disconnect()} className="user-dropdown-item">
+        <button
+          onClick={() => {
+            disconnectWallet();
+          }}
+          className="user-dropdown-item"
+        >
           <img width={18} height={18} alt="Disconnect" src="images/disconnect.svg" className="shrink-0" />
           <ChildSpan>Disconnect</ChildSpan>
         </button>
@@ -111,7 +132,14 @@ export default function User({ placement, prefixLength = 10, suffixLength = 8 }:
       </div>
     </Dropdown>
   ) : (
-    <button className="user-connect-wallet" onClick={openConnectModal}>
+    <button
+      className="user-connect-wallet"
+      onClick={() => {
+        if (selectedSourceChain) {
+          connectWallet(selectedSourceChain);
+        }
+      }}
+    >
       <LabelSpan>Connect Wallet</LabelSpan>
     </button>
   );

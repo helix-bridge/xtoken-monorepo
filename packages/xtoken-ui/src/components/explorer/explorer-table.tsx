@@ -37,7 +37,7 @@ function getColumns(isLg = false): ColumnType<TData>[] {
         const chain = getChainConfig(row.fromChain);
         return chain ? (
           <div className="gap-medium flex items-center">
-            <img alt={chain.name} width={32} height={32} src={getChainLogoSrc(chain.logo)} />
+            <img alt={chain.name} width={32} height={32} src={getChainLogoSrc(chain.logo)} className="rounded-full" />
             <span className="hidden truncate lg:inline">{chain.name}</span>
           </div>
         ) : (
@@ -53,7 +53,7 @@ function getColumns(isLg = false): ColumnType<TData>[] {
         const chain = getChainConfig(row.toChain);
         return chain ? (
           <div className="gap-medium flex items-center">
-            <img alt={chain.name} width={32} height={32} src={getChainLogoSrc(chain.logo)} />
+            <img alt={chain.name} width={32} height={32} src={getChainLogoSrc(chain.logo)} className="rounded-full" />
             <span className="hidden truncate lg:inline">{chain.name}</span>
           </div>
         ) : (

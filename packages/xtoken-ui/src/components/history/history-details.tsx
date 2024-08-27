@@ -1,21 +1,27 @@
 import { useHistoryDetails } from "../../hooks";
 import { ChainConfig, HistoryDetailsResData, HistoryRecord, RecordResult } from "../../types";
-import { formatBalance, formatTime, getChainConfig, getChainLogoSrc, toShortAdrress } from "../../utils";
+import {
+  formatBalance,
+  formatTime,
+  getChainConfig,
+  getChainLogoSrc,
+  getExplorerTxUrl,
+  toShortAdrress,
+} from "../../utils";
 import { useMemo } from "react";
-import { Hash, Hex } from "viem";
 import Completed from "../icons/completed";
 import Pending from "../icons/pending";
 import ComponentLoading from "../../ui/component-loading";
 import { Link } from "react-router-dom";
+import { Hex } from "viem";
 
 interface Props {
-  requestTxHash?: Hash | null;
-  defaultData?: HistoryDetailsResData["historyRecordByTxHash"];
+  data: Partial<HistoryDetailsResData["historyRecordByTxHash"]>;
 }
 
-export default function HistoryDetails({ defaultData, requestTxHash }: Props) {
-  const { data: _data, loading } = useHistoryDetails(requestTxHash);
-  const data = useMemo(() => _data ?? defaultData, [_data, defaultData]);
+export default function HistoryDetails({ data: propsData }: Props) {
+  const { data: _data, loading } = useHistoryDetails(propsData?.id ? null : propsData?.requestTxHash);
+  const data = useMemo(() => _data ?? propsData, [_data, propsData]);
 
   const sourceChain = getChainConfig(data?.fromChain);
   const targetChain = getChainConfig(data?.toChain);
@@ -23,15 +29,15 @@ export default function HistoryDetails({ defaultData, requestTxHash }: Props) {
 
   return (
     <div className="relative overflow-x-auto pb-2">
-      <ComponentLoading loading={loading} color="white" className="backdrop-blur-[2px]" />
+      <ComponentLoading loading={loading} icon={false} className="backdrop-blur-[2px]" />
 
       <div className="w-[39.5rem] px-5">
         <div className="flex flex-col gap-3 text-sm font-normal">
-          <Row label="Timestamp" value={data ? formatTime(data.startTime * 1000) : undefined} />
+          <Row label="Timestamp" value={data?.startTime ? formatTime(data.startTime * 1000) : undefined} />
           <Row
             label="Value"
             value={
-              data && sourceToken
+              data?.sendAmount && sourceToken
                 ? `${formatBalance(BigInt(data.sendAmount), sourceToken.decimals, { precision: 8 })} ${
                     sourceToken.symbol
                   }`
@@ -43,7 +49,11 @@ export default function HistoryDetails({ defaultData, requestTxHash }: Props) {
         <div className="mt-8 flex justify-between rounded-3xl bg-white/5 px-14 py-10">
           <Column chain={sourceChain} tx={data?.requestTxHash} completed={!!data?.requestTxHash} />
           <Bridge data={data} />
-          <Column chain={targetChain} tx={data?.responseTxHash} completed={data?.result === RecordResult.SUCCESS} />
+          <Column
+            chain={targetChain}
+            tx={data?.responseTxHash}
+            completed={data?.result === RecordResult.SUCCESS || data?.result === RecordResult.REFUNDED}
+          />
         </div>
 
         {data && (
@@ -77,12 +87,6 @@ function Column({ completed, chain, tx }: { completed: boolean; chain?: ChainCon
     <div className="flex flex-col items-center gap-6">
       <span className="text-sm font-bold text-white">{chain?.name ?? "-"}</span>
       <div className="relative flex h-28 w-28 items-center justify-center rounded-full border border-white/15">
-        {completed ? null : (
-          <div
-            className="absolute bottom-0 left-0 right-0 top-0 z-10 animate-spin rounded-full border-y border-white"
-            style={{ animationDuration: "2s" }}
-          />
-        )}
         {chain ? (
           <img alt={chain.name} width={64} height={64} src={getChainLogoSrc(chain.logo)} className="rounded-full" />
         ) : (
@@ -95,7 +99,7 @@ function Column({ completed, chain, tx }: { completed: boolean; chain?: ChainCon
           <a
             target="_blank"
             rel="noopener noreferrer"
-            href={new URL(`tx/${tx}`, chain.blockExplorers?.default.url).href}
+            href={getExplorerTxUrl(chain, tx)}
             className="hover:text-primary text-sm font-normal text-white underline transition-colors"
           >
             Tx: {toShortAdrress(tx)}
@@ -108,10 +112,10 @@ function Column({ completed, chain, tx }: { completed: boolean; chain?: ChainCon
   );
 }
 
-function Bridge({ data }: { data?: Pick<HistoryRecord, "result"> | null }) {
+function Bridge({ data }: { data?: Partial<Pick<HistoryRecord, "result">> | null }) {
   return (
     <div className="flex flex-col items-center justify-center gap-2">
-      {data?.result === RecordResult.SUCCESS ? (
+      {data?.result === RecordResult.SUCCESS || data?.result === RecordResult.REFUNDED ? (
         <svg xmlns="http://www.w3.org/2000/svg" width="72" height="72" viewBox="0 0 72 72" fill="none">
           <path
             opacity="0.5"

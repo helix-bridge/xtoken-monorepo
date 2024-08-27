@@ -55,7 +55,8 @@ export type Network =
   | "base"
   | "op"
   | "bsc"
-  | "tron-shasta";
+  | "tron-shasta"
+  | "tron";
 
 export interface ChainConfig extends Chain {
   /**

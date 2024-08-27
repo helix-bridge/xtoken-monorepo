@@ -133,7 +133,7 @@ export class XTokenV3Bridge extends BaseBridge {
         this.targetChain.id,
         sourceMessager,
         targetMessager,
-        sender,
+        recipient,
         payload,
       );
     }
@@ -164,8 +164,6 @@ export class XTokenV3Bridge extends BaseBridge {
   }
 
   async claim(record: HistoryRecord): Promise<TransactionReceipt | undefined> {
-    await this.validateNetwork("target");
-
     if (record.recvTokenAddress && this.contract && this.publicClient && this.walletClient) {
       let guardContract: Address = "0x0000000000000000000000000000000000000000";
 
@@ -205,7 +203,6 @@ export class XTokenV3Bridge extends BaseBridge {
   }
 
   async refund(record: HistoryRecord): Promise<TransactionReceipt | undefined> {
-    await this.validateNetwork("target");
     const nonce = record.messageNonce?.split("-").at(0);
     const { sourceMessager, targetMessager } = getMessagerAddress(this.sourceChain, this.targetChain);
 
@@ -246,7 +243,7 @@ export class XTokenV3Bridge extends BaseBridge {
           this.sourceChain.id,
           targetMessager,
           sourceMessager,
-          record.sender,
+          record.recipient,
           payload,
         );
 
@@ -286,7 +283,7 @@ export class XTokenV3Bridge extends BaseBridge {
           this.sourceChain.id,
           targetMessager,
           sourceMessager,
-          record.sender,
+          record.recipient,
           payload,
         );
 

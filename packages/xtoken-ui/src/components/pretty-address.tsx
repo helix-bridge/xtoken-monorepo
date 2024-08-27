@@ -1,10 +1,9 @@
 import CopyIcon from "../ui/copy-icon";
 import Tooltip from "../ui/tooltip";
 import { toShortAdrress } from "../utils/address";
-import { Address } from "viem";
 
 interface Props {
-  address: Address;
+  address: string;
   copyable?: boolean;
   className?: string;
   forceShort?: boolean;

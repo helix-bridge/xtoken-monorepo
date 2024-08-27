@@ -15,6 +15,7 @@ import {
   polygonZkEvmChain,
   scrollChain,
   sepoliaChain,
+  tronChain,
   tronShastaChain,
   zksyncChain,
   zksyncSepoliaChain,
@@ -86,6 +87,9 @@ export function getChainConfig(chainIdOrNetwork?: ChainID | Network | null): Cha
     case ChainID.TRON_SHASTA:
     case "tron-shasta":
       return tronShastaChain;
+    case ChainID.TRON_MAINNET:
+    case "tron":
+      return tronChain;
     case ChainID.KOI:
     case "koi":
       return koiChain;
@@ -117,6 +121,7 @@ export function getChainConfigs(askAll?: boolean) {
     pangoroChain,
     koiChain,
     tronShastaChain,
+    tronChain,
   ].sort((a, b) => a.name.localeCompare(b.name));
 
   if (askAll) {

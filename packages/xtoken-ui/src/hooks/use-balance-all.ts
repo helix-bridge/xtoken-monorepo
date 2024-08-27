@@ -1,12 +1,11 @@
-import { getChainConfigs, isTronChain } from "../utils";
+import { getBalanceEVM, getBalanceTron, getChainConfigs, isTronChain } from "../utils";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { createPublicClient, getContract, http } from "viem";
+import { createPublicClient, http } from "viem";
 import { forkJoin, map, of, merge, mergeAll } from "rxjs";
-import abi from "../abi/erc20";
 import { ChainConfig, Token } from "../types";
-import { useAccount } from "wagmi";
+import { useWallet } from "./use-wallet";
 
-const chains = getChainConfigs().filter((c) => c.network !== "polygon" && !isTronChain(c));
+const chains = getChainConfigs().filter((c) => c.network !== "polygon");
 
 interface BalanceAll {
   chain: ChainConfig;
@@ -15,25 +14,25 @@ interface BalanceAll {
 }
 
 export function useBalanceAll() {
-  const [balanceAll, setBalanceAll] = useState<BalanceAll[]>([]);
   const [loading, setLoading] = useState(false);
-  const { address } = useAccount();
+  const { addressForSelectedSourceChain } = useWallet();
 
+  const [balanceAll, setBalanceAll] = useState<BalanceAll[]>([]);
   const balanceAllRef = useRef(balanceAll);
 
   const updateBalanceAll = useCallback(() => {
-    if (address) {
+    if (addressForSelectedSourceChain) {
       const chainsObs = chains.map((chain) => {
-        const publicClient = createPublicClient({ chain, batch: { multicall: true }, transport: http() });
+        const publicClient = isTronChain(chain)
+          ? undefined
+          : createPublicClient({ chain, batch: { multicall: true }, transport: http() });
 
-        const tokensObs = chain.tokens.map((token) => {
-          if (token.type === "native") {
-            return publicClient.getBalance({ address });
-          } else {
-            const contract = getContract({ address: token.address, abi, publicClient });
-            return contract.read.balanceOf([address]);
-          }
-        });
+        const tokensObs = chain.tokens.map((token) =>
+          isTronChain(chain)
+            ? getBalanceTron(chain, token, addressForSelectedSourceChain)
+            : getBalanceEVM(chain, token, addressForSelectedSourceChain, publicClient),
+        );
+
         return tokensObs.length
           ? forkJoin(tokensObs).pipe(
               map((balances) => balances.map((balance, index) => ({ chain, token: chain.tokens[index], balance }))),
@@ -67,7 +66,7 @@ export function useBalanceAll() {
       setBalanceAll([]);
       setLoading(false);
     }
-  }, [address]);
+  }, [addressForSelectedSourceChain]);
 
   useEffect(() => {
     const sub$$ = updateBalanceAll();

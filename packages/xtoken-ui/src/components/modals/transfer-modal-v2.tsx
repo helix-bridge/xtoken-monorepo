@@ -1,7 +1,7 @@
 import { BaseBridge } from "../../bridges";
 import { ChainConfig, Token } from "../../types";
 import Modal from "../../ui/modal";
-import { formatBalance, getChainLogoSrc, toShortAdrress } from "../../utils";
+import { formatBalance, getAddressForChain, getChainLogoSrc, toShortAdrress } from "../../utils";
 import { Address } from "viem";
 
 interface Props {
@@ -78,6 +78,7 @@ function SourceTarget({
   token?: Token;
   address?: Address | null;
 }) {
+  const addressForChain = getAddressForChain(chain, address);
   return chain && token ? (
     <div className="bg-background lg:p-large flex items-start justify-between gap-2 rounded-xl p-3 lg:rounded-2xl">
       <img width={36} height={36} alt="Chain" src={getChainLogoSrc(chain.logo)} className="shrink-0 rounded-full" />
@@ -94,7 +95,9 @@ function SourceTarget({
         </div>
 
         <div className="flex items-center justify-between gap-1">
-          <span className="text-sm font-semibold text-white/50">{address ? toShortAdrress(address, 8, 6) : ""}</span>
+          <span className="text-sm font-semibold text-white/50">
+            {addressForChain ? toShortAdrress(addressForChain, 8, 6) : ""}
+          </span>
           <span className="text-sm font-extrabold text-white">{token.symbol}</span>
         </div>
       </div>
@@ -108,7 +111,7 @@ function Information({ fee, bridge }: { fee?: { value: bigint; token: Token } | 
       <Item label="Estimated Arrival Time" value={bridge?.formatEstimateTime()} />
       <Item
         label="Transaction Fee"
-        value={fee ? `${formatBalance(fee.value, fee.token.decimals, { precision: 6 })} ${fee.token.symbol}` : null}
+        value={fee ? `${formatBalance(fee.value, fee.token.decimals, { precision: 12 })} ${fee.token.symbol}` : null}
       />
     </div>
   );

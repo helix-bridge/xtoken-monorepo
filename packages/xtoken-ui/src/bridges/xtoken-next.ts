@@ -1,7 +1,21 @@
-import { BridgeConstructorArgs, GetFeeArgs, HistoryRecord, Token, TransferOptions } from "../types";
+import {
+  BridgeConstructorArgs,
+  GetFeeArgs,
+  HistoryRecord,
+  Token,
+  TransferOptions,
+  TronTransactionReceipt,
+} from "../types";
 import { BaseBridge } from "./base";
 import { Address, Hash, Hex, TransactionReceipt, encodeAbiParameters, encodeFunctionData, isAddressEqual } from "viem";
-import { fetchMsglineFeeAndParams, getMessagerAddress } from "../utils";
+import {
+  convertAddressToTron,
+  createTronWalletClient,
+  fetchMsglineFeeAndParams,
+  getMessagerAddress,
+  isTronChain,
+  waitForTronTransactionReceipt,
+} from "../utils";
 
 export class XTokenNextBridge extends BaseBridge {
   constructor(args: BridgeConstructorArgs) {
@@ -42,6 +56,12 @@ export class XTokenNextBridge extends BaseBridge {
     ) {
       backing = "0xcCD7B9cA36CC65AfCA2bB06EF9df73980F8E2eC4";
       issuing = "0xA22BfbAD733772e7e6a9402faa0fbE0e4db06aDE";
+    } else if (
+      (this.sourceChain?.network === "koi" && this.targetChain?.network === "tron-shasta") ||
+      (this.sourceChain?.network === "tron-shasta" && this.targetChain?.network === "koi")
+    ) {
+      backing = "0x2c841103557112d99923956eB9b9b4a05ef042af";
+      issuing = "0xE57D12Ba78d565613b52a35f0b4A9AC3b71F6119";
     }
     this.initContractByBackingIssuing(backing, issuing);
   }
@@ -97,6 +117,10 @@ export class XTokenNextBridge extends BaseBridge {
       this.convertor = { source: "0x510A820E41BB6d828a29332dB551B6B3cf7232D3", target: undefined };
     } else if (this.sourceChain?.network === "pangoro-dvm" && this.targetChain?.network === "sepolia") {
       this.convertor = { source: undefined, target: "0x510A820E41BB6d828a29332dB551B6B3cf7232D3" };
+    } else if (this.sourceChain?.network === "koi" && this.targetChain?.network === "tron-shasta") {
+      this.convertor = { source: "0xC9EA55E644F496D6CaAEDcBAD91dE7481Dcd7517", target: undefined };
+    } else if (this.sourceChain?.network === "tron-shasta" && this.targetChain?.network === "koi") {
+      this.convertor = { source: undefined, target: "0xC9EA55E644F496D6CaAEDcBAD91dE7481Dcd7517" };
     }
   }
 
@@ -105,7 +129,7 @@ export class XTokenNextBridge extends BaseBridge {
     recipient: Address,
     amount: bigint,
     options?: (TransferOptions & { askEstimateGas?: boolean | undefined }) | undefined,
-  ): Promise<bigint | TransactionReceipt | undefined> {
+  ): Promise<bigint | TransactionReceipt | TronTransactionReceipt | undefined> {
     const account = await this.getSigner();
     const askEstimateGas = options?.askEstimateGas ?? false;
 
@@ -113,16 +137,98 @@ export class XTokenNextBridge extends BaseBridge {
     const { recipient: pRecipient, extData } = await this._getExtDataAndRecipient(recipient);
     const feeAndParams = await this._getTransferFeeAndParams(sender, recipient, amount, nonce);
 
-    if (account && feeAndParams && this.contract && this.sourceToken && this.targetChain && this.sourcePublicClient) {
+    if (feeAndParams && this.contract && this.sourceToken && this.sourceChain && this.targetChain) {
       const value = this.sourceToken.type === "native" ? amount + feeAndParams.fee : feeAndParams.fee;
       const gas = this.getTxGasLimit();
 
-      if (this.crossInfo?.action === "issue") {
+      if (this.crossInfo?.action === "issue" && isTronChain(this.sourceChain)) {
+        const tronWeb = createTronWalletClient();
+        if (askEstimateGas) {
+          return 0n;
+        } else if (this.convertor?.source && tronWeb) {
+          const contract = await tronWeb.contract(
+            (await import("../abi/wtoken-convertor")).default,
+            convertAddressToTron(this.convertor.source),
+          );
+          const hash = await contract
+            .lockAndXIssue(
+              this.targetChain.id,
+              convertAddressToTron(pRecipient),
+              convertAddressToTron(recipient),
+              amount.toString(),
+              nonce.toString(),
+              extData,
+              feeAndParams.extParams,
+            )
+            .send({ callValue: value.toString() });
+          const receipt = await waitForTronTransactionReceipt({ client: tronWeb, hash });
+          return receipt;
+        } else if (tronWeb) {
+          const contract = await tronWeb.contract(
+            (await import("../abi/xtoken-backing-next")).default,
+            convertAddressToTron(this.contract.sourceAddress),
+          );
+          const hash = await contract
+            .lockAndXIssue(
+              this.targetChain.id,
+              convertAddressToTron(this.sourceToken.address),
+              convertAddressToTron(pRecipient),
+              convertAddressToTron(recipient),
+              amount.toString(),
+              nonce.toString(),
+              extData,
+              feeAndParams.extParams,
+            )
+            .send({ callValue: value.toString() });
+          const receipt = await waitForTronTransactionReceipt({ client: tronWeb, hash });
+          return receipt;
+        }
+      } else if (this.crossInfo?.action === "redeem" && isTronChain(this.sourceChain)) {
+        const tronWeb = createTronWalletClient();
+        if (askEstimateGas) {
+          return 0n;
+        } else if (this.convertor?.source && tronWeb) {
+          const contract = await tronWeb.contract(
+            (await import("../abi/xtoken-convertor")).default,
+            convertAddressToTron(this.convertor.source),
+          );
+          const hash = await contract
+            .burnAndXUnlock(
+              convertAddressToTron(pRecipient),
+              convertAddressToTron(recipient),
+              amount.toString(),
+              nonce.toString(),
+              extData,
+              feeAndParams.extParams,
+            )
+            .send({ callValue: value.toString() });
+          const receipt = await waitForTronTransactionReceipt({ client: tronWeb, hash });
+          return receipt;
+        } else if (tronWeb) {
+          const contract = await tronWeb.contract(
+            (await import("../abi/xtoken-issuing-next")).default,
+            convertAddressToTron(this.contract.sourceAddress),
+          );
+          const hash = await contract
+            .burnAndXUnlock(
+              convertAddressToTron(this.sourceToken.inner),
+              convertAddressToTron(pRecipient),
+              convertAddressToTron(recipient),
+              amount.toString(),
+              nonce.toString(),
+              extData,
+              feeAndParams.extParams,
+            )
+            .send({ callValue: value.toString() });
+          const receipt = await waitForTronTransactionReceipt({ client: tronWeb, hash });
+          return receipt;
+        }
+      } else if (this.crossInfo?.action === "issue" && this.sourcePublicClient && account) {
         if (this.convertor?.source) {
           const defaultParams = {
             abi: (await import("../abi/wtoken-convertor")).default,
             functionName: "lockAndXIssue",
-            args: [BigInt(this.targetChain.id), pRecipient, sender, amount, nonce, extData, feeAndParams.extParams],
+            args: [BigInt(this.targetChain.id), pRecipient, recipient, amount, nonce, extData, feeAndParams.extParams],
             address: this.convertor.source,
             account,
             value,
@@ -143,7 +249,7 @@ export class XTokenNextBridge extends BaseBridge {
               BigInt(this.targetChain.id),
               this.sourceToken.address,
               pRecipient,
-              sender,
+              recipient,
               amount,
               nonce,
               extData,
@@ -162,12 +268,12 @@ export class XTokenNextBridge extends BaseBridge {
             return this.sourcePublicClient.waitForTransactionReceipt({ hash });
           }
         }
-      } else if (this.crossInfo?.action === "redeem") {
+      } else if (this.crossInfo?.action === "redeem" && this.sourcePublicClient && account) {
         if (this.convertor?.source) {
           const defaultParams = {
             abi: (await import("../abi/xtoken-convertor")).default,
             functionName: "burnAndXUnlock",
-            args: [pRecipient, sender, amount, nonce, extData, feeAndParams.extParams],
+            args: [pRecipient, recipient, amount, nonce, extData, feeAndParams.extParams],
             address: this.convertor.source,
             account,
             value,
@@ -184,7 +290,7 @@ export class XTokenNextBridge extends BaseBridge {
           const defaultParams = {
             abi: (await import("../abi/xtoken-issuing-next")).default,
             functionName: "burnAndXUnlock",
-            args: [this.sourceToken.inner, pRecipient, sender, amount, nonce, extData, feeAndParams.extParams],
+            args: [this.sourceToken.inner, pRecipient, recipient, amount, nonce, extData, feeAndParams.extParams],
             address: this.contract.sourceAddress,
             account,
             value,
@@ -249,8 +355,7 @@ export class XTokenNextBridge extends BaseBridge {
       this.targetChain &&
       this.contract &&
       this.sourceToken &&
-      this.targetToken &&
-      this.sourcePublicClient
+      this.targetToken
     ) {
       let message: Hash | undefined;
       const originalSender = this.convertor?.source ?? sender;
@@ -265,7 +370,7 @@ export class XTokenNextBridge extends BaseBridge {
             this.sourceToken.inner,
             originalSender,
             pRecipient,
-            sender,
+            recipient,
             amount,
             nonce,
             extData,
@@ -280,7 +385,7 @@ export class XTokenNextBridge extends BaseBridge {
             this.targetToken.inner,
             originalSender,
             pRecipient,
-            sender,
+            recipient,
             amount,
             nonce,
             extData,
@@ -300,7 +405,7 @@ export class XTokenNextBridge extends BaseBridge {
           this.targetChain.id,
           sourceMessager,
           targetMessager,
-          sender,
+          recipient,
           payload,
         );
       }
@@ -308,7 +413,7 @@ export class XTokenNextBridge extends BaseBridge {
   }
 
   async getFee(args?: GetFeeArgs | undefined): Promise<{ value: bigint; token: Token } | undefined> {
-    if (this.sourceNativeToken) {
+    if (this.sourceNativeToken && this.sourceChain && this.targetChain) {
       const nonce = BigInt(Date.now());
       const sender = args?.sender ?? "0x0000000000000000000000000000000000000000";
       const recipient = args?.recipient ?? "0x0000000000000000000000000000000000000000";
@@ -320,19 +425,29 @@ export class XTokenNextBridge extends BaseBridge {
   }
 
   async getDailyLimit(): Promise<{ limit: bigint; spent: bigint; token: Token } | undefined> {
-    if (this.contract && this.sourceToken && this.targetToken && this.targetPublicClient) {
-      const limit = await this.targetPublicClient.readContract({
-        address: this.contract.targetAddress,
-        abi: (await import("../abi/xtoken-issuing-next")).default,
-        functionName: "calcMaxWithdraw",
-        args: [this.targetToken.inner],
-      });
-      return { limit, spent: 0n, token: this.sourceToken };
+    if (this.contract && this.sourceToken && this.targetToken) {
+      const abi = (await import("../abi/xtoken-issuing-next")).default;
+      if (this.targetPublicClient) {
+        const limit = await this.targetPublicClient.readContract({
+          address: this.contract.targetAddress,
+          abi,
+          functionName: "calcMaxWithdraw",
+          args: [this.targetToken.inner],
+        });
+        return { limit, spent: 0n, token: this.sourceToken };
+      } else if (this.targetTronWebPublicClient) {
+        const contract = await this.targetTronWebPublicClient.contract(
+          abi,
+          convertAddressToTron(this.contract.targetAddress),
+        );
+        const result = await contract.calcMaxWithdraw(convertAddressToTron(this.targetToken.inner)).call();
+        const limit = BigInt(result.toString());
+        return { limit, spent: 0n, token: this.sourceToken };
+      }
     }
   }
 
   async claim(record: HistoryRecord): Promise<TransactionReceipt | undefined> {
-    await this.validateNetwork("target");
     const guard = await this._getTargetGuard();
 
     if (record.recvTokenAddress && guard && this.contract && this.walletClient && this.publicClient) {
@@ -355,8 +470,7 @@ export class XTokenNextBridge extends BaseBridge {
     }
   }
 
-  async refund(record: HistoryRecord): Promise<TransactionReceipt | undefined> {
-    await this.validateNetwork("target");
+  async refund(record: HistoryRecord): Promise<TransactionReceipt | TronTransactionReceipt | undefined> {
     const nonce = record.messageNonce?.split("-").at(0);
     const { sourceMessager, targetMessager } = getMessagerAddress(this.sourceChain, this.targetChain);
 
@@ -366,8 +480,6 @@ export class XTokenNextBridge extends BaseBridge {
       this.sourceChain &&
       this.targetChain &&
       this.contract &&
-      this.publicClient &&
-      this.walletClient &&
       this.sourceToken &&
       this.targetToken
     ) {
@@ -383,7 +495,7 @@ export class XTokenNextBridge extends BaseBridge {
             this.sourceToken.inner,
             originalSender,
             pRecipient,
-            record.sender,
+            record.recipient,
             BigInt(record.sendAmount),
             BigInt(nonce ?? 0),
           ],
@@ -400,29 +512,51 @@ export class XTokenNextBridge extends BaseBridge {
           this.sourceChain.id,
           targetMessager,
           sourceMessager,
-          record.sender,
+          record.recipient,
           payload,
         );
 
         if (feeAndParams) {
-          const hash = await this.walletClient.writeContract({
-            address: this.contract.targetAddress,
-            abi: (await import("../abi/xtoken-issuing-next")).default,
-            functionName: "xRollbackLockAndXIssue",
-            args: [
-              BigInt(this.sourceChain.id),
-              this.sourceToken.inner,
-              originalSender,
-              pRecipient,
-              record.sender,
-              BigInt(record.sendAmount),
-              BigInt(nonce ?? 0),
-              feeAndParams.extParams,
-            ],
-            gas: this.getTxGasLimit(),
-            value: feeAndParams.fee,
-          });
-          return this.publicClient.waitForTransactionReceipt({ hash });
+          const abi = (await import("../abi/xtoken-issuing-next")).default;
+          if (isTronChain(this.targetChain)) {
+            const tronWeb = createTronWalletClient();
+            if (tronWeb) {
+              const contract = await tronWeb.contract(abi, convertAddressToTron(this.contract.targetAddress));
+              const hash = await contract
+                .xRollbackLockAndXIssue(
+                  this.sourceChain.id,
+                  convertAddressToTron(this.sourceToken.inner),
+                  convertAddressToTron(originalSender),
+                  convertAddressToTron(pRecipient),
+                  convertAddressToTron(record.recipient),
+                  record.sendAmount,
+                  nonce ?? 0,
+                  feeAndParams.extParams,
+                )
+                .send({ callValue: feeAndParams.fee.toString() });
+              const receipt = await waitForTronTransactionReceipt({ client: tronWeb, hash });
+              return receipt;
+            }
+          } else if (this.publicClient && this.walletClient) {
+            const hash = await this.walletClient.writeContract({
+              address: this.contract.targetAddress,
+              abi,
+              functionName: "xRollbackLockAndXIssue",
+              args: [
+                BigInt(this.sourceChain.id),
+                this.sourceToken.inner,
+                originalSender,
+                pRecipient,
+                record.recipient,
+                BigInt(record.sendAmount),
+                BigInt(nonce ?? 0),
+                feeAndParams.extParams,
+              ],
+              gas: this.getTxGasLimit(),
+              value: feeAndParams.fee,
+            });
+            return this.publicClient.waitForTransactionReceipt({ hash });
+          }
         }
       } else if (this.crossInfo?.action === "redeem") {
         const message = encodeFunctionData({
@@ -433,7 +567,7 @@ export class XTokenNextBridge extends BaseBridge {
             this.targetToken.inner,
             originalSender,
             pRecipient,
-            record.sender,
+            record.recipient,
             BigInt(record.sendAmount),
             BigInt(nonce ?? 0),
           ],
@@ -450,29 +584,51 @@ export class XTokenNextBridge extends BaseBridge {
           this.sourceChain.id,
           targetMessager,
           sourceMessager,
-          record.sender,
+          record.recipient,
           payload,
         );
 
         if (feeAndParams) {
-          const hash = await this.walletClient.writeContract({
-            address: this.contract.targetAddress,
-            abi: (await import("../abi/xtoken-backing-next")).default,
-            functionName: "xRollbackBurnAndXUnlock",
-            args: [
-              BigInt(this.sourceChain.id),
-              this.targetToken.inner,
-              originalSender,
-              pRecipient,
-              record.sender,
-              BigInt(record.sendAmount),
-              BigInt(nonce ?? 0),
-              feeAndParams.extParams,
-            ],
-            gas: this.getTxGasLimit(),
-            value: feeAndParams.fee,
-          });
-          return this.publicClient.waitForTransactionReceipt({ hash });
+          const abi = (await import("../abi/xtoken-backing-next")).default;
+          if (isTronChain(this.targetChain)) {
+            const tronWeb = createTronWalletClient();
+            if (tronWeb) {
+              const contract = await tronWeb.contract(abi, convertAddressToTron(this.contract.targetAddress));
+              const hash = await contract
+                .xRollbackBurnAndXUnlock(
+                  this.sourceChain.id,
+                  convertAddressToTron(this.targetToken.inner),
+                  convertAddressToTron(originalSender),
+                  convertAddressToTron(pRecipient),
+                  convertAddressToTron(record.recipient),
+                  record.sendAmount,
+                  nonce ?? 0,
+                  feeAndParams.extParams,
+                )
+                .send({ callValue: feeAndParams.fee.toString() });
+              const receipt = await waitForTronTransactionReceipt({ client: tronWeb, hash });
+              return receipt;
+            }
+          } else if (this.publicClient && this.walletClient) {
+            const hash = await this.walletClient.writeContract({
+              address: this.contract.targetAddress,
+              abi,
+              functionName: "xRollbackBurnAndXUnlock",
+              args: [
+                BigInt(this.sourceChain.id),
+                this.targetToken.inner,
+                originalSender,
+                pRecipient,
+                record.recipient,
+                BigInt(record.sendAmount),
+                BigInt(nonce ?? 0),
+                feeAndParams.extParams,
+              ],
+              gas: this.getTxGasLimit(),
+              value: feeAndParams.fee,
+            });
+            return this.publicClient.waitForTransactionReceipt({ hash });
+          }
         }
       }
     }

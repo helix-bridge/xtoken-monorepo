@@ -86,8 +86,6 @@ export class HelixLpBridge extends BaseBridge {
    * On target chain
    */
   async refund(record: HistoryRecord) {
-    await this.validateNetwork("target");
-
     if (this.contract && this.publicClient && this.walletClient) {
       const hash = await this.walletClient.writeContract({
         address: this.contract.targetAddress,

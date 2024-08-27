@@ -1,4 +1,3 @@
-import { Address } from "viem";
 import { ChainConfig, ChainID } from "../../types";
 
 export const tronShastaChain: ChainConfig = {
@@ -39,8 +38,8 @@ export const tronShastaChain: ChainConfig = {
       symbol: "TRX",
       name: "TRX",
       type: "native",
-      address: "0x0000000000000000000000000000000000000000", // TODO
-      outer: "0x0000000000000000000000000000000000000000", // TODO
+      address: "0x0000000000000000000000000000000000000000",
+      outer: "0x0000000000000000000000000000000000000000",
       inner: "0x0000000000000000000000000000000000000000", // TODO
       logo: "trx.png",
       cross: [],
@@ -51,17 +50,17 @@ export const tronShastaChain: ChainConfig = {
       symbol: "RING",
       name: "RING",
       type: "erc20",
-      address: "TXpHh528nJWoBj5qwCj2pwDBGSsGt7UPAn" as Address,
-      outer: "TXpHh528nJWoBj5qwCj2pwDBGSsGt7UPAn" as Address,
-      inner: "TXpHh528nJWoBj5qwCj2pwDBGSsGt7UPAn" as Address,
+      address: "0xefa2F03FD5aE000F5064F3d80C2290d0EAB8b685",
+      outer: "0xefa2F03FD5aE000F5064F3d80C2290d0EAB8b685",
+      inner: "0xefa2F03FD5aE000F5064F3d80C2290d0EAB8b685",
       logo: "ring.png",
       cross: [
-        { target: { network: "koi", symbol: "WKRING" }, bridge: { category: "xtoken-tron-koi" }, action: "issue" },
+        { target: { network: "koi", symbol: "RING" }, bridge: { category: "xtoken-koi-tron" }, action: "redeem" },
       ],
       category: "ring",
     },
   ],
-  messager: { msgline: "TSyvtuVJsqFwDH6cGazHyBNwMjdiFDVCji" as Address },
+  messager: { msgline: "0xBa9D1c0eb186f97cFAAC4cA798Ca04FB9bdA2B07" },
 
   fullNode: "https://api.shasta.trongrid.io",
   solidityNode: "https://api.shasta.trongrid.io",

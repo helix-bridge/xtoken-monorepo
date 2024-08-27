@@ -17,6 +17,8 @@ import {
   useRef,
   useState,
 } from "react";
+import { useSetAtom } from "jotai";
+import { selectedSourceChainAtom } from "../store/chain";
 
 interface TransferCtx {
   token: TokenOption;
@@ -41,7 +43,7 @@ export const TransferContext = createContext({} as TransferCtx);
 
 const tokenOptions = getTokenOptions();
 
-export default function TransferProviderV2({ children }: PropsWithChildren<unknown>) {
+export default function TransferProvider({ children }: PropsWithChildren<unknown>) {
   const [token, _setToken] = useState(tokenOptions[0]);
   const [amount, setAmount] = useState({ input: "", value: 0n, valid: true, alert: "" });
   const [sourceChainOptions, setSourceChainOptions] = useState(getSourceChainOptions(token.category));
@@ -77,6 +79,11 @@ export default function TransferProviderV2({ children }: PropsWithChildren<unkno
     _setTargetToken(value);
     targetTokenRef.current = value;
   }, []);
+
+  const setSelectedSourceChain = useSetAtom(selectedSourceChainAtom);
+  useEffect(() => {
+    setSelectedSourceChain(sourceChain);
+  }, [sourceChain, setSelectedSourceChain]);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.hash.split("?")[1]);

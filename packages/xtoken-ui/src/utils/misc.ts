@@ -1,6 +1,6 @@
-import { ChainConfig } from "../types";
+import { ChainConfig, TronTransactionReceipt, TronWebClient } from "../types";
 import { RecordResult } from "../types/graphql";
-import { Address, Hex } from "viem";
+import { Address, Hex, TransactionReceipt } from "viem";
 import { isTronChain } from "./chain";
 import TronWeb from "tronweb";
 
@@ -40,14 +40,14 @@ export async function fetchMsglineFeeAndParams(
   toChainId: number,
   fromMessager: Address,
   toMessager: Address,
-  sender: Address,
+  recipient: Address,
   payload: Hex,
 ) {
   const endpoint = "https://api.msgport.xyz/ormp/fee"; // v2
   // const endpoint = "https://msgport-api.darwinia.network/ormp/fee"; // v1
   // const endpoint = "http://g2.generic.darwinia.network:3378/ormp/fee";
   const feeData = await fetch(
-    `${endpoint}?from_chain_id=${fromChainId}&to_chain_id=${toChainId}&payload=${payload}&from_address=${fromMessager}&to_address=${toMessager}&refund_address=${sender}`,
+    `${endpoint}?from_chain_id=${fromChainId}&to_chain_id=${toChainId}&payload=${payload}&from_address=${fromMessager}&to_address=${toMessager}&refund_address=${recipient}`,
   );
   const feeJson = await feeData.json();
   if (feeData.ok && feeJson.code === 0) {
@@ -79,10 +79,45 @@ export function getExplorerTxUrl(chain?: ChainConfig | null, tx?: string | null)
   return "#";
 }
 
-export function getAddressForChain(chain?: ChainConfig, address?: string) {
-  if (chain && isTronChain(chain) && address?.startsWith("0x")) {
-    const tronweb = new TronWeb(chain.fullNode, chain.solidityNode, chain.eventServer);
-    return tronweb.address.fromHex(address);
+export function createTronPublicClient(chain?: ChainConfig | null): TronWebClient | undefined {
+  if (chain && isTronChain(chain) && chain.fullNode && chain.solidityNode && chain.eventServer) {
+    return new TronWeb(chain.fullNode, chain.solidityNode, chain.eventServer, "01");
   }
-  return address;
+}
+
+export function createTronWalletClient(): TronWebClient | undefined {
+  if (window.tronWeb && window.tronWeb.defaultAddress?.base58) {
+    return window.tronWeb as unknown as TronWebClient;
+  }
+}
+
+const fakeSleep = (millisecond: number) => new Promise((resolve) => setTimeout(() => resolve([]), millisecond));
+
+export async function waitForTronTransactionReceipt({ client, hash }: { client: TronWebClient; hash: string }) {
+  // 45 Seconds
+  for (let i = 0; i < 90; i++) {
+    try {
+      const receipt = await client.trx.getTransaction(hash);
+      if (receipt?.ret?.length) {
+        return receipt;
+      }
+    } catch (err) {
+      if (err !== "Transaction not found") {
+        console.error(err);
+      }
+    }
+    await fakeSleep(500);
+  }
+}
+
+export function isTxSuccess(receipt?: TransactionReceipt | TronTransactionReceipt): boolean {
+  if (
+    receipt &&
+    (("status" in receipt && receipt.status === "success") ||
+      ("ret" in receipt && receipt.ret.some(({ contractRet }) => contractRet === "SUCCESS")))
+  ) {
+    return true;
+  } else {
+    return false;
+  }
 }
