@@ -51,6 +51,7 @@ export default function HistoryDetails({ data: propsData }: Props) {
           <Bridge data={data} />
           <Column
             chain={targetChain}
+            refundChain={data?.result === RecordResult.REFUNDED ? sourceChain : undefined}
             tx={data?.responseTxHash}
             completed={data?.result === RecordResult.SUCCESS || data?.result === RecordResult.REFUNDED}
           />
@@ -82,7 +83,17 @@ function Row({ label, value }: { label: string; value?: string }) {
   );
 }
 
-function Column({ completed, chain, tx }: { completed: boolean; chain?: ChainConfig; tx?: Hex | null }) {
+function Column({
+  completed,
+  chain,
+  refundChain,
+  tx,
+}: {
+  completed: boolean;
+  chain?: ChainConfig;
+  refundChain?: ChainConfig;
+  tx?: Hex | null;
+}) {
   return (
     <div className="flex flex-col items-center gap-6">
       <span className="text-sm font-bold text-white">{chain?.name ?? "-"}</span>
@@ -99,7 +110,7 @@ function Column({ completed, chain, tx }: { completed: boolean; chain?: ChainCon
           <a
             target="_blank"
             rel="noopener noreferrer"
-            href={getExplorerTxUrl(chain, tx)}
+            href={getExplorerTxUrl(refundChain ?? chain, tx)}
             className="hover:text-primary text-sm font-normal text-white underline transition-colors"
           >
             Tx: {toShortAdrress(tx)}
