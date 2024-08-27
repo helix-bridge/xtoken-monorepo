@@ -45,7 +45,7 @@ export class AggregationResolver {
         : { startTime: Prisma.SortOrder.desc };
     const isValid = (item) => !Object.values(item).some((value) => isUndefined(value) || isNull(value) || value === "");
 
-    const accFilters = [{ sender: sender?.toLowerCase() }, { recipient }].filter(isValid);
+    const accFilters = [{ sender: sender?.toLowerCase() }, { recipient: recipient?.toLowerCase() }].filter(isValid);
     const accountCondition = accFilters.length ? { OR: accFilters } : {};
     const resultCondition = results && results.length ? { result: { in: results } } : {};
     const fromChainCondition = fromChains && fromChains.length ? { fromChain: { in: fromChains } } : {};
