@@ -1,5 +1,5 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { SchedulerRegistry } from '@nestjs/schedule';
+import { Injectable, Logger } from "@nestjs/common";
+import { SchedulerRegistry } from "@nestjs/schedule";
 
 @Injectable()
 export class TasksService {
@@ -13,9 +13,9 @@ export class TasksService {
     this.logger.log(`new interval task added name:${name}, ms: ${milliseconds}`);
     this.healthChecks.set(name, 0);
     const interval = setInterval(async () => {
-        var callTimes: number = this.healthChecks.get(name);
-        await callback();
-        this.healthChecks.set(name, callTimes + 1);
+      var callTimes: number = this.healthChecks.get(name);
+      await callback();
+      this.healthChecks.set(name, callTimes + 1);
     }, milliseconds);
     this.schedulerRegistry.addInterval(name, interval);
   }
