@@ -14,18 +14,18 @@ export const crabChain: ChainConfig = {
   },
   rpcUrls: {
     default: {
-      http: ["https://crab-rpc.darwinia.network"],
-      webSocket: ["wss://crab-rpc.darwinia.network"],
+      http: ["https://crab-rpc.dcdao.box"],
+      webSocket: [],
     },
     public: {
-      http: ["https://crab-rpc.darwinia.network"],
-      webSocket: ["wss://crab-rpc.darwinia.network"],
+      http: ["https://crab-rpc.dcdao.box"],
+      webSocket: [],
     },
   },
   blockExplorers: {
     default: {
-      name: "Subscan",
-      url: "https://crab.subscan.io/",
+      name: "CrabScan",
+      url: "https://crab-scan.darwinia.network/",
     },
   },
   contracts: {

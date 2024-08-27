@@ -81,6 +81,7 @@ export default function TransferChainSection({
         titleText="To"
         titleTips={<TokenTips token={targetToken} chain={targetChain} />}
         recipient={recipient}
+        chain={targetChain}
         alert={recipient?.alert}
         expandRecipient={expandRecipient}
         recipientOptions={recipientOptions}

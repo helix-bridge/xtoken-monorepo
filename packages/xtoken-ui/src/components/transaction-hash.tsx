@@ -1,5 +1,6 @@
 import { Network } from "../types/chain";
 import CopyIcon from "../ui/copy-icon";
+import { getExplorerTxUrl } from "../utils";
 import { getChainConfig } from "../utils/chain";
 
 interface Props {
@@ -15,7 +16,7 @@ export function TransactionHash({ chain, txHash }: Props) {
       {chainConfig?.blockExplorers ? (
         <a
           className="text-primary text-sm font-medium transition hover:underline"
-          href={new URL(`tx/${txHash}`, chainConfig.blockExplorers.default.url).href}
+          href={getExplorerTxUrl(chainConfig, txHash)}
           rel="noopener noreferrer"
           target="_blank"
         >

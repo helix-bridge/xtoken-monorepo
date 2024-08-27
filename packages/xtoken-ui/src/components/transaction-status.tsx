@@ -12,6 +12,7 @@ import { formatBalance } from "../utils/balance";
 import { HistoryRecord, InputValue, RecordResult } from "../types";
 import { RecordResultTag } from "../ui/record-result-tag";
 import Modal from "../ui/modal";
+import { useWallet } from "../hooks";
 
 interface Props {
   record?: HistoryRecord | null;
@@ -28,6 +29,7 @@ export default function TransactionStatus({ record }: Props) {
   const publicClient = usePublicClient();
   const { data: walletClient } = useWalletClient();
   const { switchNetwork } = useSwitchNetwork();
+  const { needConnectWallet, connectWallet, needSwitchChain, switchChain } = useWallet();
 
   const { sourceChain, targetChain, sourceToken, targetToken } = useMemo(() => {
     const sourceChain = getChainConfig(record?.fromChain);
@@ -65,31 +67,47 @@ export default function TransactionStatus({ record }: Props) {
   }, [chain, record, sourceChain, targetChain, sourceToken, targetToken, publicClient, walletClient, switchNetwork]);
 
   const handleRefund = useCallback(async () => {
-    if (chain?.id !== targetChain?.id) {
-      switchNetwork?.(targetChain?.id);
-    } else if (record?.bridge) {
-      const bridge = bridgeFactory({
-        category: record.bridge,
-        sourceChain,
-        targetChain,
-        sourceToken,
-        targetToken,
-        publicClient,
-        walletClient,
-      });
+    if (targetChain) {
+      if (needConnectWallet(targetChain)) {
+        connectWallet(targetChain);
+      } else if (needSwitchChain(targetChain)) {
+        switchChain(targetChain);
+      } else if (record?.bridge) {
+        const bridge = bridgeFactory({
+          category: record.bridge,
+          sourceChain,
+          targetChain,
+          sourceToken,
+          targetToken,
+          publicClient,
+          walletClient,
+        });
 
-      try {
-        setBusy(true);
-        const receipt = await bridge?.refund(record);
-        notifyTransaction(receipt, targetChain, "Refund");
-      } catch (err) {
-        console.error(err);
-        notification.error({ title: "Refund failed", description: (err as Error).message });
-      } finally {
-        setBusy(false);
+        try {
+          setBusy(true);
+          const receipt = await bridge?.refund(record);
+          notifyTransaction(receipt, targetChain, "Refund");
+        } catch (err) {
+          console.error(err);
+          notification.error({ title: "Refund failed", description: (err as Error).message });
+        } finally {
+          setBusy(false);
+        }
       }
     }
-  }, [chain, record, sourceChain, targetChain, sourceToken, targetToken, publicClient, walletClient, switchNetwork]);
+  }, [
+    connectWallet,
+    needConnectWallet,
+    needSwitchChain,
+    publicClient,
+    record,
+    sourceChain,
+    sourceToken,
+    switchChain,
+    targetChain,
+    targetToken,
+    walletClient,
+  ]);
 
   const handleSpeedUp = useCallback(async () => {
     if (chain?.id !== sourceChain?.id) {
@@ -198,7 +216,15 @@ export default function TransactionStatus({ record }: Props) {
           <div className="gap-small flex items-center">
             <span className="text-sm font-medium text-white/50">Please request refund on the target chain.</span>
             <Button className="rounded-medium px-1" kind="primary" busy={busy} onClick={handleRefund}>
-              <span className="text-sm font-medium text-white">Refund</span>
+              <span className="text-sm font-medium text-white">
+                {targetChain
+                  ? needConnectWallet(targetChain)
+                    ? "Connect Wallet"
+                    : needSwitchChain(targetChain)
+                      ? "Switch Chain"
+                      : "Refund"
+                  : "Refund"}
+              </span>
             </Button>
           </div>
         )}

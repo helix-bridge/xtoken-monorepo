@@ -1,9 +1,9 @@
 import { BaseBridge } from "../bridges";
 import { GQL_HISTORY_RECORD_BY_ID } from "../config";
-import { HistoryRecordReqParams, HistoryRecordResData, RecordResult } from "../types";
+import { HistoryRecordReqParams, HistoryRecordResData, Network, RecordResult } from "../types";
 import ComponentLoading from "../ui/component-loading";
 import CountdownRefresh from "../ui/countdown-refresh";
-import { bridgeFactory, getChainConfig } from "../utils";
+import { bridgeFactory, convertAddressToTron, getChainConfig, isTronChain } from "../utils";
 import { useQuery } from "@apollo/client";
 import { PropsWithChildren, useMemo } from "react";
 import TransferRoute from "./transfer-route";
@@ -32,6 +32,7 @@ export default function RecordDetail(props: Props) {
   } = useQuery<HistoryRecordResData, HistoryRecordReqParams>(GQL_HISTORY_RECORD_BY_ID, {
     variables: { id: props.id },
     notifyOnNetworkStatusChange: true,
+    fetchPolicy: "cache-and-network",
   });
   const navigate = useNavigate();
 
@@ -102,22 +103,16 @@ export default function RecordDetail(props: Props) {
           <Divider />
 
           <Item label="Sender" tips="Address (external or contract) sending the transaction.">
-            {record?.historyRecordById?.sender ? (
-              <PrettyAddress
-                address={record.historyRecordById.sender}
-                className="text-primary text-sm font-medium"
-                copyable
-              />
-            ) : null}
+            <SenderAndReceiver
+              address={record?.historyRecordById?.sender}
+              network={record?.historyRecordById?.fromChain}
+            />
           </Item>
           <Item label="Receiver" tips="Address (external or contract) receiving the transaction.">
-            {record?.historyRecordById?.recipient ? (
-              <PrettyAddress
-                address={record.historyRecordById.recipient}
-                className="text-primary text-sm font-medium"
-                copyable
-              />
-            ) : null}
+            <SenderAndReceiver
+              address={record?.historyRecordById?.recipient}
+              network={record?.historyRecordById?.toChain}
+            />
           </Item>
           <Item label="Token Transfer" tips="List of tokens transferred in this cross-chain transaction.">
             <TokenTransfer record={record?.historyRecordById} bridge={bridgeInstance} />
@@ -167,4 +162,12 @@ function isRefundStatus(result: RecordResult | undefined) {
     result === RecordResult.PENDING_TO_REFUND ||
     result === RecordResult.REFUNDED
   );
+}
+
+function SenderAndReceiver({ address, network }: { address?: string; network?: Network }) {
+  const chain = getChainConfig(network);
+  const addressToDisplay = chain && address && isTronChain(chain) ? convertAddressToTron(address) : address;
+  return addressToDisplay ? (
+    <PrettyAddress address={addressToDisplay} className="text-primary text-sm font-medium" copyable />
+  ) : null;
 }

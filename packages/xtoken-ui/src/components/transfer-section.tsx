@@ -3,6 +3,7 @@ import TransferSectionTitle from "./transfer-section-title";
 import WalletSVG from "./icons/wallet-svg";
 import { Address } from "viem";
 import RecipientInput from "./recipient-input";
+import { ChainConfig } from "../types";
 
 interface Recipient {
   input: string;
@@ -16,6 +17,7 @@ interface Props {
   titleTips?: string | JSX.Element;
   loading?: boolean;
   alert?: string;
+  chain?: ChainConfig;
   recipient?: Recipient;
   expandRecipient?: boolean;
   recipientOptions?: Address[];
@@ -25,6 +27,7 @@ interface Props {
 
 export default function TransferSection({
   alert,
+  chain,
   loading,
   children,
   titleText,
@@ -58,7 +61,7 @@ export default function TransferSection({
         ) : null}
         {children}
         {expandRecipient && (
-          <RecipientInput value={recipient} options={recipientOptions} onChange={onRecipientChange} />
+          <RecipientInput value={recipient} chain={chain} options={recipientOptions} onChange={onRecipientChange} />
         )}
       </div>
       {alert ? <span className="text-xs font-normal text-orange-400">{alert}</span> : null}

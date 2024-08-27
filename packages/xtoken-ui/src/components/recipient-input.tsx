@@ -1,4 +1,4 @@
-import { Address, isAddress } from "viem";
+import { Address } from "viem";
 import WalletSVG from "./icons/wallet-svg";
 import { ChangeEventHandler, useCallback, useState } from "react";
 import {
@@ -12,6 +12,8 @@ import {
   useTransitionStyles,
 } from "@floating-ui/react";
 import { useEnsName } from "wagmi";
+import { convertAddressFromTron, convertAddressToTron, isEVMAddress, isTronAddress, isTronChain } from "../utils";
+import { ChainConfig } from "../types";
 
 interface Value {
   input: string;
@@ -21,11 +23,12 @@ interface Value {
 
 interface Props {
   value?: Value;
+  chain?: ChainConfig;
   options?: Address[];
   onChange?: (value: Value) => void;
 }
 
-export default function RecipientInput({ value, options = [], onChange = () => undefined }: Props) {
+export default function RecipientInput({ value, chain, options = [], onChange = () => undefined }: Props) {
   const [isOpen, setIsOpen] = useState(false);
 
   const { refs, context, floatingStyles } = useFloating({
@@ -55,13 +58,19 @@ export default function RecipientInput({ value, options = [], onChange = () => u
     (e) => {
       if (e.target.value) {
         const input = e.target.value;
-        const alert = isAddress(input) ? undefined : "* Invalid address";
-        onChange({ input, alert, value: isAddress(input) ? input : undefined });
+        let alert: string | undefined;
+        if (chain && isTronChain(chain)) {
+          alert = isTronAddress(input) ? undefined : "* Invalid address";
+        } else if (!isEVMAddress(input)) {
+          alert = "* Invalid address";
+        }
+        const value = alert ? undefined : convertAddressFromTron(input);
+        onChange({ input, alert, value });
       } else {
         onChange({ input: "", value: undefined, alert: "* Require recipient" });
       }
     },
-    [onChange],
+    [chain, onChange],
   );
 
   return (
@@ -103,7 +112,7 @@ export default function RecipientInput({ value, options = [], onChange = () => u
               onClick={() => setIsOpen(false)}
             >
               {options.length ? (
-                options.map((option) => <Option key={option} address={option} onSelect={onChange} />)
+                options.map((option) => <Option key={option} chain={chain} address={option} onSelect={onChange} />)
               ) : (
                 <div className="py-small flex items-center justify-center">
                   <span className="text-sm font-extrabold text-slate-400">No data</span>
@@ -117,14 +126,23 @@ export default function RecipientInput({ value, options = [], onChange = () => u
   );
 }
 
-function Option({ address, onSelect }: { address: Address; onSelect: (value: Value) => void }) {
+function Option({
+  address,
+  chain,
+  onSelect,
+}: {
+  address: Address;
+  chain?: ChainConfig;
+  onSelect: (value: Value) => void;
+}) {
   const { data: name } = useEnsName({ address });
+  const addressToDisplay = chain && isTronChain(chain) ? convertAddressToTron(address) : address;
   return (
     <button
       className="py-small w-full truncate px-2 text-start transition-colors hover:bg-white/10"
-      onClick={() => onSelect({ input: address, value: address, alert: undefined })}
+      onClick={() => onSelect({ input: addressToDisplay, value: address, alert: undefined })}
     >
-      <span className="text-sm font-semibold text-white">{name ?? address}</span>
+      <span className="text-sm font-semibold text-white">{name ?? addressToDisplay}</span>
     </button>
   );
 }

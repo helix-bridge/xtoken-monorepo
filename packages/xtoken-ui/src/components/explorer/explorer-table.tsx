@@ -3,6 +3,7 @@ import Table, { ColumnType } from "./table";
 import {
   formatBalance,
   formatTime,
+  getAddressForChain,
   getChainConfig,
   getChainLogoSrc,
   getTokenLogoSrc,
@@ -36,7 +37,7 @@ function getColumns(isLg = false): ColumnType<TData>[] {
         const chain = getChainConfig(row.fromChain);
         return chain ? (
           <div className="gap-medium flex items-center">
-            <img alt={chain.name} width={32} height={32} src={getChainLogoSrc(chain.logo)} />
+            <img alt={chain.name} width={32} height={32} src={getChainLogoSrc(chain.logo)} className="rounded-full" />
             <span className="hidden truncate lg:inline">{chain.name}</span>
           </div>
         ) : (
@@ -52,7 +53,7 @@ function getColumns(isLg = false): ColumnType<TData>[] {
         const chain = getChainConfig(row.toChain);
         return chain ? (
           <div className="gap-medium flex items-center">
-            <img alt={chain.name} width={32} height={32} src={getChainLogoSrc(chain.logo)} />
+            <img alt={chain.name} width={32} height={32} src={getChainLogoSrc(chain.logo)} className="rounded-full" />
             <span className="hidden truncate lg:inline">{chain.name}</span>
           </div>
         ) : (
@@ -63,12 +64,20 @@ function getColumns(isLg = false): ColumnType<TData>[] {
     {
       title: "Sender",
       key: "sender",
-      render: (row) => (row.sender ? <PrettyAddress address={row.sender} copyable forceShort /> : <span>-</span>),
+      render: (row) => {
+        const chain = getChainConfig(row.fromChain);
+        const address = getAddressForChain(chain, row.sender);
+        return address ? <PrettyAddress address={address} copyable forceShort /> : <span>-</span>;
+      },
     },
     {
       title: "Recipient",
       key: "recipient",
-      render: (row) => (row.recipient ? <PrettyAddress address={row.recipient} copyable forceShort /> : <span>-</span>),
+      render: (row) => {
+        const chain = getChainConfig(row.toChain);
+        const address = getAddressForChain(chain, row.recipient);
+        return address ? <PrettyAddress address={address} copyable forceShort /> : <span>-</span>;
+      },
     },
     {
       title: "Amount",

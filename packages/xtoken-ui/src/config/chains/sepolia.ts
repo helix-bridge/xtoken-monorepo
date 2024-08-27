@@ -10,12 +10,12 @@ export const sepoliaChain: ChainConfig = {
   name: "Sepolia",
   rpcUrls: {
     default: {
-      http: ["https://1rpc.io/sepolia"],
-      webSocket: ["wss://ethereum-sepolia.publicnode.com"],
+      http: ["https://ethereum-sepolia-rpc.publicnode.com	"],
+      webSocket: [],
     },
     public: {
-      http: ["https://1rpc.io/sepolia"],
-      webSocket: ["wss://ethereum-sepolia.publicnode.com"],
+      http: ["https://ethereum-sepolia-rpc.publicnode.com	"],
+      webSocket: [],
     },
   },
 

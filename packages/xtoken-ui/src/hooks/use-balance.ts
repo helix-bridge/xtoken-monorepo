@@ -1,8 +1,8 @@
 import { ChainConfig, Token } from "../types";
-import { Address, createPublicClient, http } from "viem";
+import { Address } from "viem";
 import { from } from "rxjs";
 import { useCallback, useEffect, useState } from "react";
-import abi from "../abi/erc20";
+import { getBalanceEVM, getBalanceTron, isTronChain } from "../utils";
 
 export function useBalance(chain: ChainConfig, token: Token, address?: Address | null) {
   const [loading, setLoading] = useState(false);
@@ -10,12 +10,9 @@ export function useBalance(chain: ChainConfig, token: Token, address?: Address |
 
   const updateBalance = useCallback(() => {
     if (address) {
-      const publicClient = createPublicClient({ transport: http(), chain });
       setLoading(true);
       return from(
-        token.type === "native"
-          ? publicClient.getBalance({ address })
-          : publicClient.readContract({ address: token.address, abi, functionName: "balanceOf", args: [address] }),
+        isTronChain(chain) ? getBalanceTron(chain, token, address) : getBalanceEVM(chain, token, address),
       ).subscribe({
         next: (res) => {
           setLoading(false);
@@ -31,7 +28,7 @@ export function useBalance(chain: ChainConfig, token: Token, address?: Address |
       setLoading(false);
       setBalance(0n);
     }
-  }, [chain, token.address, token.type, address]);
+  }, [chain, token, address]);
 
   useEffect(() => {
     const sub$$ = updateBalance();
