@@ -5,8 +5,11 @@ MsgportMessager: TSyvtuVJsqFwDH6cGazHyBNwMjdiFDVCji
 ProxyAdmin: TJHe5fHrG3STBN1msW77C2wJiNBW1SLtqV
 XTokenIssuing_logic: TWqBdSsVS9h49fmsxGgqoavqEaCFxATxnW
 XTokenIssuing_proxy: TWtdaDvBVt9KXTTtZi4obBYRCd6QaCwQZL
+xRING: TXqKnVPQguRMDdP3a47P323VMs5t5rhDQW
+XRINGLockBox: TJYSR8i8Hjn2twjBuAcZYhd3nYpWVDcQY2
 RING: TXpHh528nJWoBj5qwCj2pwDBGSsGt7UPAn
 RINGAuthority: TT3oQtSBeAMFCynizaiKQ49XVNfYy7znQ3
+XRingConvertor: TUyFyMCPXLmChB2stLWXtgTvUigJmssAak
 ```
 
 ## Koi (701)
@@ -18,4 +21,26 @@ XTokenBacking_logic: 0x2a579104f5438C0d6c07F3Ca856051b89214b4EA
 XTokenBacking_proxy: 0x2c841103557112d99923956eB9b9b4a05ef042af 
 WToken: 0xec8406f4e6B1b853E50c53872648b7BD5e4a7b8a
 WTokenConvertor: 0xC9EA55E644F496D6CaAEDcBAD91dE7481Dcd7517
+```
+
+## Tron (728126428)
+
+```
+MsgportMessager: TBnuNgnp6Ec7H86RrDPnmLGB6eoRKWah1d
+ProxyAdmin: TCF8pxpKcoBgw4aSkNbjVeqSvAUU6LuDXa
+XTokenIssuing_logic: TPfdJXxo2W8J32j3pMPKUcVQCkLxhdRHNA
+XTokenIssuing_proxy: TEvKCc7hwTc1trReqwP5FHTLhKnqVdUzar
+RING: TL175uyihLqQD656aFx3uhHYe1tyGkmXaW
+RINGAuthority: 
+```
+
+## Darwinia (46)
+
+```
+MsgportMessager: 0x65Be094765731F394bc6d9DF53bDF3376F1Fc8B0
+ProxyAdmin: 0x8bd12E9702397D7Ff8Cd83BA4D082787e7bd3C86
+XTokenBacking_logic: 0x2c44934256f4a2201b82408C40ba471e3b92cEcA
+XTokenBacking_proxy: 0x7defE0f6105a9498376B72FFfaedf102A2f63cD5
+WToken: 0xE7578598Aac020abFB918f33A20faD5B71d670b4
+WTokenConvertor: 0x547cDb578A89517C75a0fA18a56232a357910c52
 ```
