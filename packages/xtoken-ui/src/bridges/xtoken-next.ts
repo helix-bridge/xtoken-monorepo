@@ -118,9 +118,15 @@ export class XTokenNextBridge extends BaseBridge {
     } else if (this.sourceChain?.network === "pangoro-dvm" && this.targetChain?.network === "sepolia") {
       this.convertor = { source: undefined, target: "0x510A820E41BB6d828a29332dB551B6B3cf7232D3" };
     } else if (this.sourceChain?.network === "koi" && this.targetChain?.network === "tron-shasta") {
-      this.convertor = { source: "0xC9EA55E644F496D6CaAEDcBAD91dE7481Dcd7517", target: undefined };
+      this.convertor = {
+        source: "0xC9EA55E644F496D6CaAEDcBAD91dE7481Dcd7517",
+        target: "0xd06CDE9b2A330C5ECedbc48920B502dFc590e5cC",
+      };
     } else if (this.sourceChain?.network === "tron-shasta" && this.targetChain?.network === "koi") {
-      this.convertor = { source: undefined, target: "0xC9EA55E644F496D6CaAEDcBAD91dE7481Dcd7517" };
+      this.convertor = {
+        source: "0xd06CDE9b2A330C5ECedbc48920B502dFc590e5cC",
+        target: "0xC9EA55E644F496D6CaAEDcBAD91dE7481Dcd7517",
+      };
     }
   }
 
