@@ -64,7 +64,7 @@ function Row({
           <img width={20} height={20} alt="Warning" src="images/warning.svg" />
         </Tooltip>
       ) : typeof value === "bigint" && token ? (
-        <Text value={`${formatBalance(value, token.decimals, { precision: 6 })} ${token.symbol}`} />
+        <Text value={`${formatBalance(value, token.decimals, { precision: 12 })} ${token.symbol}`} />
       ) : typeof value === "string" ? (
         <Text value={value} />
       ) : typeof value !== "bigint" ? (

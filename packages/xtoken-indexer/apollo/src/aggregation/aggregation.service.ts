@@ -1,28 +1,28 @@
-import { INestApplication, Injectable, Logger, OnModuleInit } from '@nestjs/common';
-import { HistoryRecord, Prisma, PrismaClient } from '@prisma/client';
-import { HistoryRecords } from '../graphql';
-import { GuardService } from '../guard/guard.service';
+import { INestApplication, Injectable, Logger, OnModuleInit } from "@nestjs/common";
+import { HistoryRecord, Prisma, PrismaClient } from "@prisma/client";
+import { HistoryRecords } from "../graphql";
+import { GuardService } from "../guard/guard.service";
 // export lnbridge service configure
-import { last } from 'lodash';
-import { TasksService } from '../tasks/tasks.service';
+import { last } from "lodash";
+import { TasksService } from "../tasks/tasks.service";
 
 @Injectable()
 export class AggregationService extends PrismaClient implements OnModuleInit {
-  private readonly logger = new Logger('aggregation');
+  private readonly logger = new Logger("aggregation");
 
   async onModuleInit() {
     await this.$connect();
   }
 
   constructor(
-      private guardService: GuardService,
-      private tasksService: TasksService
+    private guardService: GuardService,
+    private tasksService: TasksService,
   ) {
     super();
   }
 
   async enableShutdownHooks(app: INestApplication) {
-    this.$on('beforeExit', async () => {
+    this.$on("beforeExit", async () => {
       await app.close();
     });
   }
@@ -50,35 +50,32 @@ export class AggregationService extends PrismaClient implements OnModuleInit {
     });
   }
 
-  async addGuardSignature(params: {
-    where: Prisma.HistoryRecordWhereUniqueInput;
-    signature: string;
-  }) {
+  async addGuardSignature(params: { where: Prisma.HistoryRecordWhereUniqueInput; signature: string }) {
     const { where, signature } = params;
     try {
       const record = await this.historyRecord.findUnique({
         where,
       });
       // tx has been redeemed
-      if (record.responseTxHash !== '') {
+      if (record.responseTxHash !== "") {
         return;
       }
       const guard = this.guardService.recoverPubkey(
         record.fromChain,
         record.toChain,
         record.bridge,
-        BigInt(last(record.id.split('-'))).toString(),
+        BigInt(last(record.id.split("-"))).toString(),
         record.endTime.toString(),
         record.recvTokenAddress,
         record.recvAmount,
         record.extData,
-        signature
+        signature,
       );
       if (!guard) {
         return;
       }
-      const value = guard + '-' + signature;
-      const signatures = record.guardSignatures === null ? [] : record.guardSignatures.split(',');
+      const value = guard + "-" + signature;
+      const signatures = record.guardSignatures === null ? [] : record.guardSignatures.split(",");
       const exist = signatures.find((sig) => sig === value);
       if (exist) {
         return;
@@ -88,7 +85,7 @@ export class AggregationService extends PrismaClient implements OnModuleInit {
       await this.historyRecord.update({
         where,
         data: {
-          guardSignatures: signatures.sort().join(','),
+          guardSignatures: signatures.sort().join(","),
         },
       });
     } catch (error) {
@@ -97,7 +94,7 @@ export class AggregationService extends PrismaClient implements OnModuleInit {
   }
 
   async queryHistoryRecordById(
-    historyRecordWhereUniqueInput: Prisma.HistoryRecordWhereUniqueInput
+    historyRecordWhereUniqueInput: Prisma.HistoryRecordWhereUniqueInput,
   ): Promise<HistoryRecord | null> {
     return this.historyRecord.findUnique({
       where: historyRecordWhereUniqueInput,
@@ -106,7 +103,7 @@ export class AggregationService extends PrismaClient implements OnModuleInit {
 
   async queryHistoryRecordFirst(
     historyRecordWhereInput: Prisma.HistoryRecordWhereInput,
-    orderBy?: Prisma.Enumerable<Prisma.HistoryRecordOrderByWithRelationAndSearchRelevanceInput>
+    orderBy?: Prisma.Enumerable<Prisma.HistoryRecordOrderByWithRelationAndSearchRelevanceInput>,
   ): Promise<HistoryRecord | null> {
     return this.historyRecord.findFirst({
       where: historyRecordWhereInput,
@@ -133,6 +130,6 @@ export class AggregationService extends PrismaClient implements OnModuleInit {
   }
 
   tasksHealthCheck() {
-      return this.tasksService.queryHealthChecks();
+    return this.tasksService.queryHealthChecks();
   }
 }

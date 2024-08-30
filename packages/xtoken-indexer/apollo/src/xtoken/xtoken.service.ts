@@ -1,17 +1,20 @@
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import axios from 'axios';
-import { last } from 'lodash';
-import { AggregationService } from '../aggregation/aggregation.service';
-import { TasksService } from '../tasks/tasks.service';
-import { TransferService } from './transfer.service';
+import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import axios from "axios";
+import { last } from "lodash";
+import { AggregationService } from "../aggregation/aggregation.service";
+import { TasksService } from "../tasks/tasks.service";
+import { TransferService } from "./transfer.service";
 import {
   PartnerT2,
   PartnerSymbol,
   FetchCacheInfo,
   BridgeBaseConfigure,
   RecordStatus,
-} from '../base/TransferServiceT2';
+  Level0IndexerType,
+} from "../base/TransferServiceT2";
+import { XTokenThegraphService } from "./source/thegraph.service";
+import { XTokenSuperService } from "./source/super.service";
 
 enum xTokenStatus {
   // do nothing
@@ -30,26 +33,29 @@ enum xTokenStatus {
 
 @Injectable()
 export class xTokenService implements OnModuleInit {
-  logger: Logger = new Logger('xtoken');
+  logger: Logger = new Logger("xtoken");
   baseConfigure: BridgeBaseConfigure = {
-    name: 'xtoken',
+    name: "xtoken",
     fetchHistoryDataFirst: 10,
     fetchSendDataInterval: 3000,
     takeEachTime: 3,
   };
-
+  private sourceServices = new Map();
   fetchCache: FetchCacheInfo[] = new Array(this.transferService.transfers.length)
-    .fill('')
+    .fill("")
     .map((_) => ({ latestNonce: -1, isSyncingHistory: false, skip: 0 }));
 
   constructor(
     public configService: ConfigService,
     protected aggregationService: AggregationService,
     protected taskService: TasksService,
-    protected transferService: TransferService
+    protected transferService: TransferService,
   ) {}
 
   async onModuleInit() {
+    this.sourceServices.set(Level0IndexerType.thegraph, new XTokenThegraphService());
+    this.sourceServices.set(Level0IndexerType.superindex, new XTokenSuperService());
+
     this.transferService.transfers.forEach((item, index) => {
       this.taskService.addInterval(
         `${item.chain}-${item.bridge}-fetch_history_data`,
@@ -62,7 +68,7 @@ export class xTokenService implements OnModuleInit {
           await this.fetchRecords(item, index);
           await this.fetchStatus(item, index);
           this.fetchCache[index].isSyncingHistory = false;
-        }
+        },
       );
     });
   }
@@ -71,26 +77,23 @@ export class xTokenService implements OnModuleInit {
     return (
       this.transferService.transfers.find(
         (transfer) =>
-          (transfer.chainId.toString() === idOrName || transfer.chain === idOrName) &&
-          transfer.bridge === bridge
+          (transfer.chainId.toString() === idOrName || transfer.chain === idOrName) && transfer.bridge === bridge,
       ) ?? null
     );
   }
 
   private toMessageNonce(messageId: string, nonce: string): string {
-      return `${nonce}-${messageId}`;
+    return `${nonce}-${messageId}`;
   }
 
   private toMessageId(messageNonce: string): string {
-    return last(messageNonce.split('-'));
+    return last(messageNonce.split("-"));
   }
 
   private getToken(chain: PartnerT2, symbolOrAddress: string): PartnerSymbol | null {
     return (
       chain.symbols.find(
-        (item) =>
-          item.key === symbolOrAddress ||
-          symbolOrAddress?.toLowerCase() === item.address.toLowerCase()
+        (item) => item.key === symbolOrAddress || symbolOrAddress?.toLowerCase() === item.address.toLowerCase(),
       ) ?? null
     );
   }
@@ -102,10 +105,84 @@ export class xTokenService implements OnModuleInit {
   findPartner(transfer: PartnerT2): PartnerT2 {
     return (
       this.transferService.transfers.find(
-        (target) =>
-          target.bridge === transfer.bridge && target.chainId !== transfer.chainId
+        (target) => target.bridge === transfer.bridge && target.chainId !== transfer.chainId,
       ) ?? null
     );
+  }
+
+  async queryTransferRecords(transfer: PartnerT2, remoteChainId: number, latestNonce: number) {
+    let result = [];
+    for (const level0Indexer of transfer.urls) {
+      const service = this.sourceServices.get(level0Indexer.indexerType);
+      try {
+        const response = await service.queryTransferRecords(
+          level0Indexer.url,
+          transfer.chainId,
+          remoteChainId,
+          latestNonce,
+        );
+        if (response && response.length >= result.length) {
+          result = response;
+        }
+      } catch (err) {
+        this.logger.warn(
+          `try to get records failed, id ${transfer.chainId}, type ${level0Indexer.indexerType}, err ${err}`,
+        );
+      }
+    }
+    return result;
+  }
+
+  async queryMessageDispatchedResult(transfer: PartnerT2, messageId: string) {
+    for (const level0Indexer of transfer.dispatchUrls) {
+      const service = this.sourceServices.get(level0Indexer.indexerType);
+      try {
+        const response = await service.queryMessageDispatchResult(level0Indexer.url, transfer.chainId, messageId);
+        if (response) {
+          return response;
+        }
+      } catch (err) {
+        this.logger.warn(
+          `try to get message dispatch result failed, id ${transfer.chainId}, type ${level0Indexer.indexerType}, messageId ${messageId} err ${err}`,
+        );
+      }
+    }
+  }
+
+  async queryMessageDispatchedResults(transfer: PartnerT2, messageIds: string) {
+    let result = [];
+    for (const level0Indexer of transfer.dispatchUrls) {
+      const service = this.sourceServices.get(level0Indexer.indexerType);
+      try {
+        const response = await service.queryMessageDispatchResults(level0Indexer.url, transfer.chainId, messageIds);
+        if (response && response.length >= result.length) {
+          result = response;
+        }
+      } catch (err) {
+        this.logger.warn(
+          `try to get message dispatch result failed, id ${transfer.chainId}, type ${level0Indexer.indexerType}, messageId ${messageIds} err ${err}`,
+        );
+      }
+    }
+    return result;
+  }
+
+  async queryRefundTransferRecords(transfer: PartnerT2, sourceId: string) {
+    let result = [];
+    for (const level0Indexer of transfer.urls) {
+      const service = this.sourceServices.get(level0Indexer.indexerType);
+      try {
+        const response = await service.queryRefundTransferRecords(level0Indexer.url, transfer.chainId, sourceId);
+        if (response && response.length >= result.length) {
+          result = response;
+        }
+      } catch (err) {
+        this.logger.warn(
+          `try to get refund records failed, id ${transfer.chainId}, type ${level0Indexer.indexerType}, err ${err}`,
+        );
+      }
+    }
+    return result;
   }
 
   async fetchRecords(transfer: PartnerT2, index: number) {
@@ -125,19 +202,12 @@ export class xTokenService implements OnModuleInit {
             toChain: partner.chain,
             bridge: transfer.bridge,
           },
-          { nonce: 'desc' }
+          { nonce: "desc" },
         );
         latestNonce = firstRecord ? Number(firstRecord.nonce) : 0;
       }
 
-      const query = `query { transferRecords(where: {remoteChainId: ${partner.chainId}}, first: ${this.baseConfigure.fetchHistoryDataFirst}, orderBy: nonce, orderDirection: asc, skip: ${latestNonce}) { id, direction, remoteChainId, nonce, userNonce, messageId, sender, receiver, token, amount, timestamp, transactionHash, fee, extData } }`;
-
-      const records = await axios
-        .post(transfer.url, {
-          query: query,
-          variables: null,
-        })
-        .then((res) => res.data?.data?.transferRecords);
+      const records = await this.queryTransferRecords(transfer, partner.chainId, latestNonce);
 
       let added = 0;
       if (records && records.length > 0) {
@@ -145,7 +215,7 @@ export class xTokenService implements OnModuleInit {
           const toChain = this.getDestChain(record.remoteChainId.toString(), transfer.bridge);
           let sendTokenInfo, recvTokenInfo;
 
-          if (record.direction === 'lock') {
+          if (record.direction === "lock") {
             sendTokenInfo = this.getToken(transfer, record.token);
             recvTokenInfo = this.getToken(toChain, sendTokenInfo?.key);
           } else {
@@ -162,7 +232,7 @@ export class xTokenService implements OnModuleInit {
             continue;
           }
 
-          const responseHash = '';
+          const responseHash = "";
           const result = RecordStatus.pending;
           const endTime = 0;
           await this.aggregationService.createHistoryRecord({
@@ -173,8 +243,8 @@ export class xTokenService implements OnModuleInit {
             messageNonce: this.toMessageNonce(record.messageId, record.userNonce),
             nonce: latestNonce + 1,
             requestTxHash: record.transactionHash,
-            sender: record.sender,
-            recipient: record.receiver,
+            sender: record.sender.toLowerCase(),
+            recipient: record.receiver.toLowerCase(),
             sendToken: sendTokenInfo.symbol,
             recvToken: recvTokenInfo.symbol,
             sendAmount: record.amount,
@@ -185,12 +255,12 @@ export class xTokenService implements OnModuleInit {
             fee: record.fee,
             feeToken: sendTokenInfo.symbol,
             responseTxHash: responseHash,
-            reason: '',
+            reason: "",
             sendTokenAddress: sendTokenInfo.address.toLowerCase(),
             recvTokenAddress: recvTokenInfo.address.toLowerCase(),
             sendOuterTokenAddress: sendTokenInfo.outerAddress.toLowerCase(),
             recvOuterTokenAddress: recvTokenInfo.outerAddress.toLowerCase(),
-            endTxHash: '',
+            endTxHash: "",
             extData: record.extData,
           });
           latestNonce += 1;
@@ -198,7 +268,7 @@ export class xTokenService implements OnModuleInit {
         }
 
         this.logger.log(
-          `save new send record succeeded ${transfer.chain}, nonce: ${latestNonce}, added: ${added}/${records.length}`
+          `save new send record succeeded ${transfer.chain}, nonce: ${latestNonce}, added: ${added}/${records.length}`,
         );
         this.fetchCache[index].latestNonce = latestNonce;
       }
@@ -223,7 +293,7 @@ export class xTokenService implements OnModuleInit {
             fromChain: transfer.chain,
             toChain: partner.chain,
             bridge: transfer.bridge,
-            responseTxHash: '',
+            responseTxHash: "",
           },
         })
         .then((result) => result.records);
@@ -236,18 +306,13 @@ export class xTokenService implements OnModuleInit {
       for (const uncheckedRecord of uncheckedRecords) {
         const sourceId = this.nodeIdToTransferId(uncheckedRecord.id);
         const messageId = this.toMessageId(uncheckedRecord.messageNonce);
-        const node = await axios
-          .post(partner.dispatchUrl, {
-            query: `query { messageDispatchedResult (id: \"${messageId}\") { id, token, transactionHash, result, timestamp }}`,
-            variables: null,
-          })
-          .then((res) => res.data?.data?.messageDispatchedResult);
+        const node = await this.queryMessageDispatchedResult(partner, messageId);
 
         if (node === undefined || node === null || node.result === null) {
           continue;
         }
         let result = uncheckedRecord.result;
-        let responseTxHash = '';
+        let responseTxHash = "";
         // failed
         if (node.result === xTokenStatus.failed) {
           //pendingToRefund
@@ -268,7 +333,7 @@ export class xTokenService implements OnModuleInit {
         if (uncheckedRecord.result === RecordStatus.pending || uncheckedRecord.result === RecordStatus.pendingToClaim) {
           if (result !== uncheckedRecord.result) {
             this.logger.log(
-              `${this.baseConfigure.name} [${uncheckedRecord.fromChain}-${uncheckedRecord.toChain}] status updated, id: ${sourceId}, status ${uncheckedRecord.result}->${result}`
+              `${this.baseConfigure.name} [${uncheckedRecord.fromChain}-${uncheckedRecord.toChain}] status updated, id: ${sourceId}, status ${uncheckedRecord.result}->${result}`,
             );
             await this.aggregationService.updateHistoryRecord({
               where: { id: uncheckedRecord.id },
@@ -292,20 +357,16 @@ export class xTokenService implements OnModuleInit {
         ) {
           const destChain = this.getDestChain(uncheckedRecord.toChain, transfer.bridge);
           // all refund requests
-          const nodes = await axios
-            .post(destChain.url, {
-              query: `query { refundTransferRecords (where: {sourceId: "${sourceId}"}) { id, sourceId, transactionHash, timestamp }}`,
-              variables: null,
-            })
-            .then((res) => res.data?.data?.refundTransferRecords);
+          const nodes = await this.queryRefundTransferRecords(destChain, sourceId);
+
           if (nodes.length === 0) {
             continue;
           }
-          const refundIds = nodes.map((item) => `\"${item.id}\"`).join(',');
+          const refundIds = nodes.map((item) => `\"${item.id}\"`).join(",");
           const [successedResult, size] = await this.fetchRefundResult(refundIds, transfer);
           if (successedResult) {
             this.logger.log(
-              `${this.baseConfigure.name} refund successed, status from ${uncheckedRecord.result} to ${RecordStatus.refunded}`
+              `${this.baseConfigure.name} refund successed, status from ${uncheckedRecord.result} to ${RecordStatus.refunded}`,
             );
             // refunded
             await this.aggregationService.updateHistoryRecord({
@@ -322,7 +383,7 @@ export class xTokenService implements OnModuleInit {
                 const oldStatus = uncheckedRecord.result;
                 uncheckedRecord.result = RecordStatus.pendingToRefund;
                 this.logger.log(
-                  `${this.baseConfigure.name} no refund successed, status from ${oldStatus} to ${RecordStatus.pendingToRefund}`
+                  `${this.baseConfigure.name} no refund successed, status from ${oldStatus} to ${RecordStatus.pendingToRefund}`,
                 );
                 // update db
                 await this.aggregationService.updateHistoryRecord({
@@ -336,7 +397,7 @@ export class xTokenService implements OnModuleInit {
               // some tx not confirmed -> RecordStatus.pendingToConfirmRefund
               if (uncheckedRecord.result != RecordStatus.pendingToConfirmRefund) {
                 this.logger.log(
-                  `${this.baseConfigure.name} [${uncheckedRecord.fromChain}->${uncheckedRecord.toChain}] waiting for refund confirmed, id: ${uncheckedRecord.id} old status ${uncheckedRecord.result}`
+                  `${this.baseConfigure.name} [${uncheckedRecord.fromChain}->${uncheckedRecord.toChain}] waiting for refund confirmed, id: ${uncheckedRecord.id} old status ${uncheckedRecord.result}`,
                 );
                 uncheckedRecord.result = RecordStatus.pendingToConfirmRefund;
                 // update db
@@ -352,27 +413,16 @@ export class xTokenService implements OnModuleInit {
         }
       }
     } catch (error) {
-      this.logger.warn(
-        `${this.baseConfigure.name} update status failed, from ${transfer.chain} error ${error}`
-      );
+      this.logger.warn(`${this.baseConfigure.name} update status failed, from ${transfer.chain} error ${error}`);
     }
   }
 
   private nodeIdToTransferId(id: string): string {
-    return last(id.split('-'));
+    return last(id.split("-"));
   }
 
   async fetchRefundResult(ids: string, transfer: PartnerT2) {
-    const query = `query { messageDispatchedResults (where: {id_in: [${ids}]}) { id, token, transactionHash, result, timestamp }}`;
-    const refundResults = await axios
-      .post(transfer.dispatchUrl, {
-        query: query,
-        variables: null,
-      })
-      .then((res) => res.data?.data?.messageDispatchedResults);
-    return [
-      refundResults.find((r) => r.result === xTokenStatus.deliveredSuccessed) ?? null,
-      refundResults.length,
-    ];
+    const refundResults = await this.queryMessageDispatchedResults(transfer, ids);
+    return [refundResults.find((r) => r.result === xTokenStatus.deliveredSuccessed) ?? null, refundResults.length];
   }
 }

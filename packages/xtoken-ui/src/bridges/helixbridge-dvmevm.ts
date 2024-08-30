@@ -145,8 +145,6 @@ export class HelixBridgeDVMEVM extends BaseBridge {
   }
 
   async claim(record: HistoryRecord) {
-    await this.validateNetwork("target");
-
     if (this.guard && this.publicClient && this.walletClient) {
       const hash = await this.walletClient.writeContract({
         address: this.guard,
@@ -167,8 +165,6 @@ export class HelixBridgeDVMEVM extends BaseBridge {
   }
 
   async refund(record: HistoryRecord) {
-    await this.validateNetwork("target");
-
     if (this.contract && this.publicClient && this.walletClient) {
       const sendAmount = BigInt(record.sendAmount);
       const sendTokenAddress = record.sendTokenAddress || "0x";

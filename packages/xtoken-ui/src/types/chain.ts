@@ -6,6 +6,7 @@ export enum ChainID {
   CRAB = 44,
   PANGOLIN = 43,
   PANGORO_TANSSI = 45,
+  KOI = 701,
 
   ETHEREUM = 1,
   SEPOLIA = 11155111,
@@ -26,6 +27,10 @@ export enum ChainID {
   GNOSIS = 100,
   LINEA = 59144,
   MANTLE = 5000,
+
+  // Tron
+  TRON_SHASTA = 2494104990,
+  TRON_MAINNET = 728126428,
 }
 
 // According to graphql indexer
@@ -34,6 +39,7 @@ export type Network =
   | "crab-dvm"
   | "pangolin-dvm"
   | "pangoro-dvm"
+  | "koi"
   | "ethereum"
   | "sepolia"
   | "arbitrum"
@@ -48,7 +54,9 @@ export type Network =
   | "scroll"
   | "base"
   | "op"
-  | "bsc";
+  | "bsc"
+  | "tron-shasta"
+  | "tron";
 
 export interface ChainConfig extends Chain {
   /**
@@ -64,4 +72,9 @@ export interface ChainConfig extends Chain {
   tokens: Token[];
   messager?: { msgline?: Address }; // TODO: https://github.com/helix-bridge/xtoken-monorepo/issues/42
   hidden?: boolean;
+
+  // Tron
+  fullNode?: string;
+  solidityNode?: string;
+  eventServer?: string;
 }

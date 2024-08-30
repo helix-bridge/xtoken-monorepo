@@ -7,11 +7,19 @@ import {
   CrossChain,
   GetFeeArgs,
   HistoryRecord,
-  Location,
   Token,
   TransferOptions,
+  TronTransactionReceipt,
+  TronWebClient,
 } from "../types";
-import { getBalance } from "../utils";
+import {
+  convertAddressToTron,
+  createTronPublicClient,
+  createTronWalletClient,
+  getBalance,
+  isTronChain,
+  waitForTronTransactionReceipt,
+} from "../utils";
 import { Address, PublicClient as ViemPublicClient, TransactionReceipt, createPublicClient, http } from "viem";
 import { PublicClient as WagmiPublicClient, WalletClient } from "wagmi";
 import erc20Abi from "../abi/erc20";
@@ -37,6 +45,8 @@ export abstract class BaseBridge {
   protected readonly targetPublicClient: ViemPublicClient | undefined;
   protected readonly publicClient?: WagmiPublicClient; // The public client to which the wallet is connected
   protected readonly walletClient?: WalletClient | null;
+  protected readonly sourceTronWebPublicClient?: TronWebClient;
+  protected readonly targetTronWebPublicClient?: TronWebClient;
 
   constructor(args: BridgeConstructorArgs) {
     this.category = args.category;
@@ -58,9 +68,19 @@ export abstract class BaseBridge {
 
     this.walletClient = args.walletClient;
     this.publicClient = args.publicClient;
-    if (args.sourceChain && args.targetChain) {
-      this.sourcePublicClient = createPublicClient({ chain: args.sourceChain, transport: http() });
-      this.targetPublicClient = createPublicClient({ chain: args.targetChain, transport: http() });
+    if (args.sourceChain) {
+      if (isTronChain(args.sourceChain)) {
+        this.sourceTronWebPublicClient = createTronPublicClient(args.sourceChain);
+      } else {
+        this.sourcePublicClient = createPublicClient({ chain: args.sourceChain, transport: http() });
+      }
+    }
+    if (args.targetChain) {
+      if (isTronChain(args.targetChain)) {
+        this.targetTronWebPublicClient = createTronPublicClient(args.targetChain);
+      } else {
+        this.targetPublicClient = createPublicClient({ chain: args.targetChain, transport: http() });
+      }
     }
   }
 
@@ -78,19 +98,12 @@ export abstract class BaseBridge {
     }
   }
 
-  protected async validateNetwork(location: Location) {
-    const chain = location === "source" ? this.sourceChain : this.targetChain;
-    if (chain?.id !== (await this.publicClient?.getChainId())) {
-      throw new Error("Wrong network");
-    }
-  }
-
   protected abstract _transfer(
     sender: Address,
     recipient: Address,
     amount: bigint,
     options?: TransferOptions & { askEstimateGas?: boolean },
-  ): Promise<TransactionReceipt | bigint | undefined>;
+  ): Promise<TransactionReceipt | TronTransactionReceipt | bigint | undefined>;
 
   getLogo() {
     return this.logo;
@@ -159,7 +172,7 @@ export abstract class BaseBridge {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async refund(_record: HistoryRecord): Promise<TransactionReceipt | undefined> {
+  async refund(_record: HistoryRecord): Promise<TransactionReceipt | TronTransactionReceipt | undefined> {
     return undefined;
   }
 
@@ -180,34 +193,59 @@ export abstract class BaseBridge {
     }
   }
 
-  private async getAllowance(owner: Address, spender: Address, token: Token, publicClient: ViemPublicClient) {
+  private async getAllowance(
+    owner: Address,
+    spender: Address,
+    token: Token,
+    api: { publicClient?: ViemPublicClient; tronWeb?: TronWebClient },
+  ) {
     if (token.type === "erc20") {
-      const value = await publicClient.readContract({
-        address: token.address,
-        abi: erc20Abi,
-        functionName: "allowance",
-        args: [owner, spender],
-      });
-      return { value, token };
+      if (api.publicClient) {
+        const value = await api.publicClient.readContract({
+          address: token.address,
+          abi: erc20Abi,
+          functionName: "allowance",
+          args: [owner, spender],
+        });
+        return { value, token };
+      } else if (api.tronWeb) {
+        const contract = await api.tronWeb.contract(erc20Abi, convertAddressToTron(token.address));
+        const a = await contract.allowance(convertAddressToTron(owner), convertAddressToTron(spender)).call();
+        return { value: BigInt(a.toString()), token };
+      }
     }
   }
 
   async getSourceAllowance(owner: Address) {
-    if (this.contract && this.sourceToken && this.sourcePublicClient) {
+    if (this.contract && this.sourceToken) {
       const spender = this.convertor?.source ?? this.contract.sourceAddress;
-      return this.getAllowance(owner, spender, this.sourceToken, this.sourcePublicClient);
+      return this.getAllowance(owner, spender, this.sourceToken, {
+        publicClient: this.sourcePublicClient,
+        tronWeb: this.sourceTronWebPublicClient,
+      });
     }
   }
 
   async getTargetAllowance(owner: Address) {
-    if (this.contract && this.targetToken && this.targetPublicClient) {
+    if (this.contract && this.targetToken) {
       const spender = this.convertor?.target ?? this.contract.targetAddress;
-      return this.getAllowance(owner, spender, this.targetToken, this.targetPublicClient);
+      return this.getAllowance(owner, spender, this.targetToken, {
+        publicClient: this.targetPublicClient,
+        tronWeb: this.targetTronWebPublicClient,
+      });
     }
   }
 
-  private async approve(amount: bigint, owner: Address, spender: Address, token: Token) {
-    if (this.publicClient && this.walletClient) {
+  private async approve(amount: bigint, owner: Address, spender: Address, token: Token, chain: ChainConfig) {
+    if (isTronChain(chain)) {
+      const tronWeb = createTronWalletClient();
+      if (tronWeb) {
+        const contract = await tronWeb.contract(erc20Abi, convertAddressToTron(token.address));
+        const hash = await contract.approve(convertAddressToTron(owner), amount.toString()).send();
+        const receipt = waitForTronTransactionReceipt({ client: tronWeb, hash });
+        return receipt;
+      }
+    } else if (this.publicClient && this.walletClient) {
       const { request } = await this.publicClient.simulateContract({
         address: token.address,
         abi: erc20Abi,
@@ -221,24 +259,23 @@ export abstract class BaseBridge {
   }
 
   async sourceApprove(amount: bigint, owner: Address) {
-    await this.validateNetwork("source");
-    if (this.sourceToken && this.contract) {
+    if (this.sourceToken && this.contract && this.sourceChain) {
       const spender = this.convertor?.source ?? this.contract.sourceAddress;
-      return this.approve(amount, owner, spender, this.sourceToken);
+      return this.approve(amount, owner, spender, this.sourceToken, this.sourceChain);
     }
   }
 
   async targetApprove(amount: bigint, owner: Address) {
-    await this.validateNetwork("target");
-    if (this.targetToken && this.contract) {
+    if (this.targetToken && this.contract && this.targetChain) {
       const spender = this.convertor?.target ?? this.contract.targetAddress;
-      return this.approve(amount, owner, spender, this.targetToken);
+      return this.approve(amount, owner, spender, this.targetToken, this.targetChain);
     }
   }
 
   async transfer(sender: Address, recipient: Address, amount: bigint, options?: TransferOptions) {
-    await this.validateNetwork("source");
-    return this._transfer(sender, recipient, amount, options) as Promise<TransactionReceipt | undefined>;
+    return this._transfer(sender, recipient, amount, options) as Promise<
+      TransactionReceipt | TronTransactionReceipt | undefined
+    >;
   }
 
   async estimateTransferGas(sender: Address, recipient: Address, amount: bigint, options?: TransferOptions) {

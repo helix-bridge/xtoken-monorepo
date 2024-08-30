@@ -12,7 +12,7 @@ export default function MessageFee({ record }: Props) {
   return (
     <span className="text-sm font-medium text-white">
       {token && record?.fee
-        ? `${formatBalance(BigInt(record.fee), token.decimals, { keepZero: false, precision: 4 })} ${token.symbol}`
+        ? `${formatBalance(BigInt(record.fee), token.decimals, { keepZero: false, precision: 12 })} ${token.symbol}`
         : null}
     </span>
   );

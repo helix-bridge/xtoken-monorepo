@@ -1,4 +1,3 @@
-import { useToggle } from "../hooks/use-toggle";
 import {
   FloatingPortal,
   Placement,
@@ -14,6 +13,7 @@ import {
 import { PropsWithChildren, ReactElement } from "react";
 
 interface Props {
+  isOpen: boolean;
   label?: ReactElement;
   placeholder: ReactElement;
   disabled?: boolean;
@@ -25,10 +25,12 @@ interface Props {
   labelClassName?: string;
   childClassName?: string;
   onClear?: () => void;
+  onOpenChange: (isOpen: boolean) => void;
 }
 
 export default function Select({
   label,
+  isOpen,
   placeholder,
   disabled,
   children,
@@ -40,12 +42,11 @@ export default function Select({
   labelClassName,
   childClassName,
   onClear = () => undefined,
+  onOpenChange = () => undefined,
 }: PropsWithChildren<Props>) {
-  const { state: isOpen, setState: setIsOpen, setFalse: setIsOpenFalse } = useToggle(false);
-
   const { refs, context, floatingStyles } = useFloating({
     open: isOpen,
-    onOpenChange: setIsOpen,
+    onOpenChange,
     placement,
     middleware: [
       offset(offsetSize ?? 4),
@@ -79,7 +80,9 @@ export default function Select({
         disabled={disabled}
       >
         {label || placeholder}
-        <div className="gap-small flex shrink-0 items-center transition-transform group-hover:-translate-x-2">
+        <div
+          className={`gap-small flex shrink-0 items-center transition-transform group-hover:-translate-x-2 ${isOpen ? "-translate-x-2" : ""}`}
+        >
           {label && clearable ? (
             <div
               className="relative h-[16px] w-[16px] shrink-0 rounded-full bg-transparent p-[2px] opacity-80 transition hover:scale-105 hover:bg-white/20 hover:opacity-100 active:scale-95"
@@ -105,7 +108,7 @@ export default function Select({
       {isMounted && (
         <FloatingPortal>
           <div style={floatingStyles} ref={refs.setFloating} {...getFloatingProps()} className="z-20">
-            <div className={`${childClassName}`} style={styles} onClick={setIsOpenFalse}>
+            <div className={`${childClassName}`} style={styles} onClick={() => onOpenChange(false)}>
               {children}
             </div>
           </div>

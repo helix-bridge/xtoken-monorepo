@@ -50,7 +50,7 @@
 
 /* Page header loading bar */
 .loading-bar {
-  background: linear-gradient(90deg, #ffffff 35%, #0085ff 50%, #ffffff 65%);
+  background: linear-gradient(90deg, #ffffff 35%, #FF0083 50%, #ffffff 65%);
   background-position: 100% 50%;
   background-size: 40% 100%;
   animation: bar-loading 2.4s linear infinite;
@@ -120,17 +120,17 @@
   margin: 20px auto;
   position: relative;
   border-radius: 50% 50% 0 0;
-  border-bottom: 10px solid #0085ff;
+  border-bottom: 10px solid #FF0083;
   background-color: #fff;
-  background-image: radial-gradient(ellipse at center, #fff 34%, #0085ff 35%, #0085ff 54%, #fff 55%),
-    linear-gradient(#0085ff 10px, transparent 0);
+  background-image: radial-gradient(ellipse at center, #fff 34%, #FF0083 35%, #FF0083 54%, #fff 55%),
+    linear-gradient(#FF0083 10px, transparent 0);
   background-size: 28px 28px;
   background-position:
     center 20px,
     center 2px;
   background-repeat: no-repeat;
   box-sizing: border-box;
-  animation: animloader-back 1s linear infinite alternate;
+  animation: animloader-back 4s linear infinite alternate;
 }
 .tx-in-progress::before {
   content: "";
@@ -141,7 +141,7 @@
   width: 64px;
   height: 44px;
   border-radius: 50%;
-  box-shadow: 0px 15px #0085ff inset;
+  box-shadow: 0px 15px #FF0083 inset;
   top: 67px;
 }
 .tx-in-progress::after {
@@ -155,26 +155,26 @@
   background: radial-gradient(
     ellipse at center,
     rgba(255, 255, 255, 0.5) 8%,
-    rgba(0, 133, 255, 0.6) 24%,
+    rgba(255, 0, 131, 0.6) 24%,
     rgba(0, 0, 0, 0) 100%
   );
   border-radius: 50% 50% 0;
   background-repeat: no-repeat;
   background-position: -44px -44px;
   background-size: 100px 100px;
-  box-shadow: 4px 4px 12px 0px rgba(0, 133, 255, 0.5);
+  box-shadow: 4px 4px 12px 0px rgba(255, 0, 131, 0.5);
   box-sizing: border-box;
-  animation: animloader 1s linear infinite alternate;
+  animation: animloader 4s linear infinite alternate;
 }
 @keyframes animloader-back {
   0%,
-  30%,
-  70% {
+  7.5%,
+  17.5% {
     transform: translateY(0px);
   }
-  20%,
-  40%,
-  100% {
+  5%,
+  10%,
+  25% {
     transform: translateY(-5px);
   }
 }
@@ -186,7 +186,7 @@
     background-position: -44px -44px;
     background-size: 100px 100px;
   }
-  100% {
+  25% {
     box-shadow: 2px 2px 8px 0px rgba(255, 255, 255, 0.5);
     width: 30px;
     height: 28px;

@@ -1,4 +1,4 @@
-import TransferV2 from "../components/transfer-v2";
+import TransferV2 from "../components/transfer";
 
 export default function Home() {
   return (

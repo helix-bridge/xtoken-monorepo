@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getChainConfig, getChainConfigs } from "../utils";
+import { getChainConfig, getChainConfigs, isTronChain } from "../utils";
 import { createPublicClient, http } from "viem";
 import abi from "../abi/erc20";
 
@@ -9,6 +9,14 @@ describe.each(getChainConfigs(true).filter((c) => !!c.tokens.length))("$name", (
   it("Should configure native token", () => {
     expect(tokens.some((t) => t.type === "native")).not.toBeFalsy();
   });
+
+  if (isTronChain(chain)) {
+    it("Should configure Tron api", () => {
+      expect(chain.fullNode).toBeDefined();
+      expect(chain.solidityNode).toBeDefined();
+      expect(chain.eventServer).toBeDefined();
+    });
+  }
 
   describe.each(tokens.filter((t) => !!t.cross.length))("$symbol", (token) => {
     it.each(token.cross)(
@@ -33,13 +41,16 @@ describe.each(getChainConfigs(true).filter((c) => !!c.tokens.length))("$name", (
       },
     );
 
-    it.skip(`Should configure the correct decimals: '${token.decimals}'`, async () => {
-      if (token.type === "native") {
-        expect(token.decimals).toEqual(18);
-      } else {
-        const decimals = await publicClient.readContract({ address: token.address, abi, functionName: "decimals" });
-        expect(token.decimals).toEqual(decimals);
-      }
-    });
+    it.skipIf(isTronChain(chain) || token.cross.some((c) => c.onlyThirdParty))(
+      `Should configure the correct decimals: '${token.decimals}'`,
+      async () => {
+        if (token.type === "native") {
+          expect(token.decimals).toEqual(18);
+        } else {
+          const decimals = await publicClient.readContract({ address: token.address, abi, functionName: "decimals" });
+          expect(token.decimals).toEqual(decimals);
+        }
+      },
+    );
   });
 });

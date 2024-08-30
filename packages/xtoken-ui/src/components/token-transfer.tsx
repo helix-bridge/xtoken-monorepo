@@ -4,10 +4,11 @@ import PrettyAddress from "./pretty-address";
 import { BaseBridge } from "../bridges/base";
 import { Network } from "../types/chain";
 import { TokenSymbol } from "../types/token";
-import { getChainConfig } from "../utils/chain";
+import { getChainConfig, isTronChain } from "../utils/chain";
 import { getChainLogoSrc, getTokenLogoSrc } from "../utils/misc";
 import { formatBalance } from "../utils/balance";
 import { Address } from "viem";
+import { convertAddressToTron } from "../utils";
 
 interface Props {
   record?: HistoryRecord | null;
@@ -52,6 +53,8 @@ function Item({
 }) {
   const chainConfig = getChainConfig(chain);
   const token = chainConfig?.tokens.find((t) => t.symbol === symbol);
+  const _from = chainConfig && isTronChain(chainConfig) ? convertAddressToTron(from) : from;
+  const _to = chainConfig && isTronChain(chainConfig) ? convertAddressToTron(to) : to;
 
   return token && chainConfig ? (
     <div className="gap-medium flex items-center">
@@ -65,9 +68,9 @@ function Item({
         />
       </Tooltip>
       <Label text="From" />
-      <AddressDisplay address={from} />
+      <AddressDisplay address={_from} />
       <Label text="To" />
-      <AddressDisplay address={to} />
+      <AddressDisplay address={_to} />
       <Label text="For" />
       <img width={16} height={16} alt="Token icon" src={getTokenLogoSrc(token.logo)} className="shrink-0" />
       <span className="text-sm font-medium text-white">
@@ -77,7 +80,7 @@ function Item({
   ) : null;
 }
 
-function AddressDisplay({ address }: { address: Address }) {
+function AddressDisplay({ address }: { address: string }) {
   return (
     <div className="inline-block w-24 truncate">
       <PrettyAddress address={address} forceShort className="text-primary text-sm font-medium" />

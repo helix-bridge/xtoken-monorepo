@@ -1,12 +1,8 @@
 import { useBalanceAll } from "../hooks";
 import { ChainConfig, HistoryDetailsResData, Token } from "../types";
 import { Dispatch, PropsWithChildren, SetStateAction, createContext, useState } from "react";
-import { Hash } from "viem";
 
-interface HistoryDetails {
-  data?: HistoryDetailsResData["historyRecordByTxHash"];
-  hash?: Hash;
-}
+type HistoryDetails = Partial<HistoryDetailsResData["historyRecordByTxHash"]>;
 
 interface AppCtx {
   recordsSearch: string;

@@ -10,10 +10,11 @@ export type TokenSymbol =
   | "USDT"
   | "PRING"
   | "ORING"
-  | "ORING"
+  | "KRING"
   | "CRAB"
   | "KTON"
   | "WRING"
+  | "WKRING"
   | "xCRAB"
   | "xWRING"
   | "xRING"
@@ -23,7 +24,8 @@ export type TokenSymbol =
   | "MNT"
   | "MATIC"
   | "BNB"
-  | "xDai";
+  | "xDai"
+  | "TRX";
 
 export type TokenType = "native" | "erc20" | "mapping";
 

@@ -6,6 +6,7 @@ import {
   darwiniaChain,
   ethereumChain,
   gnosisChain,
+  koiChain,
   lineaChain,
   mantleChain,
   pangolinChain,
@@ -14,6 +15,8 @@ import {
   polygonZkEvmChain,
   scrollChain,
   sepoliaChain,
+  tronChain,
+  tronShastaChain,
   zksyncChain,
   zksyncSepoliaChain,
 } from "../config/chains";
@@ -81,6 +84,15 @@ export function getChainConfig(chainIdOrNetwork?: ChainID | Network | null): Cha
     case ChainID.PANGORO_TANSSI:
     case "pangoro-dvm":
       return pangoroChain;
+    case ChainID.TRON_SHASTA:
+    case "tron-shasta":
+      return tronShastaChain;
+    case ChainID.TRON_MAINNET:
+    case "tron":
+      return tronChain;
+    case ChainID.KOI:
+    case "koi":
+      return koiChain;
     default:
       return;
   }
@@ -107,6 +119,9 @@ export function getChainConfigs(askAll?: boolean) {
     optimismChain,
     gnosisChain,
     pangoroChain,
+    koiChain,
+    tronShastaChain,
+    tronChain,
   ].sort((a, b) => a.name.localeCompare(b.name));
 
   if (askAll) {
@@ -116,4 +131,8 @@ export function getChainConfigs(askAll?: boolean) {
   } else {
     return all.filter((c) => !c.hidden && !!c.testnet);
   }
+}
+
+export function isTronChain(chain: { id: ChainID }) {
+  return [ChainID.TRON_MAINNET, ChainID.TRON_SHASTA].includes(chain.id);
 }

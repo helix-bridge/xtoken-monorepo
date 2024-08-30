@@ -4,7 +4,32 @@ import { from } from "rxjs";
 import abi from "../abi/erc20";
 import { ChainConfig, Token } from "../types";
 import { usePublicClient, useWalletClient } from "wagmi";
-import { notifyError } from "../utils";
+import {
+  convertAddressToTron,
+  createTronPublicClient,
+  createTronWalletClient,
+  isTronChain,
+  isTxSuccess,
+  notifyError,
+  waitForTronTransactionReceipt,
+} from "../utils";
+
+function getAllowanceEVM(chain: ChainConfig, token: Token, owner: Address, spender: Address) {
+  const publicClient = createPublicClient({ chain, transport: http() });
+  return publicClient.readContract({ address: token.address, abi, functionName: "allowance", args: [owner, spender] });
+}
+
+async function getAllowanceTron(chain: ChainConfig, token: Token, owner: Address, spender: Address) {
+  let allowance = 0n;
+  const tronWeb = createTronPublicClient(chain);
+  if (tronWeb) {
+    const contract = await tronWeb.contract(abi, convertAddressToTron(token.address));
+    allowance = BigInt(
+      (await contract.allowance(convertAddressToTron(owner), convertAddressToTron(spender)).call()).toString(),
+    );
+  }
+  return allowance;
+}
 
 export function useAllowance(
   chain: ChainConfig,
@@ -24,11 +49,13 @@ export function useAllowance(
 
     if (token.type === "native") {
       setAllowance(max);
+      setLoading(false);
     } else if (owner && spender) {
       setLoading(true);
-      const publicClient = createPublicClient({ chain, transport: http() });
       return from(
-        publicClient.readContract({ address: token.address, abi, functionName: "allowance", args: [owner, spender] }),
+        isTronChain(chain)
+          ? getAllowanceTron(chain, token, owner, spender)
+          : getAllowanceEVM(chain, token, owner, spender),
       ).subscribe({
         next: (res) => {
           setLoading(false);
@@ -42,12 +69,32 @@ export function useAllowance(
       });
     } else {
       setAllowance(0n);
+      setLoading(false);
     }
-  }, [chain, owner, spender, token.address, token.decimals, token.type]);
+  }, [chain, owner, spender, token]);
 
   const approve = useCallback(
     async (amount: bigint) => {
-      if (owner && spender && walletClient) {
+      if (isTronChain(chain)) {
+        const tronWeb = createTronWalletClient();
+        if (tronWeb && owner && spender) {
+          setBusy(true);
+          try {
+            const contract = await tronWeb.contract(abi, convertAddressToTron(token.address));
+            const hash = await contract.approve(convertAddressToTron(spender), amount.toString()).send();
+            const receipt = await waitForTronTransactionReceipt({ client: tronWeb, hash });
+            if (isTxSuccess(receipt)) {
+              setAllowance(await getAllowanceTron(chain, token, owner, spender));
+            }
+            setBusy(false);
+            return receipt;
+          } catch (err) {
+            console.error(err);
+            notifyError(err);
+            setBusy(false);
+          }
+        }
+      } else if (owner && spender && walletClient) {
         setBusy(true);
         try {
           const hash = await walletClient.writeContract({
@@ -57,16 +104,8 @@ export function useAllowance(
             args: [spender, amount],
           });
           const receipt = await publicClient.waitForTransactionReceipt({ hash });
-
           if (receipt.status === "success") {
-            setAllowance(
-              await publicClient.readContract({
-                address: token.address,
-                abi,
-                functionName: "allowance",
-                args: [owner, spender],
-              }),
-            );
+            setAllowance(await getAllowanceEVM(chain, token, owner, spender));
           }
           setBusy(false);
           return receipt;
@@ -77,7 +116,7 @@ export function useAllowance(
         }
       }
     },
-    [owner, spender, token.address, publicClient, walletClient],
+    [owner, spender, token, chain, publicClient, walletClient],
   );
 
   useEffect(() => {

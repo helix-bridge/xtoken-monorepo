@@ -10,7 +10,7 @@ import { useAllowance, useBalance } from "../hooks";
 import { ethereumChain } from "../config/chains";
 import Button from "../ui/button";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
-import { notifyError, notifyTransaction } from "../utils";
+import { isTxSuccess, notifyError, notifyTransaction } from "../utils";
 
 interface Amount {
   input: string;
@@ -125,7 +125,7 @@ export default function WrapUnwrap() {
         const receipt = await approve(amountRef.current.value);
         setBusy(false);
         notifyTransaction(receipt, ethereumChain, "Approval");
-        if (receipt?.status === "success") {
+        if (isTxSuccess(receipt)) {
           refreshAllowance();
         }
       } catch (err) {

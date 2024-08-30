@@ -163,7 +163,6 @@ export class HelixBridgeDVMDVM extends BaseBridge {
   }
 
   async refund(record: HistoryRecord) {
-    await this.validateNetwork("target");
     await this.ensureSpecVersion();
 
     if (this.contract && this.specVersion && this.publicClient && this.walletClient) {

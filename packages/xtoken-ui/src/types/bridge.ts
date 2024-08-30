@@ -21,7 +21,9 @@ export type XTokenBridgeCategory =
   | "xtoken-pangolin-sepolia"
   | "xtoken-sepolia-pangolin"
   | "xtoken-pangoro-sepolia"
-  | "xtoken-sepolia-pangoro";
+  | "xtoken-sepolia-pangoro"
+  | "xtoken-tron-koi"
+  | "xtoken-koi-tron";
 export type BridgeCategory =
   | L2BridgeCategory
   | HelixLpBridgeCategory
