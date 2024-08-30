@@ -30,8 +30,11 @@ MsgportMessager: TBnuNgnp6Ec7H86RrDPnmLGB6eoRKWah1d
 ProxyAdmin: TCF8pxpKcoBgw4aSkNbjVeqSvAUU6LuDXa
 XTokenIssuing_logic: TPfdJXxo2W8J32j3pMPKUcVQCkLxhdRHNA
 XTokenIssuing_proxy: TEvKCc7hwTc1trReqwP5FHTLhKnqVdUzar
+xRING: TNnUtHb7fywQ9e6kAY7MvRMMcyUWFy2vru
+XRINGLockBox: TWYCpj6nnb6JG7gXWU2t3FhnSwLpnXxvcE
 RING: TL175uyihLqQD656aFx3uhHYe1tyGkmXaW
-RINGAuthority: 
+RINGAuthority: TWHpeWAZFKLfrirRkfybK6NFY7qDa5zy7J
+XRingConvertor: THZAnF8vB4jU4bNh8EchJVRbqx2L6CagDr
 ```
 
 ## Darwinia (46)
