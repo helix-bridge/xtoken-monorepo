@@ -62,6 +62,12 @@ export class XTokenNextBridge extends BaseBridge {
     ) {
       backing = "0x2c841103557112d99923956eB9b9b4a05ef042af";
       issuing = "0xE57D12Ba78d565613b52a35f0b4A9AC3b71F6119";
+    } else if (
+      (this.sourceChain?.network === "tron" && this.targetChain?.network === "darwinia-dvm") ||
+      (this.sourceChain?.network === "darwinia-dvm" && this.targetChain?.network === "tron")
+    ) {
+      backing = "0x7defE0f6105a9498376B72FFfaedf102A2f63cD5";
+      issuing = "0x364c8e473156A30dA29e640c0485db1e4464539d";
     }
     this.initContractByBackingIssuing(backing, issuing);
   }
@@ -126,6 +132,16 @@ export class XTokenNextBridge extends BaseBridge {
       this.convertor = {
         source: "0xd06CDE9b2A330C5ECedbc48920B502dFc590e5cC",
         target: "0xC9EA55E644F496D6CaAEDcBAD91dE7481Dcd7517",
+      };
+    } else if (this.sourceChain?.network === "tron" && this.targetChain?.network === "darwinia-dvm") {
+      this.convertor = {
+        source: "0x53352b535fc38843BF1C04DC863bCEca855A4811",
+        target: "0x547cDb578A89517C75a0fA18a56232a357910c52",
+      };
+    } else if (this.sourceChain?.network === "darwinia-dvm" && this.targetChain?.network === "tron") {
+      this.convertor = {
+        source: "0x547cDb578A89517C75a0fA18a56232a357910c52",
+        target: "0x53352b535fc38843BF1C04DC863bCEca855A4811",
       };
     }
   }

@@ -44,7 +44,26 @@ export const tronChain: ChainConfig = {
       cross: [],
       category: "eth",
     },
+    {
+      decimals: 18,
+      symbol: "RING",
+      name: "RING",
+      type: "erc20",
+      address: "0x6e0D26ADf5323F5B82d5714354DC3c6870Adee7C",
+      outer: "0x6e0D26ADf5323F5B82d5714354DC3c6870Adee7C",
+      inner: "0x8c92517A14889B1EF5cd27995A504f8e35A03531",
+      logo: "ring.png",
+      cross: [
+        {
+          target: { network: "darwinia-dvm", symbol: "RING" },
+          bridge: { category: "xtoken-darwinia-tron" },
+          action: "redeem",
+        },
+      ],
+      category: "ring",
+    },
   ],
+  messager: { msgline: "0x13Fd60a93feD8141875378Ba57500c5E554C93F2" },
 
   fullNode: "https://api.trongrid.io",
   solidityNode: "https://api.trongrid.io",
