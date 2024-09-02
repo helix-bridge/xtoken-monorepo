@@ -52,7 +52,7 @@ export const tronShastaChain: ChainConfig = {
       type: "erc20",
       address: "0xefa2F03FD5aE000F5064F3d80C2290d0EAB8b685",
       outer: "0xefa2F03FD5aE000F5064F3d80C2290d0EAB8b685",
-      inner: "0xefa2F03FD5aE000F5064F3d80C2290d0EAB8b685",
+      inner: "0xeFd51a1A0F28f627Bd57E62Ad61bD3Db02B59a5d",
       logo: "ring.png",
       cross: [
         { target: { network: "koi", symbol: "RING" }, bridge: { category: "xtoken-koi-tron" }, action: "redeem" },

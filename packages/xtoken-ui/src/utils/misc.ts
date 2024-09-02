@@ -64,6 +64,10 @@ export function getMessagerAddress(sourceChain: ChainConfig | undefined, targetC
     sourceMessager = "0x65Be094765731F394bc6d9DF53bDF3376F1Fc8B0";
   } else if (sourceChain?.network === "crab-dvm" && targetChain?.network === "darwinia-dvm") {
     targetMessager = "0x65Be094765731F394bc6d9DF53bDF3376F1Fc8B0";
+  } else if (sourceChain?.network === "darwinia-dvm" && targetChain?.network === "tron") {
+    sourceMessager = "0x65Be094765731F394bc6d9DF53bDF3376F1Fc8B0";
+  } else if (sourceChain?.network === "tron" && targetChain?.network === "darwinia-dvm") {
+    targetMessager = "0x65Be094765731F394bc6d9DF53bDF3376F1Fc8B0";
   }
   return { sourceMessager, targetMessager };
 }
