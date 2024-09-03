@@ -241,6 +241,72 @@ export class TransferService extends BaseTransferServiceT2 {
         },
       ],
     },
+    {
+      chainId: 46,
+      chain: "darwinia-dvm",
+      urls: [
+        {
+          indexerType: Level0IndexerType.superindex,
+          url: this.superUrl,
+        },
+      ],
+      dispatchUrls: [
+        {
+          indexerType: Level0IndexerType.superindex,
+          url: this.superUrl,
+        },
+      ],
+      bridge: "xtoken-darwinia-tron",
+      symbols: [
+        {
+          key: "RING",
+          symbol: "RING",
+          address: "0xE7578598Aac020abFB918f33A20faD5B71d670b4",
+          outerAddress: "0x0000000000000000000000000000000000000000",
+          protocolFee: 0,
+          decimals: 18,
+        },
+      ],
+      channels: [
+        {
+          chain: "tron",
+          channel: "msgport",
+        },
+      ],
+    },
+    {
+      chainId: 728126428,
+      chain: "tron",
+      urls: [
+        {
+          indexerType: Level0IndexerType.superindex,
+          url: this.superUrl,
+        },
+      ],
+      dispatchUrls: [
+        {
+          indexerType: Level0IndexerType.superindex,
+          url: this.superUrl,
+        },
+      ],
+      bridge: "xtoken-darwinia-tron",
+      symbols: [
+        {
+          key: "RING",
+          symbol: "RING",
+          address: "0x8c92517a14889b1ef5cd27995a504f8e35a03531",
+          outerAddress: "0x6e0d26adf5323f5b82d5714354dc3c6870adee7c",
+          protocolFee: 0,
+          decimals: 18,
+        },
+      ],
+      channels: [
+        {
+          chain: "darwinia-dvm",
+          channel: "msgport",
+        },
+      ],
+    }
   ];
 
   testChainTransfers: PartnerT2[] = [
@@ -297,7 +363,7 @@ export class TransferService extends BaseTransferServiceT2 {
         {
           key: "RING",
           symbol: "RING",
-          address: "0xefa2f03fd5ae000f5064f3d80c2290d0eab8b685",
+          address: "0xefd51a1a0f28f627bd57e62ad61bd3db02b59a5d",
           outerAddress: "0xefa2f03fd5ae000f5064f3d80c2290d0eab8b685",
           protocolFee: 0,
           decimals: 18,
