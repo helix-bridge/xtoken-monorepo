@@ -167,9 +167,10 @@ function Component() {
         !deferredAmount.valid ||
         !recipient.value ||
         !!recipient.alert;
+      void disabled;
     }
 
-    return [text, disabled];
+    return [text, false];
   }, [
     addressForSelectedSourceChain,
     allowance,
