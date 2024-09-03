@@ -46,9 +46,8 @@ export async function fetchMsglineFeeAndParams(
   const endpoint = "https://api.msgport.xyz/ormp/fee"; // v2
   // const endpoint = "https://msgport-api.darwinia.network/ormp/fee"; // v1
   // const endpoint = "http://g2.generic.darwinia.network:3378/ormp/fee";
-  const feeData = await fetch(
-    `${endpoint}?from_chain_id=${fromChainId}&to_chain_id=${toChainId}&payload=${payload}&from_address=${fromMessager}&to_address=${toMessager}&refund_address=${recipient}`,
-  );
+  const defaultInput = `${endpoint}?from_chain_id=${fromChainId}&to_chain_id=${toChainId}&payload=${payload}&from_address=${fromMessager}&to_address=${toMessager}&refund_address=${recipient}`;
+  const feeData = await fetch(isTronChain({ id: toChainId }) ? `${defaultInput}&gas_limit=200000` : defaultInput);
   const feeJson = await feeData.json();
   if (feeData.ok && feeJson.code === 0) {
     const fee = BigInt(feeJson.data.fee); // In native token
