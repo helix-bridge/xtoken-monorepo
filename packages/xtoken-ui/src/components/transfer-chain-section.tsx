@@ -108,7 +108,7 @@ function TokenTips({ token, chain }: { token: Token; chain: ChainConfig }) {
     <div className="gap-small flex flex-col">
       <div className="gap-small flex items-center">
         <img alt="Token" width={18} height={18} src={getTokenLogoSrc(token.logo)} />
-        <span className="text-sm font-extrabold text-white">
+        <span className="text-xs font-medium text-white">
           {token.symbol}
           {token.type === "native" ? " (native token)" : null}
         </span>
@@ -116,7 +116,7 @@ function TokenTips({ token, chain }: { token: Token; chain: ChainConfig }) {
       {token.type === "native" ? null : (
         <div className="inline-flex items-center gap-1">
           <a
-            className="text-sm font-semibold text-white hover:underline"
+            className="text-xs font-normal text-white hover:underline"
             rel="noopener noreferrer"
             target="_blank"
             href={explorer.href}
