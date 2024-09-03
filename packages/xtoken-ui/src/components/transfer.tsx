@@ -1,9 +1,7 @@
-import { useCallback, useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useDeferredValue, useEffect, useMemo, useState } from "react";
 import TransferTokenSection from "./transfer-token-section";
 import {
   bridgeFactory,
-  convertAddressToTron,
-  getAddressForChain,
   getSourceTokenOptions,
   getTargetTokenOptions,
   getTokenOptions,
@@ -65,41 +63,31 @@ function Component() {
   const { addressForSelectedSourceChain, needSwitchChain, connectWallet, switchChain } = useWallet();
 
   const [recipient, setRecipient] = useState<Recipient>({
-    input:
-      addressForSelectedSourceChain && isTronChain(targetChain)
-        ? convertAddressToTron(addressForSelectedSourceChain)
-        : addressForSelectedSourceChain ?? "",
-    value: addressForSelectedSourceChain,
+    input: "",
+    value: undefined,
     alert: undefined,
   });
   const [expandRecipient, setExpandRecipient] = useState(false);
-  const isCustomRecipient = useRef(false); // After input recipient manually, set to `true`
   useEffect(() => {
-    if (!isCustomRecipient.current) {
-      if (addressForSelectedSourceChain) {
-        setRecipient({
-          input:
-            addressForSelectedSourceChain && isTronChain(targetChain)
-              ? convertAddressToTron(addressForSelectedSourceChain)
-              : addressForSelectedSourceChain,
-          value: addressForSelectedSourceChain,
-          alert: undefined,
-        });
+    if (addressForSelectedSourceChain) {
+      if (isTronChain(sourceChain) || isTronChain(targetChain)) {
+        setRecipient({ input: "", value: undefined, alert: "* Require recipient" });
+        setExpandRecipient(true);
       } else {
-        setRecipient({ input: "", value: undefined, alert: undefined });
+        setRecipient((prev) =>
+          prev.input?.startsWith("0x")
+            ? prev
+            : { input: addressForSelectedSourceChain, value: addressForSelectedSourceChain, alert: undefined },
+        );
+        setExpandRecipient(false);
       }
     } else {
-      setRecipient((prev) => {
-        if (prev.input && prev.value) {
-          return { ...prev, input: getAddressForChain(targetChain, prev.input) ?? prev.input };
-        }
-        return prev;
-      });
+      setRecipient({ input: "", value: undefined, alert: undefined });
+      setExpandRecipient(false);
     }
-  }, [addressForSelectedSourceChain, targetChain]);
+  }, [addressForSelectedSourceChain, sourceChain, targetChain]);
   const handleRecipientChange = useCallback((value: Recipient) => {
     setRecipient(value);
-    isCustomRecipient.current = true;
   }, []);
   const handleExpandRecipient = useCallback(() => setExpandRecipient((prev) => !prev), []);
 
