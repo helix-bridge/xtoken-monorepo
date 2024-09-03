@@ -4,8 +4,9 @@ import TransferChainSelect from "./transfer-chain-select";
 import TransferSwitch from "./transfer-switch";
 import ComponentLoading from "../ui/component-loading";
 import { Address } from "viem";
-import { getTokenLogoSrc, toShortAdrress } from "../utils";
+import { convertAddressToTron, getTokenLogoSrc, isTronChain, toShortAdrress } from "../utils";
 import CopyIcon from "../ui/copy-icon";
+import { useMemo } from "react";
 
 interface Recipient {
   input: string;
@@ -102,13 +103,20 @@ export default function TransferChainSection({
 }
 
 function TokenTips({ token, chain }: { token: Token; chain: ChainConfig }) {
-  const explorer = new URL(`/address/${token.address}`, chain.blockExplorers?.default.url);
+  const [explorerUrl, tokenAddress] = useMemo(() => {
+    if (isTronChain(chain)) {
+      const address = convertAddressToTron(token.address);
+      const explorer = new URL(`/#/address/${address}`, chain.blockExplorers?.default.url);
+      return [explorer, address];
+    }
+    return [new URL(`/address/${token.address}`, chain.blockExplorers?.default.url), token.address];
+  }, [chain, token.address]);
 
   return (
     <div className="gap-small flex flex-col">
       <div className="gap-small flex items-center">
         <img alt="Token" width={18} height={18} src={getTokenLogoSrc(token.logo)} />
-        <span className="text-sm font-extrabold text-white">
+        <span className="text-xs font-medium text-white">
           {token.symbol}
           {token.type === "native" ? " (native token)" : null}
         </span>
@@ -116,14 +124,14 @@ function TokenTips({ token, chain }: { token: Token; chain: ChainConfig }) {
       {token.type === "native" ? null : (
         <div className="inline-flex items-center gap-1">
           <a
-            className="text-sm font-semibold text-white hover:underline"
+            className="text-xs font-normal text-white hover:underline"
             rel="noopener noreferrer"
             target="_blank"
-            href={explorer.href}
+            href={explorerUrl.href}
           >
-            {toShortAdrress(token.address, 12, 10)}
+            {toShortAdrress(tokenAddress, 12, 10)}
           </a>
-          <CopyIcon text={token.address} copiedColor="#ffffff" />
+          <CopyIcon text={tokenAddress} copiedColor="#ffffff" />
         </div>
       )}
     </div>
