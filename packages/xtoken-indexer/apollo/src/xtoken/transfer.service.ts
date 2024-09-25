@@ -32,11 +32,15 @@ export class TransferService extends BaseTransferServiceT2 {
       chain: "darwinia-dvm",
       urls: [
         {
-          indexerType: Level0IndexerType.thegraph,
-          url: this.darwainiaCrabBackingUrl,
+          indexerType: Level0IndexerType.superindex,
+          url: this.superUrl,
         },
       ],
       dispatchUrls: [
+        {
+          indexerType: Level0IndexerType.superindex,
+          url: this.superUrl,
+        },
         {
           indexerType: Level0IndexerType.thegraph,
           url: this.darwiniaDispatchSubgraph,
@@ -65,11 +69,15 @@ export class TransferService extends BaseTransferServiceT2 {
       chain: "crab-dvm",
       urls: [
         {
-          indexerType: Level0IndexerType.thegraph,
-          url: this.darwainiaCrabIssuingUrl,
+          indexerType: Level0IndexerType.superindex,
+          url: this.superUrl,
         },
       ],
       dispatchUrls: [
+        {
+          indexerType: Level0IndexerType.superindex,
+          url: this.superUrl,
+        },
         {
           indexerType: Level0IndexerType.thegraph,
           url: this.crabDispatchSubgraph,
@@ -98,11 +106,15 @@ export class TransferService extends BaseTransferServiceT2 {
       chain: "darwinia-dvm",
       urls: [
         {
-          indexerType: Level0IndexerType.thegraph,
-          url: this.crabDarwiniaIssuingUrl,
+          indexerType: Level0IndexerType.superindex,
+          url: this.superUrl,
         },
       ],
       dispatchUrls: [
+        {
+          indexerType: Level0IndexerType.superindex,
+          url: this.superUrl,
+        },
         {
           indexerType: Level0IndexerType.thegraph,
           url: this.darwiniaDispatchSubgraph,
@@ -131,11 +143,15 @@ export class TransferService extends BaseTransferServiceT2 {
       chain: "crab-dvm",
       urls: [
         {
-          indexerType: Level0IndexerType.thegraph,
-          url: this.crabDarwiniaBackingUrl,
+          indexerType: Level0IndexerType.superindex,
+          url: this.superUrl,
         },
       ],
       dispatchUrls: [
+        {
+          indexerType: Level0IndexerType.superindex,
+          url: this.superUrl,
+        },
         {
           indexerType: Level0IndexerType.thegraph,
           url: this.crabDispatchSubgraph,
@@ -164,14 +180,18 @@ export class TransferService extends BaseTransferServiceT2 {
       chain: "darwinia-dvm",
       urls: [
         {
-          indexerType: Level0IndexerType.thegraph,
-          url: this.darwainiaEthereumBackingUrl,
+          indexerType: Level0IndexerType.superindex,
+          url: this.superUrl,
         },
       ],
       dispatchUrls: [
         {
           indexerType: Level0IndexerType.thegraph,
           url: this.darwiniaDispatchSubgraph,
+        },
+        {
+          indexerType: Level0IndexerType.superindex,
+          url: this.superUrl,
         },
       ],
       bridge: "xtoken-darwinia-ethereum",
