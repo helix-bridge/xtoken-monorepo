@@ -3,7 +3,7 @@ import { PropsWithChildren } from "react";
 export default function Footer() {
   return (
     <div className="app-footer px-medium flex items-center justify-center lg:justify-between lg:px-5">
-      <span className="text-xs font-semibold text-white/50">{`© ${new Date().getFullYear()} Powered by Helix Bridge`}</span>
+      <span className="text-xs font-semibold text-white/50">{`© ${new Date().getFullYear()} Powered by Helixbox Bridge`}</span>
 
       <div className="hidden items-center gap-5 lg:flex">
         <a
@@ -16,7 +16,7 @@ export default function Footer() {
         </a>
         <a
           className="text-xs font-semibold text-white/50 transition hover:text-white active:scale-95"
-          href="https://docs.helixbridge.app/"
+          href="https://docs.helix.box/"
           rel="noopener noreferrer"
           target="_blank"
         >
@@ -28,8 +28,8 @@ export default function Footer() {
         <SocialLink href="https://github.com/helix-bridge">
           <img width={16} height={16} alt="Github" src="images/social/github.svg" />
         </SocialLink>
-        <SocialLink href="https://twitter.com/helixbridges">
-          <img width={16} height={16} alt="Twitter" src="images/social/twitter.svg" />
+        <SocialLink href="https://x.com/helixofficialx">
+          <img width={15.3} height={14} alt="Twitter" src="images/social/x.svg" />
         </SocialLink>
         <SocialLink href="https://discord.gg/6XyyNGugdE">
           <img width={20} height={20} alt="Discord" src="images/social/discord.svg" />
