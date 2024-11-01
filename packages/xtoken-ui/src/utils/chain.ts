@@ -10,7 +10,6 @@ import {
   lineaChain,
   mantleChain,
   pangolinChain,
-  pangoroChain,
   polygonChain,
   polygonZkEvmChain,
   scrollChain,
@@ -81,9 +80,6 @@ export function getChainConfig(chainIdOrNetwork?: ChainID | Network | null): Cha
     case ChainID.SEPOLIA:
     case "sepolia":
       return sepoliaChain;
-    case ChainID.PANGORO_TANSSI:
-    case "pangoro-dvm":
-      return pangoroChain;
     case ChainID.TRON_SHASTA:
     case "tron-shasta":
       return tronShastaChain;
@@ -118,7 +114,6 @@ export function getChainConfigs(askAll?: boolean) {
     bscChain,
     optimismChain,
     gnosisChain,
-    pangoroChain,
     koiChain,
     tronShastaChain,
     tronChain,
