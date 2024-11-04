@@ -47,9 +47,4 @@ jobs:
           alias_domain: "xtokenui-dev-testnet"
           enable_cache: true
           enable_notify_comment: true
-<<<<<<< HEAD
-=======
-          enable_notify_slack: false
-          slack_channel: helixbox-ui
->>>>>>> main
           slack_webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
