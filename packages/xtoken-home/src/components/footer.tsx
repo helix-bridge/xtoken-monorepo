@@ -21,7 +21,7 @@ export default function Footer({ className }: Props) {
         <Social href="https://discord.gg/6XyyNGugdE">
           <Image width={20} height={20} alt="Discord" src="/social/discord.svg" />
         </Social>
-        <Social href="mailto:hello@helixbridge.app">
+        <Social href="mailto:hello@helix.box">
           <Image width={16} height={16} alt="Email" src="/social/email.svg" />
         </Social>
       </div>

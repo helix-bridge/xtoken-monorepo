@@ -34,7 +34,7 @@ export default function Footer() {
         <SocialLink href="https://discord.gg/6XyyNGugdE">
           <img width={20} height={20} alt="Discord" src="images/social/discord.svg" />
         </SocialLink>
-        <SocialLink href="mailto:hello@helixbridge.app">
+        <SocialLink href="mailto:hello@helix.box">
           <img width={16} height={16} alt="Email" src="images/social/email.svg" />
         </SocialLink>
       </div>
