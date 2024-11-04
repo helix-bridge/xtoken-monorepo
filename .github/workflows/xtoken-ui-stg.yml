@@ -32,7 +32,7 @@ jobs:
           project_name: xtoken-ui
           alias_domain: "xtokenui-stg-mainnet"
           enable_cache: true
-          enable_notify_slack: true
+          enable_notify_slack: false
           slack_channel: helixbox-ui
           slack_webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
 
@@ -49,6 +49,6 @@ jobs:
           project_name: xtoken-ui-test
           alias_domain: "xtokenui-stg-testnet"
           enable_cache: true
-          enable_notify_slack: true
+          enable_notify_slack: false
           slack_channel: helixbox-ui
           slack_webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}

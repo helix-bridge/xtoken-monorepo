@@ -31,7 +31,7 @@ jobs:
           script_build: npm run build:mainnet -w xtoken-ui
           dist_path: packages/xtoken-ui/dist
           enable_notify_comment: true
-          enable_notify_slack: true
+          enable_notify_slack: false
           slack_channel: helixbox-ui
           slack_webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
 
@@ -49,6 +49,6 @@ jobs:
           alias_domain: "xtokenui-dev-testnet"
           enable_cache: true
           enable_notify_comment: true
-          enable_notify_slack: true
+          enable_notify_slack: false
           slack_channel: helixbox-ui
           slack_webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
