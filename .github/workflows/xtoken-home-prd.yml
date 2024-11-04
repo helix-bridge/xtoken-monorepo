@@ -34,5 +34,5 @@ jobs:
           enable_cache: true
           enable_notify_comment: true
           enable_notify_slack: true
-          slack_channel: helixbox-xtoken
+          slack_channel: helixbox-ui
           slack_webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
