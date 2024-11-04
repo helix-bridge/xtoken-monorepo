@@ -32,7 +32,7 @@ jobs:
           dist_path: packages/xtoken-ui/dist
           enable_notify_comment: true
           enable_notify_slack: true
-          slack_channel: helix-ui
+          slack_channel: helixbox-ui
           slack_webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
 
       - uses: ./.github/actions/smart-vercel
@@ -50,5 +50,5 @@ jobs:
           enable_cache: true
           enable_notify_comment: true
           enable_notify_slack: true
-          slack_channel: helix-ui
+          slack_channel: helixbox-ui
           slack_webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
