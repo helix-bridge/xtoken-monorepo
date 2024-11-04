@@ -34,11 +34,11 @@ export const sepoliaChain: ChainConfig = {
       inner: "0xfB025B0e2FadF33C644fCe3f5409c0cD4a3045dE",
       logo: "eth.png",
       cross: [
-        {
-          target: { network: "pangoro-dvm", symbol: "xETH" },
-          bridge: { category: "xtoken-sepolia-pangoro" },
-          action: "issue",
-        },
+        // {
+        //   target: { network: "pangoro-dvm", symbol: "xETH" },
+        //   bridge: { category: "xtoken-sepolia-pangoro" },
+        //   action: "issue",
+        // },
       ],
       category: "eth",
     },
