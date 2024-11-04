@@ -6,14 +6,14 @@ export default function Home() {
     <main className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden">
       <div className="container flex flex-col items-center justify-center gap-12 px-3 lg:flex-row lg:justify-between lg:gap-3">
         <div className="flex flex-col">
-          <Image alt="Logo" width={210} height={56} src="/logo.svg" className="shrink-0" />
+          <Image alt="Logo" width={267.5} height={50} src="/logo.svg" className="shrink-0" />
           <span className="mt-11 inline-block text-3xl font-bold text-white lg:w-[32.8rem]">
-            XToken, Helix&apos;s Bridge as a Service Open Platform
+            XToken, Helixbox&apos;s Bridge as a Service Open Platform
           </span>
           <span className="mt-5 inline-block text-sm font-normal leading-6 text-white/60 lg:w-[36rem]">
-            XToken BAAS(Bridge as a Service) offers professional cross-chain token mapping bridge services tailored for
+            XToken BaaS(Bridge as a Service) offers professional cross-chain token mapping bridge services tailored for
             cryptocurrency token issuance projects or custodial applications. Clients maintain full control over
-            contracts and asset permissions. Our comprehensive services include BAAS solution consulting, contract
+            contracts and asset permissions. Our comprehensive services include BaaS solution consulting, contract
             deployment, indexing, and UI cloud services. Custom domain provisioning is also available. For inquiries,
             please contact hello@helixbridge.app.
           </span>

@@ -83,9 +83,9 @@ export const darwiniaChain: ChainConfig = {
           action: "issue",
           thirdPartyBridges: [
             {
-              name: "Helix Bridge",
+              name: "Helixbox Bridge",
               logo: "helix-bridge.png",
-              url: "https://helixbridge.app/#/?token_category=ring&source_chain=darwinia-dvm&source_token=RING&target_chain=ethereum&target_token=RING",
+              url: "https://app.helix.box/#/?token_category=ring&source_chain=darwinia-dvm&source_token=RING&target_chain=ethereum&target_token=RING",
             },
           ],
         },
@@ -94,9 +94,9 @@ export const darwiniaChain: ChainConfig = {
           bridge: { category: "third-party-bridge" },
           thirdPartyBridges: [
             {
-              name: "Helix Bridge",
+              name: "Helixbox Bridge",
               logo: "helix-bridge.png",
-              url: "https://helixbridge.app/#/?token_category=ring&source_chain=darwinia-dvm&source_token=RING&target_chain=polygon&target_token=RING",
+              url: "https://app.helix.box/#/?token_category=ring&source_chain=darwinia-dvm&source_token=RING&target_chain=polygon&target_token=RING",
             },
           ],
           onlyThirdParty: true,
@@ -106,9 +106,9 @@ export const darwiniaChain: ChainConfig = {
           bridge: { category: "third-party-bridge" },
           thirdPartyBridges: [
             {
-              name: "Helix Bridge",
+              name: "Helixbox Bridge",
               logo: "helix-bridge.png",
-              url: "https://helixbridge.app/#/?token_category=ring&source_chain=darwinia-dvm&source_token=RING&target_chain=arbitrum&target_token=RING",
+              url: "https://app.helix.box/#/?token_category=ring&source_chain=darwinia-dvm&source_token=RING&target_chain=arbitrum&target_token=RING",
             },
           ],
           onlyThirdParty: true,
