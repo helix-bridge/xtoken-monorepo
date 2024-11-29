@@ -473,7 +473,7 @@ export class XTokenNextBridge extends BaseBridge {
     const guard = await this._getTargetGuard();
 
     if (record.recvTokenAddress && guard && this.contract && this.walletClient && this.publicClient) {
-      const hash = await this.walletClient.writeContract({
+      const { request } = await this.publicClient.simulateContract({
         abi: (await import("../abi/guard-next")).default,
         functionName: "claim",
         args: [
@@ -488,6 +488,7 @@ export class XTokenNextBridge extends BaseBridge {
         address: guard,
         gas: this.getTxGasLimit(),
       });
+      const hash = await this.walletClient.writeContract(request);
       return this.publicClient.waitForTransactionReceipt({ hash });
     }
   }
