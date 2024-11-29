@@ -11,6 +11,7 @@ import { ethereumChain } from "../config/chains";
 import Button from "../ui/button";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { isTxSuccess, notifyError, notifyTransaction } from "../utils";
+import { TX_CONFIRMATIONS } from "../config";
 
 interface Amount {
   input: string;
@@ -142,7 +143,7 @@ export default function WrapUnwrap() {
           functionName: actionText === "Unwrap" ? "withdraw" : "deposit",
           args: [amountRef.current.value],
         });
-        const receipt = await publicClient.waitForTransactionReceipt({ hash });
+        const receipt = await publicClient.waitForTransactionReceipt({ hash, confirmations: TX_CONFIRMATIONS });
         setBusy(false);
         notifyTransaction(receipt, ethereumChain, actionText === "Unwrap" ? "Withdraw" : "Deposit");
         if (receipt.status === "success") {

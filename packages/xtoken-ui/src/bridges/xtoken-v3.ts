@@ -2,6 +2,7 @@ import { BridgeConstructorArgs, GetFeeArgs, HistoryRecord, Token, TransferOption
 import { BaseBridge } from ".";
 import { Address, Hex, TransactionReceipt, encodeFunctionData, isAddressEqual } from "viem";
 import { fetchMsglineFeeAndParams, getMessagerAddress } from "../utils";
+import { TX_CONFIRMATIONS } from "../config";
 
 export class XTokenV3Bridge extends BaseBridge {
   constructor(args: BridgeConstructorArgs) {
@@ -72,7 +73,7 @@ export class XTokenV3Bridge extends BaseBridge {
           return this.sourcePublicClient.estimateContractGas(defaultParams);
         } else if (this.walletClient) {
           const hash = await this.walletClient.writeContract(defaultParams);
-          return this.sourcePublicClient.waitForTransactionReceipt({ hash });
+          return this.sourcePublicClient.waitForTransactionReceipt({ hash, confirmations: TX_CONFIRMATIONS });
         }
       } else if (this.crossInfo?.action === "redeem") {
         const defaultParams = {
@@ -89,7 +90,7 @@ export class XTokenV3Bridge extends BaseBridge {
           return this.sourcePublicClient.estimateContractGas(defaultParams);
         } else if (this.walletClient) {
           const hash = await this.walletClient.writeContract(defaultParams);
-          return this.sourcePublicClient.waitForTransactionReceipt({ hash });
+          return this.sourcePublicClient.waitForTransactionReceipt({ hash, confirmations: TX_CONFIRMATIONS });
         }
       }
     }
@@ -197,7 +198,7 @@ export class XTokenV3Bridge extends BaseBridge {
           address: guardContract,
           gas: this.getTxGasLimit(),
         });
-        return this.publicClient.waitForTransactionReceipt({ hash });
+        return this.publicClient.waitForTransactionReceipt({ hash, confirmations: TX_CONFIRMATIONS });
       }
     }
   }
@@ -299,7 +300,7 @@ export class XTokenV3Bridge extends BaseBridge {
         }
       }
 
-      return hash && this.publicClient.waitForTransactionReceipt({ hash });
+      return hash && this.publicClient.waitForTransactionReceipt({ hash, confirmations: TX_CONFIRMATIONS });
     }
   }
 }
