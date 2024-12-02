@@ -2,6 +2,7 @@ import { BridgeConstructorArgs, GetFeeArgs, TransferOptions } from "../types/bri
 import { BaseBridge } from "./base";
 import { Address, TransactionReceipt } from "viem";
 import { HistoryRecord } from "../types/graphql";
+import { TX_CONFIRMATIONS } from "../config";
 
 export class HelixLpBridge extends BaseBridge {
   private readonly prefix = BigInt("0x6878000000000000");
@@ -77,7 +78,7 @@ export class HelixLpBridge extends BaseBridge {
         const hash = await (this.sourceToken?.type === "native"
           ? this.walletClient.writeContract(nativeParams)
           : this.walletClient.writeContract(defaultParams));
-        return this.sourcePublicClient.waitForTransactionReceipt({ hash });
+        return this.sourcePublicClient.waitForTransactionReceipt({ hash, confirmations: TX_CONFIRMATIONS });
       }
     }
   }
@@ -104,7 +105,7 @@ export class HelixLpBridge extends BaseBridge {
         value: await this.getBridgeFee(),
         gas: this.getTxGasLimit(),
       });
-      return this.publicClient.waitForTransactionReceipt({ hash });
+      return this.publicClient.waitForTransactionReceipt({ hash, confirmations: TX_CONFIRMATIONS });
     }
   }
 
@@ -136,7 +137,7 @@ export class HelixLpBridge extends BaseBridge {
             value: fee,
           })
         : this.walletClient.writeContract({ address, abi, gas, functionName: "increaseFee", args: [transferId, fee] }));
-      return await this.publicClient.waitForTransactionReceipt({ hash });
+      return await this.publicClient.waitForTransactionReceipt({ hash, confirmations: TX_CONFIRMATIONS });
     }
   }
 

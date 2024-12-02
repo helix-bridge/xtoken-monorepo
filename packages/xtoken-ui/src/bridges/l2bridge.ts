@@ -1,3 +1,4 @@
+import { TX_CONFIRMATIONS } from "../config";
 import { BridgeConstructorArgs, TransferOptions } from "../types/bridge";
 import { BaseBridge } from "./base";
 import { Address, TransactionReceipt, encodeAbiParameters } from "viem";
@@ -73,7 +74,7 @@ export class L2ArbitrumBridge extends BaseBridge {
         return this.sourcePublicClient.estimateContractGas(defaultParams);
       } else if (this.walletClient) {
         const hash = await this.walletClient.writeContract(defaultParams);
-        return this.sourcePublicClient.waitForTransactionReceipt({ hash });
+        return this.sourcePublicClient.waitForTransactionReceipt({ hash, confirmations: TX_CONFIRMATIONS });
       }
     }
   }
