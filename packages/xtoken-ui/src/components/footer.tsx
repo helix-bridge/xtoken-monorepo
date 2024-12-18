@@ -28,7 +28,7 @@ export default function Footer() {
         <SocialLink href="https://github.com/helix-bridge">
           <img width={16} height={16} alt="Github" src="images/social/github.svg" />
         </SocialLink>
-        <SocialLink href="https://x.com/helixofficialx">
+        <SocialLink href="https://x.com/HelixboxLabs">
           <img width={15.3} height={14} alt="Twitter" src="images/social/x.svg" />
         </SocialLink>
         <SocialLink href="https://discord.gg/6XyyNGugdE">

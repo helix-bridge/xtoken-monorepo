@@ -15,7 +15,7 @@ export default function Footer({ className }: Props) {
         <Social href="https://github.com/helix-bridge">
           <Image width={16} height={16} alt="Github" src="/social/github.svg" />
         </Social>
-        <Social href="https://x.com/helixofficialx">
+        <Social href="https://x.com/HelixboxLabs">
           <Image width={15.3} height={14} alt="Twitter" src="/social/x.svg" />
         </Social>
         <Social href="https://discord.gg/6XyyNGugdE">
