@@ -14,6 +14,16 @@ export const ethereumChain: ChainConfig = {
    * Custom
    */
   logo: "ethereum.png",
+  rpcUrls: {
+    default: {
+      http: ["https://ethereum-rpc.publicnode.com"],
+      webSocket: ["wss://ethereum-rpc.publicnode.com"],
+    },
+    public: {
+      http: ["https://ethereum.callstaticrpc.com"],
+      webSocket: ["wss://ethereum.callstaticrpc.com"],
+    },
+  },
   tokens: [
     {
       decimals: 18,
