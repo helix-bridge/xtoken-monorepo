@@ -14,6 +14,16 @@ export const ethereumChain: ChainConfig = {
    * Custom
    */
   logo: "ethereum.png",
+  rpcUrls: {
+    default: {
+      http: ["https://ethereum-rpc.publicnode.com"],
+      webSocket: ["wss://ethereum-rpc.publicnode.com"],
+    },
+    public: {
+      http: ["https://ethereum.callstaticrpc.com"],
+      webSocket: ["wss://ethereum.callstaticrpc.com"],
+    },
+  },
   tokens: [
     {
       decimals: 18,
@@ -57,9 +67,9 @@ export const ethereumChain: ChainConfig = {
           action: "redeem",
           thirdPartyBridges: [
             {
-              name: "Helix Bridge",
+              name: "Helixbox Bridge",
               logo: "helix-bridge.png",
-              url: "https://helixbridge.app/#/?token_category=ring&source_chain=ethereum&source_token=RING&target_chain=darwinia-dvm&target_token=RING",
+              url: "https://app.helix.box/#/?token_category=ring&source_chain=ethereum&source_token=RING&target_chain=darwinia-dvm&target_token=RING",
             },
           ],
         },

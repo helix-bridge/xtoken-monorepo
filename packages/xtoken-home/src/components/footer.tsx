@@ -10,18 +10,18 @@ export default function Footer({ className }: Props) {
     <div
       className={`${className} lg:h-15 flex h-10 w-full items-center justify-center px-3 lg:justify-between lg:px-5`}
     >
-      <span className="text-xs font-semibold text-white/50">{`© ${new Date().getFullYear()} Developed by Helix Bridge Team`}</span>
+      <span className="text-xs font-semibold text-white/50">{`© ${new Date().getFullYear()} Developed by Helixbox Team`}</span>
       <div className="hidden items-center gap-5 lg:flex">
         <Social href="https://github.com/helix-bridge">
           <Image width={16} height={16} alt="Github" src="/social/github.svg" />
         </Social>
-        <Social href="https://twitter.com/helixbridges">
-          <Image width={16} height={16} alt="Twitter" src="/social/twitter.svg" />
+        <Social href="https://x.com/HelixboxLabs">
+          <Image width={15.3} height={14} alt="Twitter" src="/social/x.svg" />
         </Social>
         <Social href="https://discord.gg/6XyyNGugdE">
           <Image width={20} height={20} alt="Discord" src="/social/discord.svg" />
         </Social>
-        <Social href="mailto:hello@helixbridge.app">
+        <Social href="mailto:hello@helix.box">
           <Image width={16} height={16} alt="Email" src="/social/email.svg" />
         </Social>
       </div>

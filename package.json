@@ -19,7 +19,7 @@
   "workspaces": [
     "packages/*"
   ],
-  "author": "Helix Bridge",
+  "author": "Helixbox",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/helix-bridge/xtoken-monorepo/issues"

@@ -16,6 +16,7 @@ import {
   isTronChain,
   waitForTronTransactionReceipt,
 } from "../utils";
+import { TX_CONFIRMATIONS } from "../config";
 
 export class XTokenNextBridge extends BaseBridge {
   constructor(args: BridgeConstructorArgs) {
@@ -261,7 +262,7 @@ export class XTokenNextBridge extends BaseBridge {
             return this.sourcePublicClient.estimateContractGas(defaultParams);
           } else if (this.walletClient) {
             const hash = await this.walletClient.writeContract(defaultParams);
-            return this.sourcePublicClient.waitForTransactionReceipt({ hash });
+            return this.sourcePublicClient.waitForTransactionReceipt({ hash, confirmations: TX_CONFIRMATIONS });
           }
         } else {
           const defaultParams = {
@@ -287,7 +288,7 @@ export class XTokenNextBridge extends BaseBridge {
             return this.sourcePublicClient.estimateContractGas(defaultParams);
           } else if (this.walletClient) {
             const hash = await this.walletClient.writeContract(defaultParams);
-            return this.sourcePublicClient.waitForTransactionReceipt({ hash });
+            return this.sourcePublicClient.waitForTransactionReceipt({ hash, confirmations: TX_CONFIRMATIONS });
           }
         }
       } else if (this.crossInfo?.action === "redeem" && this.sourcePublicClient && account) {
@@ -306,7 +307,7 @@ export class XTokenNextBridge extends BaseBridge {
             return this.sourcePublicClient.estimateContractGas(defaultParams);
           } else if (this.walletClient) {
             const hash = await this.walletClient.writeContract(defaultParams);
-            return this.sourcePublicClient.waitForTransactionReceipt({ hash });
+            return this.sourcePublicClient.waitForTransactionReceipt({ hash, confirmations: TX_CONFIRMATIONS });
           }
         } else {
           const defaultParams = {
@@ -323,7 +324,7 @@ export class XTokenNextBridge extends BaseBridge {
             return this.sourcePublicClient.estimateContractGas(defaultParams);
           } else if (this.walletClient) {
             const hash = await this.walletClient.writeContract(defaultParams);
-            return this.sourcePublicClient.waitForTransactionReceipt({ hash });
+            return this.sourcePublicClient.waitForTransactionReceipt({ hash, confirmations: TX_CONFIRMATIONS });
           }
         }
       }
@@ -473,7 +474,7 @@ export class XTokenNextBridge extends BaseBridge {
     const guard = await this._getTargetGuard();
 
     if (record.recvTokenAddress && guard && this.contract && this.walletClient && this.publicClient) {
-      const hash = await this.walletClient.writeContract({
+      const { request } = await this.publicClient.simulateContract({
         abi: (await import("../abi/guard-next")).default,
         functionName: "claim",
         args: [
@@ -488,7 +489,8 @@ export class XTokenNextBridge extends BaseBridge {
         address: guard,
         gas: this.getTxGasLimit(),
       });
-      return this.publicClient.waitForTransactionReceipt({ hash });
+      const hash = await this.walletClient.writeContract(request);
+      return this.publicClient.waitForTransactionReceipt({ hash, confirmations: TX_CONFIRMATIONS });
     }
   }
 
@@ -577,7 +579,7 @@ export class XTokenNextBridge extends BaseBridge {
               gas: this.getTxGasLimit(),
               value: feeAndParams.fee,
             });
-            return this.publicClient.waitForTransactionReceipt({ hash });
+            return this.publicClient.waitForTransactionReceipt({ hash, confirmations: TX_CONFIRMATIONS });
           }
         }
       } else if (this.crossInfo?.action === "redeem") {
@@ -649,7 +651,7 @@ export class XTokenNextBridge extends BaseBridge {
               gas: this.getTxGasLimit(),
               value: feeAndParams.fee,
             });
-            return this.publicClient.waitForTransactionReceipt({ hash });
+            return this.publicClient.waitForTransactionReceipt({ hash, confirmations: TX_CONFIRMATIONS });
           }
         }
       }

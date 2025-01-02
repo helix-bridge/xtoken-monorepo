@@ -2,6 +2,7 @@ import { BridgeConstructorArgs, TransferOptions } from "../types/bridge";
 import { BaseBridge } from "./base";
 import { Address, TransactionReceipt } from "viem";
 import { HistoryRecord } from "../types/graphql";
+import { TX_CONFIRMATIONS } from "../config";
 
 /**
  * DVM <=> DVM
@@ -95,7 +96,7 @@ export class HelixBridgeDVMDVM extends BaseBridge {
         const hash = await (this.sourceToken.type === "native"
           ? this.walletClient.writeContract(nativeParams)
           : this.walletClient.writeContract(defaultParams));
-        return this.sourcePublicClient.waitForTransactionReceipt({ hash });
+        return this.sourcePublicClient.waitForTransactionReceipt({ hash, confirmations: TX_CONFIRMATIONS });
       }
     }
   }
@@ -141,7 +142,7 @@ export class HelixBridgeDVMDVM extends BaseBridge {
         const hash = await (this.targetToken?.type === "native"
           ? this.walletClient.writeContract(nativeParams)
           : this.walletClient.writeContract(defaultParams));
-        return this.sourcePublicClient.waitForTransactionReceipt({ hash });
+        return this.sourcePublicClient.waitForTransactionReceipt({ hash, confirmations: TX_CONFIRMATIONS });
       }
     }
   }
@@ -207,7 +208,7 @@ export class HelixBridgeDVMDVM extends BaseBridge {
           args: [this.specVersion.source, this.gasLimit, messageNonce, sendTokenAddress, record.sender, sendAmount],
         });
       }
-      return hash && this.publicClient.waitForTransactionReceipt({ hash });
+      return hash && this.publicClient.waitForTransactionReceipt({ hash, confirmations: TX_CONFIRMATIONS });
     }
   }
 

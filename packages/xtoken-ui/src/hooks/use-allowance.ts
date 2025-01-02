@@ -13,6 +13,7 @@ import {
   notifyError,
   waitForTronTransactionReceipt,
 } from "../utils";
+import { TX_CONFIRMATIONS } from "../config";
 
 function getAllowanceEVM(chain: ChainConfig, token: Token, owner: Address, spender: Address) {
   const publicClient = createPublicClient({ chain, transport: http() });
@@ -103,7 +104,7 @@ export function useAllowance(
             functionName: "approve",
             args: [spender, amount],
           });
-          const receipt = await publicClient.waitForTransactionReceipt({ hash });
+          const receipt = await publicClient.waitForTransactionReceipt({ hash, confirmations: TX_CONFIRMATIONS });
           if (receipt.status === "success") {
             setAllowance(await getAllowanceEVM(chain, token, owner, spender));
           }
