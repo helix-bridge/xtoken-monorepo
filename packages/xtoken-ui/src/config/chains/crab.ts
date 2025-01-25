@@ -14,11 +14,11 @@ export const crabChain: ChainConfig = {
   },
   rpcUrls: {
     default: {
-      http: ["https://crab-rpc.dcdao.box"],
+      http: ["https://crab-rpc.darwinia.network"],
       webSocket: [],
     },
     public: {
-      http: ["https://crab-rpc.dcdao.box"],
+      http: ["https://crab-rpc.darwinia.network"],
       webSocket: [],
     },
   },
