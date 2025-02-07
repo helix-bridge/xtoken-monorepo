@@ -306,44 +306,50 @@ export class xTokenService implements OnModuleInit {
       for (const uncheckedRecord of uncheckedRecords) {
         const sourceId = this.nodeIdToTransferId(uncheckedRecord.id);
         const messageId = this.toMessageId(uncheckedRecord.messageNonce);
-        const node = await this.queryMessageDispatchedResult(partner, messageId);
 
-        if (node === undefined || node === null || node.result === null) {
-          continue;
-        }
-        let result = uncheckedRecord.result;
-        let responseTxHash = "";
-        // failed
-        if (node.result === xTokenStatus.failed) {
-          //pendingToRefund
-          result = RecordStatus.pendingToRefund;
-        } else if (node.result === xTokenStatus.deliveredSuccessed) {
-          //success
-          result = RecordStatus.success;
-          responseTxHash = node.transactionHash;
-        } else if (node.result === xTokenStatus.pendingToClaim) {
-          //pendingToClaim
-          result = RecordStatus.pendingToClaim;
-        } else if (node.result === xTokenStatus.claimed) {
-          //success
-          result = RecordStatus.success;
-          responseTxHash = node.transactionHash;
-        }
-        // only pending status for the transfer need to be updated by this dispatch result
-        if (uncheckedRecord.result === RecordStatus.pending || uncheckedRecord.result === RecordStatus.pendingToClaim) {
-          if (result !== uncheckedRecord.result) {
-            this.logger.log(
-              `${this.baseConfigure.name} [${uncheckedRecord.fromChain}-${uncheckedRecord.toChain}] status updated, id: ${sourceId}, status ${uncheckedRecord.result}->${result}`,
-            );
-            await this.aggregationService.updateHistoryRecord({
-              where: { id: uncheckedRecord.id },
-              data: {
-                responseTxHash,
-                result,
-                endTime: Number(node.timestamp),
-              },
-            });
-            uncheckedRecord.result = result;
+        if (
+          uncheckedRecord.result !== RecordStatus.pendingToRefund &&
+          uncheckedRecord.result !== RecordStatus.pendingToConfirmRefund
+        ) {
+          const node = await this.queryMessageDispatchedResult(partner, messageId);
+
+          if (node === undefined || node === null || node.result === null) {
+            continue;
+          }
+          let result = uncheckedRecord.result;
+          let responseTxHash = "";
+          // failed
+          if (node.result === xTokenStatus.failed) {
+            //pendingToRefund
+            result = RecordStatus.pendingToRefund;
+          } else if (node.result === xTokenStatus.deliveredSuccessed) {
+            //success
+            result = RecordStatus.success;
+            responseTxHash = node.transactionHash;
+          } else if (node.result === xTokenStatus.pendingToClaim) {
+            //pendingToClaim
+            result = RecordStatus.pendingToClaim;
+          } else if (node.result === xTokenStatus.claimed) {
+            //success
+            result = RecordStatus.success;
+            responseTxHash = node.transactionHash;
+          }
+          // only pending status for the transfer need to be updated by this dispatch result
+          if (uncheckedRecord.result === RecordStatus.pending || uncheckedRecord.result === RecordStatus.pendingToClaim) {
+            if (result !== uncheckedRecord.result) {
+              this.logger.log(
+                `${this.baseConfigure.name} [${uncheckedRecord.fromChain}-${uncheckedRecord.toChain}] status updated, id: ${sourceId}, status ${uncheckedRecord.result}->${result}`,
+              );
+              await this.aggregationService.updateHistoryRecord({
+                where: { id: uncheckedRecord.id },
+                data: {
+                  responseTxHash,
+                  result,
+                  endTime: Number(node.timestamp),
+                },
+              });
+              uncheckedRecord.result = result;
+            }
           }
         }
 

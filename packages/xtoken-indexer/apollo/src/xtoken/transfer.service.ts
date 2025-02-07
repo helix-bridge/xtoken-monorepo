@@ -24,7 +24,8 @@ export class TransferService extends BaseTransferServiceT2 {
   private readonly ethereumDispatchSubgraphV2 = this.configService.get<string>("XTOKEN_DISPATCH_ETHEREUM_V2");
   private readonly darwiniaDispatchSubgraphV2 = this.configService.get<string>("XTOKEN_DISPATCH_DARWINIA_V2");
 
-  private readonly superUrl = this.configService.get<string>("XTOKEN_SUPER_URL");
+  private readonly fastUrl = this.configService.get<string>("XTOKEN_FAST_URL");
+  private readonly slowUrl = this.configService.get<string>("XTOKEN_SLOW_URL");
 
   formalChainTransfers: PartnerT2[] = [
     {
@@ -33,13 +34,21 @@ export class TransferService extends BaseTransferServiceT2 {
       urls: [
         {
           indexerType: Level0IndexerType.superindex,
-          url: this.superUrl,
+          url: this.fastUrl,
+        },
+        {
+          indexerType: Level0IndexerType.superindex,
+          url: this.slowUrl,
         },
       ],
       dispatchUrls: [
         {
           indexerType: Level0IndexerType.superindex,
-          url: this.superUrl,
+          url: this.fastUrl,
+        },
+        {
+          indexerType: Level0IndexerType.superindex,
+          url: this.slowUrl,
         },
         {
           indexerType: Level0IndexerType.thegraph,
@@ -70,13 +79,21 @@ export class TransferService extends BaseTransferServiceT2 {
       urls: [
         {
           indexerType: Level0IndexerType.superindex,
-          url: this.superUrl,
+          url: this.fastUrl,
+        },
+        {
+          indexerType: Level0IndexerType.superindex,
+          url: this.slowUrl,
         },
       ],
       dispatchUrls: [
         {
           indexerType: Level0IndexerType.superindex,
-          url: this.superUrl,
+          url: this.fastUrl,
+        },
+        {
+          indexerType: Level0IndexerType.superindex,
+          url: this.slowUrl,
         },
         {
           indexerType: Level0IndexerType.thegraph,
@@ -107,13 +124,21 @@ export class TransferService extends BaseTransferServiceT2 {
       urls: [
         {
           indexerType: Level0IndexerType.superindex,
-          url: this.superUrl,
+          url: this.fastUrl,
+        },
+        {
+          indexerType: Level0IndexerType.superindex,
+          url: this.slowUrl,
         },
       ],
       dispatchUrls: [
         {
           indexerType: Level0IndexerType.superindex,
-          url: this.superUrl,
+          url: this.fastUrl,
+        },
+        {
+          indexerType: Level0IndexerType.superindex,
+          url: this.slowUrl,
         },
         {
           indexerType: Level0IndexerType.thegraph,
@@ -144,13 +169,21 @@ export class TransferService extends BaseTransferServiceT2 {
       urls: [
         {
           indexerType: Level0IndexerType.superindex,
-          url: this.superUrl,
+          url: this.fastUrl,
+        },
+        {
+          indexerType: Level0IndexerType.superindex,
+          url: this.slowUrl,
         },
       ],
       dispatchUrls: [
         {
           indexerType: Level0IndexerType.superindex,
-          url: this.superUrl,
+          url: this.fastUrl,
+        },
+        {
+          indexerType: Level0IndexerType.superindex,
+          url: this.slowUrl,
         },
         {
           indexerType: Level0IndexerType.thegraph,
@@ -181,7 +214,11 @@ export class TransferService extends BaseTransferServiceT2 {
       urls: [
         {
           indexerType: Level0IndexerType.superindex,
-          url: this.superUrl,
+          url: this.fastUrl,
+        },
+        {
+          indexerType: Level0IndexerType.superindex,
+          url: this.slowUrl,
         },
       ],
       dispatchUrls: [
@@ -191,7 +228,11 @@ export class TransferService extends BaseTransferServiceT2 {
         },
         {
           indexerType: Level0IndexerType.superindex,
-          url: this.superUrl,
+          url: this.fastUrl,
+        },
+        {
+          indexerType: Level0IndexerType.superindex,
+          url: this.slowUrl,
         },
       ],
       bridge: "xtoken-darwinia-ethereum",
@@ -267,13 +308,21 @@ export class TransferService extends BaseTransferServiceT2 {
       urls: [
         {
           indexerType: Level0IndexerType.superindex,
-          url: this.superUrl,
+          url: this.fastUrl,
+        },
+        {
+          indexerType: Level0IndexerType.superindex,
+          url: this.slowUrl,
         },
       ],
       dispatchUrls: [
         {
           indexerType: Level0IndexerType.superindex,
-          url: this.superUrl,
+          url: this.fastUrl,
+        },
+        {
+          indexerType: Level0IndexerType.superindex,
+          url: this.slowUrl,
         },
       ],
       bridge: "xtoken-darwinia-tron",
@@ -300,13 +349,21 @@ export class TransferService extends BaseTransferServiceT2 {
       urls: [
         {
           indexerType: Level0IndexerType.superindex,
-          url: this.superUrl,
+          url: this.fastUrl,
+        },
+        {
+          indexerType: Level0IndexerType.superindex,
+          url: this.slowUrl,
         },
       ],
       dispatchUrls: [
         {
           indexerType: Level0IndexerType.superindex,
-          url: this.superUrl,
+          url: this.fastUrl,
+        },
+        {
+          indexerType: Level0IndexerType.superindex,
+          url: this.slowUrl,
         },
       ],
       bridge: "xtoken-darwinia-tron",
@@ -336,13 +393,13 @@ export class TransferService extends BaseTransferServiceT2 {
       urls: [
         {
           indexerType: Level0IndexerType.superindex,
-          url: this.superUrl,
+          url: this.fastUrl,
         },
       ],
       dispatchUrls: [
         {
           indexerType: Level0IndexerType.superindex,
-          url: this.superUrl,
+          url: this.fastUrl,
         },
       ],
       bridge: "xtoken-koi-tron",
@@ -369,13 +426,13 @@ export class TransferService extends BaseTransferServiceT2 {
       urls: [
         {
           indexerType: Level0IndexerType.superindex,
-          url: this.superUrl,
+          url: this.fastUrl,
         },
       ],
       dispatchUrls: [
         {
           indexerType: Level0IndexerType.superindex,
-          url: this.superUrl,
+          url: this.fastUrl,
         },
       ],
       bridge: "xtoken-koi-tron",
