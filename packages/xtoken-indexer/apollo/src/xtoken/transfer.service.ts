@@ -5,11 +5,8 @@ import { AddressTokenMap } from "../base/AddressToken";
 
 @Injectable()
 export class TransferService extends BaseTransferServiceT2 {
-  private readonly darwainiaCrabBackingUrl = this.configService.get<string>("XTOKEN_DARWINIA_CRAB_BACKING");
-  private readonly darwainiaCrabIssuingUrl = this.configService.get<string>("XTOKEN_DARWINIA_CRAB_ISSUING");
   private readonly darwainiaEthereumIssuingUrl = this.configService.get<string>("XTOKEN_DARWINIA_ETHEREUM_ISSUING");
 
-  private readonly darwiniaEthereumIssuingUrl = this.configService.get<string>("XTOKEN_DARWINIA_ETHEREUM_ISSUING");
   private readonly ethereumDispatchSubgraph = this.configService.get<string>("XTOKEN_DISPATCH_ETHEREUM");
 
   // testnet
@@ -243,12 +240,20 @@ export class TransferService extends BaseTransferServiceT2 {
           indexerType: Level0IndexerType.thegraph,
           url: this.darwainiaEthereumIssuingUrl,
         },
+        {
+          indexerType: Level0IndexerType.superindex,
+          url: this.slowUrl,
+        }
       ],
       dispatchUrls: [
         {
           indexerType: Level0IndexerType.thegraph,
           url: this.ethereumDispatchSubgraph,
         },
+        {
+          indexerType: Level0IndexerType.superindex,
+          url: this.slowUrl,
+        }
       ],
       bridge: "xtoken-darwinia-ethereum",
       symbols: [
@@ -327,10 +332,18 @@ export class TransferService extends BaseTransferServiceT2 {
         },
         {
           indexerType: Level0IndexerType.superindex,
+          url: this.fastUrl,
+        },
+        {
+          indexerType: Level0IndexerType.superindex,
           url: this.slowUrl,
         },
       ],
       dispatchUrls: [
+        {
+          indexerType: Level0IndexerType.superindex,
+          url: this.fastUrl,
+        },
         {
           indexerType: Level0IndexerType.superindex,
           url: this.fastUrl,
