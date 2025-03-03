@@ -12,6 +12,7 @@ import Button from "../ui/button";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { isTxSuccess, notifyError, notifyTransaction } from "../utils";
 import { TX_CONFIRMATIONS } from "../config";
+import WrapSwitch from "./wrap-switch";
 
 interface Amount {
   input: string;
@@ -45,6 +46,31 @@ const xRing: Token = {
   category: "ring",
 };
 const xRingLockBox: Address = "0x00000000062D35A6F9F82305c47A786527896578";
+
+const kton: Token = {
+  address: "0x9f284e1337a815fe77d2ff4ae46544645b20c5ff",
+  outer: "0x9f284e1337a815fe77d2ff4ae46544645b20c5ff",
+  inner: "0x9f284e1337a815fe77d2ff4ae46544645b20c5ff",
+  logo: "kton.png",
+  name: "KTON",
+  symbol: "KTON",
+  decimals: 18,
+  cross: [],
+  type: "erc20",
+  category: "kton",
+};
+const xKton: Token = {
+  address: "0x35f15275041B53324dF461d5ccC952EE19D4a982",
+  outer: "0x35f15275041B53324dF461d5ccC952EE19D4a982",
+  inner: "0x35f15275041B53324dF461d5ccC952EE19D4a982",
+  logo: "kton.png",
+  name: "xKTON",
+  symbol: "xKTON",
+  decimals: 18,
+  cross: [],
+  type: "erc20",
+  category: "kton",
+};
 
 export default function WrapUnwrap() {
   const [sourceToken, _setSourceToken] = useState(ring);
@@ -94,7 +120,7 @@ export default function WrapUnwrap() {
       if (network.chain.id === ChainID.ETHEREUM) {
         if (allowance < amount.value) {
           result = "Approve";
-        } else if (sourceToken.symbol === "RING") {
+        } else if (sourceToken.symbol === "RING" || sourceToken.symbol === "KTON") {
           result = "Unwrap";
         } else {
           result = "Wrap";
@@ -168,51 +194,67 @@ export default function WrapUnwrap() {
 
   return (
     <>
-      <div className="bg-secondary p-large mx-auto flex w-full flex-col gap-5 rounded-3xl lg:w-[28rem] lg:rounded-[2rem] lg:p-5">
-        <div className="flex flex-col">
-          <WrapTokenSection label="You pay" token={sourceToken} />
-          <TransferSwitch onSwitch={handleSwitch} />
-          <WrapTokenSection label="You receive" token={targetToken} />
+      <div className="flex w-full flex-col gap-2 lg:w-[28rem]">
+        <div className="flex justify-end px-2">
+          <WrapSwitch
+            value={sourceToken.category as "ring" | "kton"}
+            onChange={(value) => {
+              if (value === "ring") {
+                setSourceToken(ring);
+                setTargetToken(xRing);
+              } else {
+                setSourceToken(kton);
+                setTargetToken(xKton);
+              }
+            }}
+          />
         </div>
+        <div className="bg-secondary p-large mx-auto flex w-full flex-col gap-5 rounded-3xl lg:rounded-[2rem] lg:p-5">
+          <div className="flex flex-col">
+            <WrapTokenSection label="You pay" token={sourceToken} />
+            <TransferSwitch onSwitch={handleSwitch} />
+            <WrapTokenSection label="You receive" token={targetToken} />
+          </div>
 
-        <TransferAmountSection
-          maxInput
-          max={balance}
-          balance={balance}
-          amount={amount}
-          loading={isLoadingBalance}
-          chain={ethereumChain}
-          token={sourceToken}
-          onChange={setAmount}
-          onRefresh={refreshBalance}
-        />
+          <TransferAmountSection
+            maxInput
+            max={balance}
+            balance={balance}
+            amount={amount}
+            loading={isLoadingBalance}
+            chain={ethereumChain}
+            token={sourceToken}
+            onChange={setAmount}
+            onRefresh={refreshBalance}
+          />
 
-        <div className="flex flex-col gap-3">
-          <Button
-            busy={busy}
-            kind="primary"
-            className="inline-flex h-11 items-center justify-center rounded-full"
-            disabled={
-              (actionText === "Unwrap" || actionText === "Wrap" || actionText === "Approve") &&
-              (isLoadingAllowance || !(amount.valid && amount.input))
-            }
-            onClick={handleWrap}
-          >
-            <span className="text-sm font-bold text-white">{actionText}</span>
-          </Button>
+          <div className="flex flex-col gap-3">
+            <Button
+              busy={busy}
+              kind="primary"
+              className="inline-flex h-11 items-center justify-center rounded-full"
+              disabled={
+                (actionText === "Unwrap" || actionText === "Wrap" || actionText === "Approve") &&
+                (isLoadingAllowance || !(amount.valid && amount.input))
+              }
+              onClick={handleWrap}
+            >
+              <span className="text-sm font-bold text-white">{actionText}</span>
+            </Button>
 
-          {network.chain?.id && network.chain.id !== ChainID.ETHEREUM ? (
-            <div className="mx-auto flex flex-wrap items-center gap-1">
-              <img
-                alt="Wrong network"
-                width={18}
-                height={18}
-                src="images/warning.svg"
-                className="shrink-0 rounded-full"
-              />
-              <span className="text-xs font-bold text-orange-400">Wrong chain, wrap/unwrap is only for Ethereum</span>
-            </div>
-          ) : null}
+            {network.chain?.id && network.chain.id !== ChainID.ETHEREUM ? (
+              <div className="mx-auto flex flex-wrap items-center gap-1">
+                <img
+                  alt="Wrong network"
+                  width={18}
+                  height={18}
+                  src="images/warning.svg"
+                  className="shrink-0 rounded-full"
+                />
+                <span className="text-xs font-bold text-orange-400">Wrong chain, wrap/unwrap is only for Ethereum</span>
+              </div>
+            ) : null}
+          </div>
         </div>
       </div>
     </>

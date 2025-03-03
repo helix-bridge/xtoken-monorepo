@@ -107,7 +107,7 @@ export const ethereumChain: ChainConfig = {
       type: "erc20",
       address: "0x9f284e1337a815fe77d2ff4ae46544645b20c5ff",
       outer: "0x9f284e1337a815fe77d2ff4ae46544645b20c5ff",
-      inner: "0x9f284e1337a815fe77d2ff4ae46544645b20c5ff",
+      inner: "0x35f15275041B53324dF461d5ccC952EE19D4a982",
       logo: "kton.png",
       cross: [
         {

@@ -144,6 +144,18 @@ export class XTokenNextBridge extends BaseBridge {
         source: "0x547cDb578A89517C75a0fA18a56232a357910c52",
         target: "0x53352b535fc38843BF1C04DC863bCEca855A4811",
       };
+    } else if (
+      this.sourceChain?.network === "darwinia-dvm" &&
+      this.targetChain?.network === "ethereum" &&
+      this.sourceToken?.symbol === "KTON"
+    ) {
+      this.convertor = { source: undefined, target: "0x3217F36AE34aCA2CE60d218af8F47d29101204a8" };
+    } else if (
+      this.sourceChain?.network === "ethereum" &&
+      this.targetChain?.network === "darwinia-dvm" &&
+      this.targetToken?.symbol === "KTON"
+    ) {
+      this.convertor = { source: "0x3217F36AE34aCA2CE60d218af8F47d29101204a8", target: undefined };
     }
   }
 

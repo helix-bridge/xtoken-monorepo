@@ -18,6 +18,7 @@ export type TokenSymbol =
   | "xCRAB"
   | "xWRING"
   | "xRING"
+  | "xKTON"
   | "xWCRAB"
   | "xPRING"
   | "xETH"
