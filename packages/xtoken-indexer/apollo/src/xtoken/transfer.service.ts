@@ -5,17 +5,8 @@ import { AddressTokenMap } from "../base/AddressToken";
 
 @Injectable()
 export class TransferService extends BaseTransferServiceT2 {
-  private readonly darwainiaCrabBackingUrl = this.configService.get<string>("XTOKEN_DARWINIA_CRAB_BACKING");
-  private readonly darwainiaCrabIssuingUrl = this.configService.get<string>("XTOKEN_DARWINIA_CRAB_ISSUING");
-  private readonly crabDarwiniaBackingUrl = this.configService.get<string>("XTOKEN_CRAB_DARWINIA_BACKING");
-  private readonly crabDarwiniaIssuingUrl = this.configService.get<string>("XTOKEN_CRAB_DARWINIA_ISSUING");
-  private readonly darwainiaEthereumBackingUrl = this.configService.get<string>("XTOKEN_DARWINIA_ETHEREUM_BACKING");
   private readonly darwainiaEthereumIssuingUrl = this.configService.get<string>("XTOKEN_DARWINIA_ETHEREUM_ISSUING");
 
-  private readonly darwiniaEthereumBackingUrl = this.configService.get<string>("XTOKEN_DARWINIA_ETHEREUM_BACKING");
-  private readonly darwiniaEthereumIssuingUrl = this.configService.get<string>("XTOKEN_DARWINIA_ETHEREUM_ISSUING");
-  private readonly darwiniaDispatchSubgraph = this.configService.get<string>("XTOKEN_DISPATCH_DARWINIA");
-  private readonly crabDispatchSubgraph = this.configService.get<string>("XTOKEN_DISPATCH_CRAB");
   private readonly ethereumDispatchSubgraph = this.configService.get<string>("XTOKEN_DISPATCH_ETHEREUM");
 
   // testnet
@@ -49,10 +40,6 @@ export class TransferService extends BaseTransferServiceT2 {
         {
           indexerType: Level0IndexerType.superindex,
           url: this.slowUrl,
-        },
-        {
-          indexerType: Level0IndexerType.thegraph,
-          url: this.darwiniaDispatchSubgraph,
         },
       ],
       bridge: "xtoken-darwinia-crab",
@@ -95,10 +82,6 @@ export class TransferService extends BaseTransferServiceT2 {
           indexerType: Level0IndexerType.superindex,
           url: this.slowUrl,
         },
-        {
-          indexerType: Level0IndexerType.thegraph,
-          url: this.crabDispatchSubgraph,
-        },
       ],
       bridge: "xtoken-darwinia-crab",
       symbols: [
@@ -139,10 +122,6 @@ export class TransferService extends BaseTransferServiceT2 {
         {
           indexerType: Level0IndexerType.superindex,
           url: this.slowUrl,
-        },
-        {
-          indexerType: Level0IndexerType.thegraph,
-          url: this.darwiniaDispatchSubgraph,
         },
       ],
       bridge: "xtoken-crab-darwinia",
@@ -185,10 +164,6 @@ export class TransferService extends BaseTransferServiceT2 {
           indexerType: Level0IndexerType.superindex,
           url: this.slowUrl,
         },
-        {
-          indexerType: Level0IndexerType.thegraph,
-          url: this.crabDispatchSubgraph,
-        },
       ],
       bridge: "xtoken-crab-darwinia",
       symbols: [
@@ -222,10 +197,6 @@ export class TransferService extends BaseTransferServiceT2 {
         },
       ],
       dispatchUrls: [
-        {
-          indexerType: Level0IndexerType.thegraph,
-          url: this.darwiniaDispatchSubgraph,
-        },
         {
           indexerType: Level0IndexerType.superindex,
           url: this.fastUrl,
@@ -269,12 +240,20 @@ export class TransferService extends BaseTransferServiceT2 {
           indexerType: Level0IndexerType.thegraph,
           url: this.darwainiaEthereumIssuingUrl,
         },
+        {
+          indexerType: Level0IndexerType.superindex,
+          url: this.slowUrl,
+        }
       ],
       dispatchUrls: [
         {
           indexerType: Level0IndexerType.thegraph,
           url: this.ethereumDispatchSubgraph,
         },
+        {
+          indexerType: Level0IndexerType.superindex,
+          url: this.slowUrl,
+        }
       ],
       bridge: "xtoken-darwinia-ethereum",
       symbols: [
@@ -353,10 +332,18 @@ export class TransferService extends BaseTransferServiceT2 {
         },
         {
           indexerType: Level0IndexerType.superindex,
+          url: this.fastUrl,
+        },
+        {
+          indexerType: Level0IndexerType.superindex,
           url: this.slowUrl,
         },
       ],
       dispatchUrls: [
+        {
+          indexerType: Level0IndexerType.superindex,
+          url: this.fastUrl,
+        },
         {
           indexerType: Level0IndexerType.superindex,
           url: this.fastUrl,
