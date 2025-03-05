@@ -268,7 +268,7 @@ export class TransferService extends BaseTransferServiceT2 {
         {
           key: "KTON",
           symbol: "KTON",
-          address: "0x9F284E1337A815fe77D2Ff4aE46544645B20c5ff",
+          address: "0x35f15275041B53324dF461d5ccC952EE19D4a982",
           outerAddress: "0x9F284E1337A815fe77D2Ff4aE46544645B20c5ff",
           protocolFee: 0,
           decimals: 18,
