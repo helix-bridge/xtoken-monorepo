@@ -71,6 +71,7 @@ const xKton: Token = {
   type: "erc20",
   category: "kton",
 };
+const xKtonLockBox: Address = "0x4B14BcB238fE9961cddc26d1e4ffD309552048Fd";
 
 export default function WrapUnwrap() {
   const [sourceToken, _setSourceToken] = useState(ring);
@@ -101,6 +102,14 @@ export default function WrapUnwrap() {
   const publicClient = usePublicClient();
   const { data: walletClient } = useWalletClient();
 
+  const xTokenLockBox = useMemo(() => {
+    if (sourceToken.category === "ring") {
+      return xRingLockBox;
+    } else {
+      return xKtonLockBox;
+    }
+  }, [sourceToken.category]);
+
   const [busy, setBusy] = useState(false);
   const {
     balance,
@@ -112,7 +121,7 @@ export default function WrapUnwrap() {
     loading: isLoadingAllowance,
     approve,
     refresh: refreshAllowance,
-  } = useAllowance(ethereumChain, sourceToken, account.address, xRingLockBox);
+  } = useAllowance(ethereumChain, sourceToken, account.address, xTokenLockBox);
 
   const actionText = useMemo(() => {
     let result: "Connect Wallet" | "Switch to Ethereum" | "Approve" | "Wrap" | "Unwrap" = "Unwrap";
@@ -164,7 +173,7 @@ export default function WrapUnwrap() {
       setBusy(true);
       try {
         const hash = await walletClient.writeContract({
-          address: xRingLockBox,
+          address: xTokenLockBox,
           abi,
           functionName: actionText === "Unwrap" ? "withdraw" : "deposit",
           args: [amountRef.current.value],
@@ -185,6 +194,7 @@ export default function WrapUnwrap() {
     actionText,
     publicClient,
     walletClient,
+    xTokenLockBox,
     approve,
     switchNetwork,
     openConnectModal,
