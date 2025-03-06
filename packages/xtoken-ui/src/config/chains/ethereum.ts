@@ -120,7 +120,6 @@ export const ethereumChain: ChainConfig = {
           target: { network: "darwinia-dvm", symbol: "KTON" },
           bridge: { category: "xtoken-darwinia-ethereum" },
           action: "redeem",
-          hidden: true,
         },
         {
           target: { network: "arbitrum", symbol: "KTON" },

@@ -136,7 +136,6 @@ export const darwiniaChain: ChainConfig = {
           target: { network: "ethereum", symbol: "KTON" },
           bridge: { category: "xtoken-darwinia-ethereum" },
           action: "issue",
-          hidden: true,
         },
       ],
       category: "kton",
