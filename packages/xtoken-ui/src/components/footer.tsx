@@ -16,7 +16,7 @@ export default function Footer() {
         </a>
         <a
           className="text-xs font-semibold text-white/50 transition hover:text-white active:scale-95"
-          href="https://docs.helix.box/"
+          href="https://docs.helixbox.ai/"
           rel="noopener noreferrer"
           target="_blank"
         >
@@ -34,7 +34,7 @@ export default function Footer() {
         <SocialLink href="https://discord.gg/6XyyNGugdE">
           <img width={20} height={20} alt="Discord" src="images/social/discord.svg" />
         </SocialLink>
-        <SocialLink href="mailto:hello@helix.box">
+        <SocialLink href="mailto:hello@helixbox.ai">
           <img width={16} height={16} alt="Email" src="images/social/email.svg" />
         </SocialLink>
       </div>
