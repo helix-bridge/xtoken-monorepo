@@ -15,7 +15,7 @@ export default function Home() {
             cryptocurrency token issuance projects or custodial applications. Clients maintain full control over
             contracts and asset permissions. Our comprehensive services include BaaS solution consulting, contract
             deployment, indexing, and UI cloud services. Custom domain provisioning is also available. For inquiries,
-            please contact hello@helix.box.
+            please contact hello@helixbox.ai.
           </span>
         </div>
         <div className="flex items-center gap-8">

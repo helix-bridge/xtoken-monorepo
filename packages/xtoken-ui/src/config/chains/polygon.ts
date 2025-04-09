@@ -43,7 +43,7 @@ export const polygonChain: ChainConfig = {
             {
               name: "Helixbox Bridge",
               logo: "helix-bridge.png",
-              url: "https://app.helix.box/#/?token_category=ring&source_chain=polygon&source_token=RING&target_chain=darwinia-dvm&target_token=RING",
+              url: "https://app.helixbox.ai/#/?token_category=ring&source_chain=polygon&source_token=RING&target_chain=darwinia-dvm&target_token=RING",
             },
           ],
           onlyThirdParty: true,
