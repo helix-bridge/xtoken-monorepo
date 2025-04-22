@@ -33,6 +33,8 @@ enum BridgeTab {
   THIRD_PARTY,
 }
 
+const IS_BRIDGE_UNDER_MAINTENANCE = true;
+
 function Component() {
   const { updateBalanceAll, setIsHistoryOpen, setHistoryDetails } = useApp();
   const [isOpen, setIsOpen] = useState(false);
@@ -265,7 +267,14 @@ function Component() {
               ? []
               : [
                   {
-                    children: (
+                    children: IS_BRIDGE_UNDER_MAINTENANCE ? (
+                      <div className="bg-background rounded-xl p-2">
+                        <p className="text-sm font-normal text-yellow-400">
+                          ⚠️ The bridge feature is currently under maintenance. We are working to restore it as soon as
+                          possible. Thank you for your patience.
+                        </p>
+                      </div>
+                    ) : (
                       <>
                         <TransferAmountSection
                           amount={amount}
