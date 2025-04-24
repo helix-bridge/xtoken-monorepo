@@ -17,7 +17,7 @@ interface NavigationConfig {
 const navigationsConfig: NavigationConfig[] = [
   { href: "/", label: "Bridge" },
   { href: "/explorer", label: "Explorer" },
-  { href: "https://paralink.darwinia.network", label: "Paralink", external: true },
+  { href: "https://para.link/", label: "Paralink", external: true },
   { href: "/wrap", label: "Wrap" },
 ];
 
