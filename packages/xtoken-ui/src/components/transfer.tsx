@@ -33,7 +33,7 @@ enum BridgeTab {
   THIRD_PARTY,
 }
 
-const IS_BRIDGE_UNDER_MAINTENANCE = true;
+const IS_BRIDGE_UNDER_MAINTENANCE = false;
 
 function Component() {
   const { updateBalanceAll, setIsHistoryOpen, setHistoryDetails } = useApp();
