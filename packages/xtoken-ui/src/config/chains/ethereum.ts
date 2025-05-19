@@ -97,6 +97,32 @@ export const ethereumChain: ChainConfig = {
           ],
           onlyThirdParty: true,
         },
+        {
+          target: { network: "base", symbol: "RING" },
+          bridge: { category: "third-party-bridge" },
+          thirdPartyBridges: [
+            {
+              name: "Superbridge",
+              logo: "superbridge.png",
+              url: "https://superbridge.app",
+              xToken: "xRING",
+            },
+          ],
+          onlyThirdParty: true,
+        },
+        {
+          target: { network: "op", symbol: "RING" },
+          bridge: { category: "third-party-bridge" },
+          thirdPartyBridges: [
+            {
+              name: "Superbridge",
+              logo: "superbridge.png",
+              url: "https://superbridge.app",
+              xToken: "xRING",
+            },
+          ],
+          onlyThirdParty: true,
+        },
       ],
       category: "ring",
     },
@@ -141,6 +167,32 @@ export const ethereumChain: ChainConfig = {
               name: "Polygon",
               logo: "polygon.png",
               url: "https://portal.polygon.technology/bridge",
+            },
+          ],
+          onlyThirdParty: true,
+        },
+        {
+          target: { network: "base", symbol: "KTON" },
+          bridge: { category: "third-party-bridge" },
+          thirdPartyBridges: [
+            {
+              name: "Superbridge",
+              logo: "superbridge.png",
+              url: "https://superbridge.app",
+              xToken: "xKTON",
+            },
+          ],
+          onlyThirdParty: true,
+        },
+        {
+          target: { network: "op", symbol: "KTON" },
+          bridge: { category: "third-party-bridge" },
+          thirdPartyBridges: [
+            {
+              name: "Superbridge",
+              logo: "superbridge.png",
+              url: "https://superbridge.app",
+              xToken: "xKTON",
             },
           ],
           onlyThirdParty: true,

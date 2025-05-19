@@ -1,5 +1,8 @@
+import { Link } from "react-router-dom";
+import { TokenSymbol } from "../types";
+
 interface Props {
-  data: { name: string; url: string; logo: string }[];
+  data: { name: string; url: string; logo: string; xToken?: TokenSymbol }[];
 }
 
 export default function ThirdPartyBridge({ data }: Props) {
@@ -19,9 +22,21 @@ export default function ThirdPartyBridge({ data }: Props) {
               height={38}
               alt={option.name}
               src={`images/third-party-bridges/${option.logo}`}
-              className="shrink-0"
+              className="shrink-0 rounded-lg"
             />
-            <span className="truncate text-sm font-bold italic text-white">{option.name}</span>
+            <div className="flex flex-col items-start gap-0 sm:flex-row sm:items-center sm:gap-1">
+              <span className="truncate text-sm font-bold italic text-white">{option.name}</span>
+              {option.xToken && (
+                <p className="cursor-default text-xs font-bold italic text-white/50">
+                  <span className="hidden sm:inline">(</span>
+                  <Link to="/wrap" className="text-primary underline-offset-2 hover:underline">
+                    Unwrap
+                  </Link>{" "}
+                  it into {option.xToken} first
+                  <span className="hidden sm:inline">)</span>
+                </p>
+              )}
+            </div>
           </div>
 
           <ExternalIcon />
