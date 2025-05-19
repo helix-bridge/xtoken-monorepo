@@ -22,7 +22,7 @@ export default function ThirdPartyBridge({ data }: Props) {
               height={38}
               alt={option.name}
               src={`images/third-party-bridges/${option.logo}`}
-              className="shrink-0"
+              className="shrink-0 rounded-lg"
             />
             <div className="flex flex-col items-start gap-0 sm:flex-row sm:items-center sm:gap-1">
               <span className="truncate text-sm font-bold italic text-white">{option.name}</span>
