@@ -30,7 +30,7 @@ export default function ThirdPartyBridge({ data }: Props) {
                 <p className="cursor-default text-xs font-bold italic text-white/50">
                   <span className="hidden sm:inline">(</span>
                   <Link to="/wrap" className="text-primary underline-offset-2 hover:underline">
-                    Wrap
+                    Unwrap
                   </Link>{" "}
                   it into {option.xToken} first
                   <span className="hidden sm:inline">)</span>
