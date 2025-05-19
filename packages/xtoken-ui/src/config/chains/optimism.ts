@@ -14,6 +14,19 @@ export const optimismChain: ChainConfig = {
    */
   logo: "optimism.png",
   tokens: [
+    // TODO: Needs correction
+    {
+      decimals: 18,
+      symbol: "ETH",
+      name: "ETH",
+      type: "native",
+      address: "0x0000000000000000000000000000000000000000",
+      outer: "0x0000000000000000000000000000000000000000",
+      inner: "0x0000000000000000000000000000000000000000",
+      logo: "eth.png",
+      cross: [],
+      category: "eth",
+    },
     {
       decimals: 18,
       symbol: "RING",
