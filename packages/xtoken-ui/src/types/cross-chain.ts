@@ -19,6 +19,7 @@ interface ThirdPartyBridge {
   name: string;
   url: string;
   logo: string; // File name
+  xToken?: TokenSymbol;
 }
 
 export type CrossChain =

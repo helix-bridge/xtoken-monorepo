@@ -81,6 +81,7 @@ export const ethereumChain: ChainConfig = {
               name: "Arbitrum",
               logo: "arbitrum.png",
               url: "https://bridge.arbitrum.io/?destinationChain=arbitrum-one&sourceChain=ethereum",
+              xToken: "xRING",
             },
           ],
           onlyThirdParty: true,
