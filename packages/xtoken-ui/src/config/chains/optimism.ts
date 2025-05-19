@@ -27,6 +27,7 @@ export const optimismChain: ChainConfig = {
       cross: [],
       category: "eth",
     },
+
     {
       decimals: 18,
       symbol: "RING",
