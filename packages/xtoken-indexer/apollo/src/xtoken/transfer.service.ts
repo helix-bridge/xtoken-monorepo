@@ -5,10 +5,6 @@ import { AddressTokenMap } from "../base/AddressToken";
 
 @Injectable()
 export class TransferService extends BaseTransferServiceT2 {
-  private readonly darwainiaEthereumIssuingUrl = this.configService.get<string>("XTOKEN_DARWINIA_ETHEREUM_ISSUING");
-
-  private readonly ethereumDispatchSubgraph = this.configService.get<string>("XTOKEN_DISPATCH_ETHEREUM");
-
   // testnet
   private readonly ethereumDarwiniaBackingV2Url = this.configService.get<string>("XTOKEN_ETHEREUM_DARWINIA_BACKING_V2");
   private readonly ethereumDarwiniaIssuingV2Url = this.configService.get<string>("XTOKEN_ETHEREUM_DARWINIA_ISSUING_V2");
@@ -237,19 +233,11 @@ export class TransferService extends BaseTransferServiceT2 {
       chain: "ethereum",
       urls: [
         {
-          indexerType: Level0IndexerType.thegraph,
-          url: this.darwainiaEthereumIssuingUrl,
-        },
-        {
           indexerType: Level0IndexerType.superindex,
           url: this.slowUrl,
         }
       ],
       dispatchUrls: [
-        {
-          indexerType: Level0IndexerType.thegraph,
-          url: this.ethereumDispatchSubgraph,
-        },
         {
           indexerType: Level0IndexerType.superindex,
           url: this.slowUrl,
