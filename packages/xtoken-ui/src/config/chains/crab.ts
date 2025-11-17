@@ -50,11 +50,13 @@ export const crabChain: ChainConfig = {
       inner: "0x2D2b97EA380b0185e9fDF8271d1AFB5d2Bf18329",
       logo: "crab.png",
       cross: [
+        /*
         {
           target: { network: "darwinia-dvm", symbol: "xWCRAB" },
           bridge: { category: "xtoken-crab-darwinia" },
           action: "issue",
         },
+        */
       ],
       category: "crab",
     },

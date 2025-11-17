@@ -51,11 +51,13 @@ export const darwiniaChain: ChainConfig = {
       inner: "0xE7578598Aac020abFB918f33A20faD5B71d670b4",
       logo: "ring.png",
       cross: [
+        /*
         {
           target: { network: "crab-dvm", symbol: "xWRING" },
           bridge: { category: "xtoken-darwinia-crab" },
           action: "issue",
         },
+        */
         {
           target: { network: "ethereum", symbol: "RING" },
           bridge: { category: "lpbridge-darwinia-dvm" },
