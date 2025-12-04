@@ -20,8 +20,8 @@ export const ethereumChain: ChainConfig = {
       webSocket: ["wss://ethereum-rpc.publicnode.com"],
     },
     public: {
-      http: ["https://eth.llamarpc.com"],
-      webSocket: ["wss://eth.llamarpc.com"],
+      http: ["https://eth.drpc.org"],
+      webSocket: ["wss://eth.drpc.org"],
     },
   },
   tokens: [
