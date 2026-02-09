@@ -142,6 +142,7 @@ export const darwiniaChain: ChainConfig = {
       ],
       category: "kton",
     },
+    /*
     {
       decimals: 18,
       symbol: "xWCRAB",
@@ -160,6 +161,7 @@ export const darwiniaChain: ChainConfig = {
       ],
       category: "crab",
     },
+    */
   ],
   messager: { msgline: "0x682294D1c00A9CA13290b53B7544b8F734D6501f" },
 };
