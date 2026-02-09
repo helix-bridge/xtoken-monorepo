@@ -2,14 +2,11 @@ import {
   arbitrumChain,
   arbitrumSepoliaChain,
   baseChain,
-  crabChain,
   darwiniaChain,
   ethereumChain,
-  gnosisChain,
   koiChain,
   lineaChain,
   mantleChain,
-  pangolinChain,
   // pangoroChain,
   polygonChain,
   polygonZkEvmChain,
@@ -17,12 +14,10 @@ import {
   sepoliaChain,
   tronChain,
   tronShastaChain,
-  zksyncChain,
   zksyncSepoliaChain,
 } from "../config/chains";
 import { ChainConfig, ChainID, Network } from "../types";
 import { isMainnet } from "./env";
-import { bscChain } from "../config/chains/bsc";
 import { optimismChain } from "../config/chains/optimism";
 
 export function getChainConfig(chainIdOrNetwork?: ChainID | Network | null): ChainConfig | undefined {
@@ -30,12 +25,6 @@ export function getChainConfig(chainIdOrNetwork?: ChainID | Network | null): Cha
     case ChainID.DARWINIA:
     case "darwinia-dvm":
       return darwiniaChain;
-    case ChainID.CRAB:
-    case "crab-dvm":
-      return crabChain;
-    case ChainID.PANGOLIN:
-    case "pangolin-dvm":
-      return pangolinChain;
     case ChainID.ETHEREUM:
     case "ethereum":
       return ethereumChain;
@@ -45,9 +34,6 @@ export function getChainConfig(chainIdOrNetwork?: ChainID | Network | null): Cha
     case ChainID.ARBITRUM_SEPOLIA:
     case "arbitrum-sepolia":
       return arbitrumSepoliaChain;
-    case ChainID.ZKSYNC:
-    case "zksync":
-      return zksyncChain;
     case ChainID.ZKSYNC_SEPOLIA:
     case "zksync-sepolia":
       return zksyncSepoliaChain;
@@ -69,15 +55,9 @@ export function getChainConfig(chainIdOrNetwork?: ChainID | Network | null): Cha
     case ChainID.BASE:
     case "base":
       return baseChain;
-    case ChainID.BSC:
-    case "bsc":
-      return bscChain;
     case ChainID.OPTIMISM:
     case "op":
       return optimismChain;
-    case ChainID.GNOSIS:
-    case "gnosis":
-      return gnosisChain;
     case ChainID.SEPOLIA:
     case "sepolia":
       return sepoliaChain;
@@ -102,22 +82,17 @@ export function getChainConfigs(askAll?: boolean) {
   const all = [
     arbitrumChain,
     arbitrumSepoliaChain,
-    crabChain,
     darwiniaChain,
     ethereumChain,
     sepoliaChain,
     lineaChain,
     mantleChain,
-    pangolinChain,
-    zksyncChain,
     zksyncSepoliaChain,
     polygonChain,
     polygonZkEvmChain,
     scrollChain,
     baseChain,
-    bscChain,
     optimismChain,
-    gnosisChain,
     // pangoroChain,
     koiChain,
     tronShastaChain,
