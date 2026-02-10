@@ -4,8 +4,6 @@ export * from "./base";
 export * from "./darwinia";
 export * from "./ethereum";
 export * from "./sepolia";
-export * from "./linea";
-export * from "./mantle";
 export * from "./optimism";
 export * from "./pangolin";
 export * from "./polygon";

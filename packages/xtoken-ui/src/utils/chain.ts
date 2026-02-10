@@ -5,8 +5,6 @@ import {
   darwiniaChain,
   ethereumChain,
   koiChain,
-  lineaChain,
-  mantleChain,
   // pangoroChain,
   polygonChain,
   polygonZkEvmChain,
@@ -37,12 +35,6 @@ export function getChainConfig(chainIdOrNetwork?: ChainID | Network | null): Cha
     case ChainID.ZKSYNC_SEPOLIA:
     case "zksync-sepolia":
       return zksyncSepoliaChain;
-    case ChainID.LINEA:
-    case "linea":
-      return lineaChain;
-    case ChainID.MANTLE:
-    case "mantle":
-      return mantleChain;
     case ChainID.POLYGON:
     case "polygon":
       return polygonChain;
@@ -85,8 +77,6 @@ export function getChainConfigs(askAll?: boolean) {
     darwiniaChain,
     ethereumChain,
     sepoliaChain,
-    lineaChain,
-    mantleChain,
     zksyncSepoliaChain,
     polygonChain,
     polygonZkEvmChain,
