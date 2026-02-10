@@ -7,8 +7,6 @@ export * from "./sepolia";
 export * from "./optimism";
 export * from "./pangolin";
 export * from "./polygon";
-export * from "./polygon-zkevm";
-export * from "./scroll";
 export * from "./zksync-sepolia";
 export * from "./pangoro";
 export * from "./koi";

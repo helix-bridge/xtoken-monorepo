@@ -7,8 +7,6 @@ import {
   koiChain,
   // pangoroChain,
   polygonChain,
-  polygonZkEvmChain,
-  scrollChain,
   sepoliaChain,
   tronChain,
   tronShastaChain,
@@ -38,12 +36,6 @@ export function getChainConfig(chainIdOrNetwork?: ChainID | Network | null): Cha
     case ChainID.POLYGON:
     case "polygon":
       return polygonChain;
-    case ChainID.POLYGON_ZKEVM:
-    case "polygon-zkEvm":
-      return polygonZkEvmChain;
-    case ChainID.SCROLL:
-    case "scroll":
-      return scrollChain;
     case ChainID.BASE:
     case "base":
       return baseChain;
@@ -79,8 +71,6 @@ export function getChainConfigs(askAll?: boolean) {
     sepoliaChain,
     zksyncSepoliaChain,
     polygonChain,
-    polygonZkEvmChain,
-    scrollChain,
     baseChain,
     optimismChain,
     // pangoroChain,
