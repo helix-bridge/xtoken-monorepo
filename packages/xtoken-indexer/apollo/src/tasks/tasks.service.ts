@@ -15,9 +15,7 @@ export class TasksService {
     this.logger.log(`healthChecks ${JSON.stringify([...this.healthChecks.entries()])}`);
     const interval = setInterval(async () => {
       var callTimes: number = this.healthChecks.get(name);
-      this.logger.log(`scheduler start ${name} ${callTimes}`);
       await callback();
-      this.logger.log(`scheduler end ${name} ${callTimes}`);
       this.healthChecks.set(name, callTimes + 1);
     }, milliseconds);
     this.schedulerRegistry.addInterval(name, interval);
