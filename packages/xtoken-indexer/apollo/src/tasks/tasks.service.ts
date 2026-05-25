@@ -10,8 +10,9 @@ export class TasksService {
   constructor(private schedulerRegistry: SchedulerRegistry) {}
 
   addInterval(name: string, milliseconds: number, callback: () => void) {
-    this.logger.log(`new interval task added name:${name}, ms: ${milliseconds}`);
+    this.logger.log(`New interval task added name:${name}, ms: ${milliseconds}`);
     this.healthChecks.set(name, 0);
+    this.logger.log(`healthChecks ${this.healthChecks}`);
     const interval = setInterval(async () => {
       var callTimes: number = this.healthChecks.get(name);
       await callback();
@@ -21,6 +22,7 @@ export class TasksService {
   }
 
   queryHealthChecks() {
+    this.logger.log(`Query healthChecks ${this.healthChecks}`);
     return this.healthChecks;
   }
 }
