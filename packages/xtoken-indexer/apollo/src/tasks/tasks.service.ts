@@ -12,7 +12,7 @@ export class TasksService {
   addInterval(name: string, milliseconds: number, callback: () => void) {
     this.logger.log(`New interval task added name:${name}, ms: ${milliseconds}`);
     this.healthChecks.set(name, 0);
-    this.logger.log(`healthChecks ${this.healthChecks}`);
+    this.logger.log(`healthChecks ${JSON.stringify(this.healthChecks)}`);
     const interval = setInterval(async () => {
       var callTimes: number = this.healthChecks.get(name);
       await callback();
@@ -22,7 +22,7 @@ export class TasksService {
   }
 
   queryHealthChecks() {
-    this.logger.log(`Query healthChecks ${this.healthChecks}`);
+    this.logger.log(`Query healthChecks ${JSON.stringify(this.healthChecks)}`);
     return this.healthChecks;
   }
 }
