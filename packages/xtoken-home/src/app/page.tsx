@@ -19,7 +19,6 @@ export default function Home() {
           </span>
         </div>
         <div className="flex items-center gap-8">
-          <Card icon="/darwinia.png" link="https://bridge.darwinia.network" label="Darwinia" />
           <Card icon="/docs.png" link="./docs.html" label="Docs" />
         </div>
       </div>
