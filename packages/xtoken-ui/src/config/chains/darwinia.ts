@@ -78,6 +78,7 @@ export const darwiniaChain: ChainConfig = {
           target: { network: "tron", symbol: "RING" },
           bridge: { category: "xtoken-darwinia-tron" },
           action: "issue",
+          hidden: true,
         },
         {
           target: { network: "ethereum", symbol: "RING" },
