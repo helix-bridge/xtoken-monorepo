@@ -21,7 +21,7 @@ jobs:
       - uses: ./.github/actions/smart-vercel
         name: Deploy xtoken-ui (mainnet)
         with:
-          node_version: 20
+          node_version: 24
           vercel_token: ${{ secrets.VERCEL_TOKEN }}
           vercel_group: itering
           preview_output: true
@@ -36,7 +36,7 @@ jobs:
       - uses: ./.github/actions/smart-vercel
         name: Deploy xtoken-ui (testnet)
         with:
-          node_version: 20
+          node_version: 24
           vercel_token: ${{ secrets.VERCEL_TOKEN }}
           vercel_group: itering
           preview_output: true
